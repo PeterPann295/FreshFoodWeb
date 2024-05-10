@@ -1,0 +1,31 @@
+@charset "UTF-8";
+.container_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+.form-container {
+    max-width: 500px;
+    width: 80%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+.size {
+    width: 15px;
+    height: 15px;
+}
+.content{
+
+    margin-top: 70px;
+    margin-bottom: 70px;
+
+}
+.margin-label{
+    margin-bottom: 8px;
+}
+.margin-button {
+    margin-top: 10px;
+    width: 100%;
+}

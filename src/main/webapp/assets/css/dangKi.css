@@ -1,0 +1,22 @@
+
+@charset "UTF-8";
+.container_form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+.form-container {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+.size {
+    width: 15px;
+    height: 15px;
+}
+.width-btn {
+    width: 100%;
+}
