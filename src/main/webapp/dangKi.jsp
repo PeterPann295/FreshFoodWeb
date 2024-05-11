@@ -95,7 +95,7 @@
         let re_password = document.getElementById("confirm-password").value;
         let fullName = document.getElementById("full-name").value;
         let numberPhone = document.getElementById("phone").value;
-        let email = document.getElementById("email");
+        let email = document.getElementById("email").value;
         if(username.length < 8) {
             err_username = document.getElementsByClassName("err_username")[0];
             err_username.innerHTML= "<span> Tên tài khoản phải ít nhất 8 kí tự </span>"
@@ -158,7 +158,7 @@
 
 
         var phoneRegex = /^\d{10,}$/; // Biểu thức chính quy để kiểm tra số điện thoại, ở đây tôi giả sử số điện thoại có ít nhất 10 chữ số
-        var isValidPhone = phoneRegex.test(number_phone);
+        var isValidPhone = phoneRegex.test(numberPhone);
         if (!isValidPhone) {
             err_phone = document.getElementsByClassName("err_numberPhone")[0];
             err_phone.innerHTML= "<span> Số điện thoại không hợp lệ </span>"
