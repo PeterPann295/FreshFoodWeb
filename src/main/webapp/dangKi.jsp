@@ -14,7 +14,7 @@
 <%@ include file="layouts/header.jsp"%>
 
 <div class="container_form">
-    <form id="form_register" class="form-container" action="DangKiTaiKhoan" method="post">
+    <form id="form_register" class="form-container" action="customer?action=register" method="post">
         <h1 class="text-center text-success">
             Đăng ký tài khoản <a href="#" class="logo-link"> <img
                 style="width: 80px; height: 80px" src="assets/images/rau.png" alt="Logo"
