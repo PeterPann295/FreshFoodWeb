@@ -56,6 +56,7 @@ public class CustomerSerlvet extends HttpServlet {
             customer.setProvider("google");
             cusDao.insert(customer);
         }
+        customer = cusDao.checkProviderUserID(account.getId());
         HttpSession session = req.getSession();
         session.setAttribute("customer_login", customer);
         req.getRequestDispatcher("/index.jsp").forward(req,resp);
@@ -73,6 +74,7 @@ public class CustomerSerlvet extends HttpServlet {
             customer.setProvider_user_id(id);
             cusDao.insert(customer);
         }
+        customer = cusDao.checkProviderUserID(id);
         HttpSession session = req.getSession();
         session.setAttribute("customer_login", customer);
         req.getRequestDispatcher("/index.jsp").forward(req,resp);

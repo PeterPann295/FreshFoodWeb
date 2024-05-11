@@ -85,6 +85,8 @@ public class CustomerDao extends AbsDao<Customer> {
                 c.setEmail(rs.getString("email"));
                 c.setProvider(rs.getString("provider"));
                 c.setProvider_user_id(rs.getString("provider_user_id"));
+                super.user_id = c.getId();
+                super.login(c);
             }
             return c;
         } catch (SQLException e) {
@@ -115,6 +117,8 @@ public class CustomerDao extends AbsDao<Customer> {
                 String provider = rs.getNString("provider");
                 String providerUserId = rs.getNString("provider_user_id");
                 c = new Customer(id,user_name, password_, nameCustomer_, numberPhone_, email, role, provider, providerUserId);
+                super.user_id = c.getId();
+                super.login(c);
             }
         } catch (SQLException e) {
             e.printStackTrace();
