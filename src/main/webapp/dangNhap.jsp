@@ -14,7 +14,7 @@
 <%@ include file="layouts/header.jsp" %>
 
 <div class="container_form content">
-    <form action="DangNhap" method="post" class="form-container">
+    <form action="customer?action=login" method="post" class="form-container">
         <h1 class="text-center mb-3 text-success ">
             Đăng Nhập <a href="#" class="logo-link"> <img
                 style="width: 60px; height: 60px" src="assets/images/rau.png" alt="Logo"
@@ -22,6 +22,7 @@
         </a>
         </h1>
         <div class="text-danger mb-3">${error_login}</div>
+        <div class="text-danger mb-3">${register_success}</div>
         <div class="form-group mb-2">
             <label class="margin-label" for="username">Tên đăng nhập:</label> <input
                 type="text" class="form-control" id="username" name="username"

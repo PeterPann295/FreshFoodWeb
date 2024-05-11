@@ -22,6 +22,12 @@
             /* Các thuộc tính CSS khác cho header */
         }
     </style>
+    <!-- Bao gồm Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bao gồm Bootstrap JavaScript bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 </head>
 <body>
 <header class="fixed-top p-3 text-bg-success" style="padding-top: 100px;">
@@ -67,21 +73,23 @@
 
 
                 <c:choose>
-                    <c:when test="${sessionScope.customer != null}">
+                    <c:when test="${sessionScope.customer_login != null}">
                         <div class="flex-shrink-0 dropdown">
                             <a href="#"
                                class="d-block link-body-emphasis text-decoration-none dropdown-toggle text-white"
                                data-bs-toggle="dropdown" aria-expanded="false"> <i
                                     class="bi bi-person" style="font-size: 24px; color: white"></i>
 
-                                Xin Chào ${customer.username}
+                                Xin Chào ${customer_login.fullName}
                             </a>
                             <ul class="dropdown-menu text-small shadow">
                                 <li><a class="dropdown-item" href="lichsumuahang">Lịch sử mua hàng</a></li>
-                                <li><a class="dropdown-item" href="thayDoiMatKhau.jsp">Thay đổi mật khẩu</a></li>
-                                <li><a class="dropdown-item" href="thayDoiThongTinKhachHang.jsp">Thay đổi thông tin</a></li>
+                                <c:if test="${sessionScope.customer_login.provider == null}">
+                                    <li><a class="dropdown-item" href="thayDoiMatKhau.jsp">Thay đổi mật khẩu</a></li>
+                                    <li><a class="dropdown-item" href="thayDoiThongTinKhachHang.jsp">Thay đổi thông tin</a></li>
+                                </c:if>
                                 <li><hr class="dropdown-divider"></li>
-                                <c:if test="${sessionScope.customer.role == true}">
+                                <c:if test="${sessionScope.customer_login.role == true}">
                                     <li><a class="dropdown-item" href="dashBoard.jsp">Trang quản trị</a></li>
 
                                 </c:if>
