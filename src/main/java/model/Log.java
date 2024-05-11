@@ -9,27 +9,27 @@ public class Log {
     private String level;
     private String beforeData;
     private String afterData;
-    private String username;
+    private int user_id;
     private Timestamp time;
 
-    public Log(String action, String table, String level, String beforeData, String afterData, String username) {
+    public Log(String action, String table, String level, String beforeData, String afterData, int user_id) {
         this.action = action;
         this.table = table;
         this.level = level;
         this.beforeData = beforeData;
         this.afterData = afterData;
-        this.username = username;
+        this.user_id = user_id;
         this.time = new Timestamp(System.currentTimeMillis());
     }
 
-    public Log(int id, String action, String table, String level, String beforeData, String afterData, String username, Timestamp time) {
+    public Log(int id, String action, String table, String level, String beforeData, String afterData, int user_id, Timestamp time) {
         this.id = id;
         this.action = action;
         this.table = table;
         this.level = level;
         this.beforeData = beforeData;
         this.afterData = afterData;
-        this.username = username;
+        this.user_id = user_id;
         this.time = time;
     }
 
@@ -81,12 +81,12 @@ public class Log {
         this.afterData = afterData;
     }
 
-    public String getUsername() {
-        return username;
+    public int getUser_id() {
+        return user_id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(int user_id) {
+        this.user_id = user_id;
     }
 
     public Timestamp getTime() {
@@ -106,17 +106,20 @@ public class Log {
                 ", level='" + level + '\'' +
                 ", beforeData='" + beforeData + '\'' +
                 ", afterData='" + afterData + '\'' +
-                ", username='" + username + '\'' +
+                ", user_id='" + user_id+ '\'' +
                 ", time=" + time +
                 '}';
     }
-    public static <T extends IModel> Log insert(T model, String username) {
-        return new Log("insert", model.table(), "infor", "{}", model.afterData(), username);
+    public static <T extends IModel> Log insert(T model, int user_id) {
+        return new Log("insert", model.table(), "infor", "{}", model.afterData(), user_id);
     }
-    public static <T extends IModel> Log update(T model, String username) {
-        return new Log("update", model.table(), "warning", model.beforeData(), model.afterData(), username);
+    public static <T extends IModel> Log update(T model, int user_id) {
+        return new Log("update", model.table(), "warning", model.beforeData(), model.afterData(), user_id);
     }
-    public static <T extends IModel> Log delete(T model, String username) {
-        return new Log("delete", model.table(), "danger", model.beforeData(), "{}", username);
+    public static <T extends IModel> Log delete(T model, int user_id) {
+        return new Log("delete", model.table(), "danger", model.beforeData(), "{}", user_id);
+    }
+    public static <T extends IModel> Log login(T model, int user_id) {
+        return new Log("login", model.table(), "infor", "{}", "{}", user_id);
     }
 }
