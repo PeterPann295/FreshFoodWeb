@@ -37,6 +37,18 @@ public class CustomerSerlvet extends HttpServlet {
         GoogleLogin gg = new GoogleLogin();
         String accessToken = gg.getToken(code);
         GoogleAccount account = gg.getUserInfo(accessToken);
+        Customer customer = cusDao.checkProviderUserID(account.getId());
+        if(customer == null) {
+            customer = new Customer();
+            customer.setProvider_user_id(account.getId());
+            customer.setFullName(account.getName());
+            customer.setEmail(account.getEmail());
+            customer.setProvider("google");
+            cusDao.insert(customer);
+        }
+        HttpSession session = req.getSession();
+        session.setAttribute("customer_login", customer);
+        req.getRequestDispatcher("/index.jsp").forward(req,resp);
     }
     private void loginFacebook (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
