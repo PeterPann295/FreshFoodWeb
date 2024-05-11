@@ -6,12 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Đăng kí tài khoản</title>
-    <%@ include file="/layouts/common.jsp"%>
+    <%@ include file="layouts/common.jsp"%>
     <script src="assets/javascript/dangKi.js"></script>
     <link rel="stylesheet" type="text/css" href="assets/css/dangKi.css">
 </head>
 <body>
-<%@ include file="/layouts/header.jsp"%>
+<%@ include file="layouts/header.jsp"%>
 
 <div class="container_form">
     <form class="form-container" action="DangKiTaiKhoan" method="post">
@@ -83,6 +83,6 @@
     </form>
 </div>
 
-<%@ include file="/layouts/footer.jsp"%>
+<%@ include file="layouts/footer.jsp"%>
 </body>
 </html>
