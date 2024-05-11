@@ -6,12 +6,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Đăng nhập</title>
-    <%@ include file="common.jsp" %>
+    <%@ include file="/layouts/common.jsp" %>
     <link rel="stylesheet" type="text/css" href="assets/css/dangNhap.css">
     <script src="assets/javascript/facebookAPI.js"></script>
 </head>
 <body>
-<%@ include file="header.jsp" %>
+<%@ include file="/layouts/header.jsp" %>
 
 <div class="container_form content">
     <form action="DangNhap" method="post" class="form-container">
@@ -65,6 +65,6 @@
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js"></script>
 </body>
 <footer>
-    <%@ include file="footer.jsp" %>
+    <%@ include file="/layouts/footer.jsp" %>
 </footer>
 </html>
