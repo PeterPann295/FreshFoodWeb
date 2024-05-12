@@ -8,6 +8,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
+@MultipartConfig
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
     private ParentCategoryDao parentCateDao = new ParentCategoryDao();
@@ -33,7 +34,11 @@ public class AdminServlet extends HttpServlet {
 
     }
     private void addParentCategory (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String name = req.getParameter("parentCateName");
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String name = req.getParameter("namePC");
+        System.out.println(name);
         DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
         diskFileItemFactory.setRepository(new File("D:/FutureOFMe/Project_Web_FreshFood/src/main/webapp"));
         ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
@@ -53,7 +58,7 @@ public class AdminServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         parentCateDao.insert(new ParentCategory(name, url));
-        req.getRequestDispatcher("/admin/themSanPham.jsp").forward(req, resp);
+        req.getRequestDispatcher("/admin/danhMucCha.jsp").forward(req, resp);
     }
 
 }

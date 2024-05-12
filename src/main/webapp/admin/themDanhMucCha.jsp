@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false"%>
+<%@ include file="layouts/svg.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +24,7 @@
                     <div class="mb-3">
                         <label for="parentCateName" class="form-label">Tên Danh Mục: </label>
                         <input type="text" class="form-control" id="parentCateName"
-                               name="parentCateName" placeholder="Nhập tên danh mục ">
+                               name="namePC" placeholder="Nhập tên danh mục ">
 
                     </div>
                     <div class="mb-3">

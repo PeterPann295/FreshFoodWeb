@@ -4,7 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:useBean id="parentCategoryDAO" class="database.ParentCategoryDao" />
-
+<%@ include file="layouts/svg.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,7 +50,7 @@
                 <tr>
                     <th scope="row"> ${p.id}  </th>
                     <td> <img
-                            style="width: 60px; height: 50px" src="/assets/images/categories/thịt.png" alt="Logo"
+                            style="width: 60px; height: 50px" src="${p.imageURL}" alt="Logo"
                             class="logo-image"> </td>
                     <td> ${p.name} </td>
 
