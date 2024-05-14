@@ -6,6 +6,13 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html; charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+<jsp:useBean id="parentCategoryDAO" class="database.ParentCategoryDao"
+             scope="page" />
+<%@ page isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <html>
 <head>
     <title>Title</title>
@@ -84,6 +91,29 @@
 
     </div>
     <hr>
+</div>
+<div style="margin: 40px;">
+
+    <h3 class="text-success">Danh Mục Nổi Bật</h3>
+    <hr class="border border-success border-1 opacity-75">
+
+    <div class="row" style="margin-left: 20px">
+        			<c:forEach var="p" items="${parentCategoryDAO.selectAll()}">
+        				<div class="col-lg-4 col-md-6 mb-4 border-success"
+        					style="width: 160px; height: 150px">
+        					<div class="card h-110">
+        						<a
+        							href="bolocsanpham?parentCategoryID=${p.id}&hanhDong=parent-category"
+        							style="text-decoration: none" class="text-success"><img
+        							class="card-img-top" src="${p.imageURL}" alt="">
+        							<div class="card-body">
+        								<h6 class="text-center">${p.name}</h6>
+        								<p class="card-text"></p>
+        							</div> </a>
+        					</div>
+        				</div>
+        			</c:forEach>
+    </div>
 </div>
 
 </body>
