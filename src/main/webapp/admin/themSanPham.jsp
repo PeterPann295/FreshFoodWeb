@@ -4,6 +4,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false" %>
 <%@ include file="layouts/svg.jsp"%>
+<jsp:useBean id="discountDAO" class="database.DiscountDao"
+             />
+<jsp:useBean id="categoryDAO" class="database.CategoryDao"
+             />
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,13 +28,7 @@
                       enctype="multipart/form-data">
 
                     <h1 class="text-center">Thêm sản phẩm</h1>
-                    <div class="mb-3">
-                        <label for="productID" class="form-label">Mã Sản Phẩm</label> <input
-                            type="text" class="form-control" id="productID" name="productID"
-                            placeholder="Nhập mã sản phẩm" value="${productID}">
-                        <div class="text-danger">${err_productID}</div>
 
-                    </div>
                     <div class="mb-3">
                         <label for="productName" class="form-label">Tên Sản Phẩm</label>
                         <input type="text" class="form-control" id="productName"
@@ -47,13 +45,23 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="unit" class="form-label">Đơn Vị Tính</label> <input
-                            type="name" class="form-control" id="unit" name="unit"
-                            placeholder="Nhập đơn vị tính">
-
+                        <label for="unit" class="form-label">Đơn Vị Tính</label>
+                        <select class="form-select" id="unit" name="unit">
+                            <option value="Kg">0.5 KG</option>
+                            <option value="g">1 KG</option>
+                            <option value="mg">Chai</option>
+                            <option value="L">Lon</option>
+                            <option value="ml">Gói</option>
+                            <option value="m">Khay</option>
+                            <option value="cm">24 Chai</option>
+                            <option value="mm">Bao</option>
+                        </select>
                     </div>
-
-
+                    <div class="mb-3">
+                        <label for="weight" class="form-label">Trọng Lượng</label> <input
+                            type="text" class="form-control" id="weight" name="weight"
+                            placeholder="Nhập trọng lượng">
+                    </div>
 
                     <div class="mb-3">
                         <label for="imgProduct" class="form-label">Hình Ảnh Sản
@@ -78,7 +86,7 @@
                             Sản Phẩm</label> <select class="form-select" id="category"
                                                      name="category">
                         <c:forEach var="p" items="${categoryDAO.selectAll()}">
-                            <option value="${p.categoryID}">${p.nameCategory}</option>
+                            <option value="${p.id}">${p.name}</option>
                         </c:forEach>
                     </select>
 
@@ -89,7 +97,7 @@
                                                                  name="discount">
                             <option value="none">Không</option>
                             <c:forEach var="p" items="${discountDAO.selectAll()}">
-                                <option value="${p.discountID}">${p.nameDiscount}</option>
+                                <option value="${p.id}">${p.name}</option>
                             </c:forEach>
                         </select>
 
