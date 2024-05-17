@@ -8,6 +8,8 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <jsp:useBean id="parentCategoryDAO" class="database.ParentCategoryDao"
              scope="page" />
+<jsp:useBean id="productDAO" class="database.ProductDao" scope="page" />
+
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -18,6 +20,22 @@
     <title>Title</title>
     <meta charset="UTF-8">
     <%@ include file="layouts/common.jsp"%>
+    <style>
+        .card:hover {
+            border: 2px solid;
+            border-color: #28a745;
+        }
+
+        .discount-percentage {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: red;
+            color: white;
+            padding: 5px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
@@ -111,6 +129,78 @@
         								<p class="card-text"></p>
         							</div> </a>
         					</div>
+        				</div>
+        			</c:forEach>
+    </div>
+</div>
+<div style="margin: 40px; margin-top: 40px;">
+    <h3 class="text-success">Sản Phẩm Mới Nhất</h3>
+    <hr class="border border-success border-1 opacity-75">
+
+    <div class="row" style="margin-left: 30px">
+        			<c:forEach var="product" items="${productDAO.selectNewestProducts()}">
+        				<div class="col-lg-4 col-md-6 mb-4 mt-2"
+        					style="width: 216px; height: 355px">
+
+        					<c:choose>
+        						<c:when test="${product.discount != null}">
+        							<div class="card">
+        								<a href="chitietsanpham?productID=${product.id}"><img
+        									class="card-img-top" src="${product.imageUrl}" alt=""></a>
+        								<div class="card-body">
+        									<h5 class="card-title">
+        										<a href="#" style="text-decoration: none">
+        											${product.name} </a>
+        									</h5>
+        									<p class="mt-1">ĐVT: ${product.unit}</p>
+        									<p>
+        										<span class="text-success"> <fmt:formatNumber
+        												value="${product.getFinalPrice()}" type="currency"
+        												currencyCode="VND" minFractionDigits="0" />
+        										</span> <span
+        											style="text-decoration: line-through; padding-left: 5px">
+        											<fmt:formatNumber value="${product.price}" type="currency"
+        												currencyCode="VND" minFractionDigits="0" />
+        										</span>
+        									</p>
+        									<span class="discount-percentage"> Giảm
+        										${product.discount.percent}% </span>
+											<a href="customer?action=addToCart&productId=${product.id}" class="ms-1 btn btn-success add-to-cart-btn"
+											   data-product-id="${product.id}">
+												<i class="bi bi-cart3"></i> Thêm Vào Giỏ
+											</a>
+        								</div>
+
+        							</div>
+
+        						</c:when>
+        						<c:otherwise>
+        							<div class="card">
+        								<a href="chitietsanpham?productID=${product.id}"><img
+        									class="card-img-top" src="${product.imageUrl}" alt=""></a>
+        								<div class="card-body">
+        									<h5 class="card-title">
+        										<a href="#" style="text-decoration: none">
+        											${product.name} </a>
+        									</h5>
+        									<p class="mt-1">ĐVT: ${product.unit}</p>
+        									<p>
+        										<span class="text-success"> <fmt:formatNumber
+        												value="${product.getFinalPrice()}" type="currency"
+        												currencyCode="VND" minFractionDigits="0"/>
+        										</span>
+        									</p>
+
+											<a href="customer?action=addToCart&productId=${product.id}" class="ms-1 btn btn-success add-to-cart-btn"
+											   data-product-id="${product.id}">
+												<i class="bi bi-cart3"></i> Thêm Vào Giỏ
+											</a>
+        								</div>
+
+        							</div>
+        						</c:otherwise>
+        					</c:choose>
+
         				</div>
         			</c:forEach>
     </div>

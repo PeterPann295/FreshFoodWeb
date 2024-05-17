@@ -1,7 +1,13 @@
 package controller;
 
+import database.CartDao;
+import database.CartItemDao;
 import database.CustomerDao;
+import database.ProductDao;
+import model.Cart;
+import model.CartItem;
 import model.Customer;
+import model.Product;
 import utils.Encode;
 import utils.GoogleAccount;
 import utils.GoogleLogin;
@@ -19,6 +25,9 @@ import java.util.regex.Pattern;
 @WebServlet("/customer")
 public class CustomerSerlvet extends HttpServlet {
     private CustomerDao cusDao = new CustomerDao();
+    private CartDao cartDao = new CartDao();
+    private CartItemDao cartItemDao = new CartItemDao();
+    private ProductDao prodDao = new ProductDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -40,6 +49,8 @@ public class CustomerSerlvet extends HttpServlet {
             login(req, resp);
         } else if(action.equals("register")){
              register(req, resp);
+        } else if (action.equals("addToCart")) {
+            addToCart(req, resp);
         }
     }
     private void loginGoogle(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -164,5 +175,30 @@ public class CustomerSerlvet extends HttpServlet {
             url = "/dangNhap.jsp";
         }
         req.getRequestDispatcher(url).forward(req,resp);
+    }
+    private void addToCart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        Cart cart = cartDao.selectByCustomerId(customer.getId());
+        if(cart == null) {
+            cart = new Cart();
+            cart.setCustomer(customer);
+            cart.setTotalPrice(0);
+            cartDao.insert(cart);
+        }
+        int productId = Integer.parseInt(req.getParameter("productId"));
+        Product product = prodDao.selectById(productId);
+        CartItem cartItem = new CartItem();
+        cartItem.setProduct(product);
+        cartItem.setQuantity(1);
+        cartItem.setCart(cart);
+        cartItemDao.insert(cartItem);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/customer/gioHang.jsp");
+
     }
 }

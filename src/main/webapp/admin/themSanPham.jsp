@@ -24,7 +24,7 @@
         <%@ include file="layouts/navMenu.jsp"%>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="container_form">
-                <form class="form-container" action="ThemSanPham" method="post"
+                <form class="form-container" action="../admin?action=addProduct" method="post"
                       enctype="multipart/form-data">
 
                     <h1 class="text-center">Thêm sản phẩm</h1>
@@ -47,14 +47,14 @@
                     <div class="mb-3">
                         <label for="unit" class="form-label">Đơn Vị Tính</label>
                         <select class="form-select" id="unit" name="unit">
-                            <option value="Kg">0.5 KG</option>
-                            <option value="g">1 KG</option>
-                            <option value="mg">Chai</option>
-                            <option value="L">Lon</option>
-                            <option value="ml">Gói</option>
-                            <option value="m">Khay</option>
-                            <option value="cm">24 Chai</option>
-                            <option value="mm">Bao</option>
+                            <option value="0.5 Kg">0.5 KG</option>
+                            <option value="1 Kg">1 KG</option>
+                            <option value="Chai">Chai</option>
+                            <option value="Lon">Lon</option>
+                            <option value="Gói">Gói</option>
+                            <option value="Khay">Khay</option>
+                            <option value="24 Chai">24 Chai</option>
+                            <option value="Bao">Bao</option>
                         </select>
                     </div>
                     <div class="mb-3">
