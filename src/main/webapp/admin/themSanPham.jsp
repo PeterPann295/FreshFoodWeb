@@ -4,6 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false" %>
 <%@ include file="layouts/svg.jsp"%>
+
 <jsp:useBean id="discountDAO" class="database.DiscountDao"
              />
 <jsp:useBean id="categoryDAO" class="database.CategoryDao"

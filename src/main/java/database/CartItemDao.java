@@ -60,7 +60,7 @@ public class CartItemDao extends AbsDao<CartItem> {
         }
         return 0;
     }
-    private List<CartItem> selectCartItemsByCartId(int cartId) {
+    public List<CartItem> selectCartItemsByCartId(int cartId) {
         List<CartItem> cartItems = new ArrayList<>();
         try {
             Connection con = JDBCUtil.getConnection();
@@ -72,7 +72,7 @@ public class CartItemDao extends AbsDao<CartItem> {
             ProductDao productDao = new ProductDao();
             while (rs.next()) {
                 CartItem item = new CartItem();
-                item.setCart(cartDao.selectById(rs.getInt("cart_id"), rs.getInt("customer_id")));
+                item.setCart(cartDao.selectById(rs.getInt("cart_id")));
                 item.setProduct(productDao.selectById(rs.getInt("product_id")));
                 item.setQuantity(rs.getInt("quantity"));
                 cartItems.add(item);
@@ -81,5 +81,11 @@ public class CartItemDao extends AbsDao<CartItem> {
             e.printStackTrace();
         }
         return cartItems;
+    }
+
+    public static void main(String[] args) {
+        CartItemDao cartItemDao = new CartItemDao();
+        CartDao cartDao = new CartDao();
+        System.out.println(cartItemDao.selectCartItemsByCartId(cartDao.selectByCustomerId(1).getId()).size());
     }
 }
