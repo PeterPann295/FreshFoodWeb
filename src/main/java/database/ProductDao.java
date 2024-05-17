@@ -5,10 +5,8 @@ import model.Discount;
 import model.Product;
 import utils.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.lang.reflect.Type;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ProductDao extends AbsDao<Product> {
@@ -26,7 +24,11 @@ public class ProductDao extends AbsDao<Product> {
             pst.setDouble(6, product.getWeight());
             pst.setBoolean(7, product.isAvailable());
             pst.setInt(8, product.getCategory().getId());
+            if(product.getDiscount() != null) {
             pst.setInt(9, product.getDiscount().getId());
+            } else {
+                pst.setNull(9, Types.INTEGER);
+            }
             int i = pst.executeUpdate();
             if (i > 0) {
                 ResultSet rs = pst.getGeneratedKeys();
@@ -109,5 +111,47 @@ public class ProductDao extends AbsDao<Product> {
         }
         return null;
     }
+    public ArrayList<Product> selectNewestProducts() {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM products ORDER BY id DESC LIMIT 10"; // Sắp xếp giảm dần theo ID và giới hạn kết quả là 10
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+
+                DiscountDao discountDao = new DiscountDao();
+                Discount discount = discountDao.selectById(discountId);
+
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
+                products.add(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
+    public static void main(String[] args) {
+        ProductDao productDao = new ProductDao();
+        ArrayList<Product> products = productDao.selectNewestProducts();
+        for (Product product : products) {
+            System.out.println(product);
+        }
+    }
+
 
 }

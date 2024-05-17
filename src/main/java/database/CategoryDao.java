@@ -55,8 +55,9 @@ public class CategoryDao extends AbsDao<Category> {
         Category category = null;
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "Select * from Categories";
+            String sql = "Select * from Categories where id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             ParentCategoryDao dao = new ParentCategoryDao();
             while(rs.next()) {

@@ -151,6 +151,14 @@ public class Product implements IModel {
     public String afterData() {
         return toString();
     }
-
+    public double getFinalPrice() {
+        if (discount != null) {
+            double pc = (double) discount.getPercent() / 100;
+            double discountAmount = price * pc;
+            return price - discountAmount;
+        } else {
+            return price;
+        }
+    }
 
 }
