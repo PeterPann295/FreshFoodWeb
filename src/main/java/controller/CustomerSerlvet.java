@@ -4,10 +4,7 @@ import database.CartDao;
 import database.CartItemDao;
 import database.CustomerDao;
 import database.ProductDao;
-import model.Cart;
-import model.CartItem;
-import model.Customer;
-import model.Product;
+import model.*;
 import utils.Encode;
 import utils.GoogleAccount;
 import utils.GoogleLogin;
@@ -18,7 +15,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.HttpJspPage;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,8 +51,18 @@ public class CustomerSerlvet extends HttpServlet {
              register(req, resp);
         } else if (action.equals("addToCart")) {
             addToCart(req, resp);
+        }else if(action.equals("selectProductOnCart")){
+            selectProductOnCart(req, resp);
+        } else if (action.equals("goConfirmAddress")) {
+            goConfirmAddress(req, resp);
+        } else if(action.equals("confirmAddress")) {
+            confirmAddress(req, resp);
         }
     }
+
+
+
+
     private void loginGoogle(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
         GoogleLogin gg = new GoogleLogin();
@@ -199,6 +209,73 @@ public class CustomerSerlvet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/customer/gioHang.jsp");
+
+    }
+    private void selectProductOnCart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String productId = req.getParameter("productId");
+        int id = Integer.parseInt(productId);
+        boolean isChecked = Boolean.parseBoolean(req.getParameter("isChecked"));
+        // Kiểm tra xem prices có tồn tại không
+        HttpSession session = req.getSession();
+        Double prices = (Double) session.getAttribute("prices");
+        System.out.println(prices);
+        if (prices == null) {
+            prices = (double) 0;
+        }
+
+        // Nếu isChecked là true, thêm giá sản phẩm vào prices, ngược lại, trừ giá sản phẩm ra khỏi prices
+        if (isChecked) {
+            // Lấy giá sản phẩm từ cơ sở dữ liệu hoặc các nguồn khác và thêm vào prices
+            double productPrice = prodDao.selectById(id).getFinalPrice(); // Hàm này cần phải được triển khai
+            prices += productPrice;
+        } else {
+            // Lấy giá sản phẩm từ cơ sở dữ liệu hoặc các nguồn khác và trừ ra khỏi prices
+            double productPrice = prodDao.selectById(id).getFinalPrice(); // Hàm này cần phải được triển khai
+            prices -= productPrice;
+        }
+        session.setAttribute("prices", prices);
+        resp.getWriter().write(String.valueOf(prices));
+    }
+    private void goConfirmAddress(HttpServletRequest req, HttpServletResponse resp) {
+        String[] selectedProductIds = req.getParameterValues("selectedProducts");
+
+        if (selectedProductIds != null) {
+            ArrayList<Product> products = new ArrayList<Product>();
+            for (String productId : selectedProductIds) {
+                products.add(prodDao.selectById(Integer.parseInt(productId)));
+            }
+            double totalPrice = 0;
+            double totalWeight = 0;
+            for (Product product : products) {
+                totalPrice += product.getFinalPrice();
+                totalWeight += product.getWeight();
+            }
+            HttpSession session = req.getSession();
+            session.setAttribute("totalPrice", totalPrice);
+            session.setAttribute("totalWeight", totalWeight);
+            session.setAttribute("selectedProducts", products);
+        } else {
+            System.out.println("No products selected.");
+        }
+
+    }
+    private void confirmAddress(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        String name = req.getParameter("to_customer");
+        String numberPhone = req.getParameter("phone");
+        String[] provinceId = req.getParameterValues("provinceId");
+        String[] districtId = req.getParameterValues("districtId");
+        String[] wardId = req.getParameterValues("wardId");
+        String addressDetail = req.getParameter("address_detail");
+        Address address = new Address(customer, name, numberPhone,Integer.parseInt(provinceId[0]), Integer.parseInt(districtId[0]), Integer.parseInt(wardId[0]), addressDetail);
+        System.out.println(address.toString());
 
     }
 }

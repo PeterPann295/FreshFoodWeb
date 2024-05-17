@@ -38,7 +38,7 @@
             <div>
 
                 <a href="trangChu.jsp" class="logo-link"> <img
-                        style="width: 60px; height: 50px" src="assets/images/logo.png" alt="Logo"
+                        style="width: 60px; height: 50px" src="/assets/images/logo.png" alt="Logo"
                         class="logo-image">
                 </a>
             </div>
