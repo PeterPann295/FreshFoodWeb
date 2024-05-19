@@ -81,7 +81,7 @@ public class CustomerSerlvet extends HttpServlet {
         customer = cusDao.checkProviderUserID(account.getId());
         HttpSession session = req.getSession();
         session.setAttribute("customer_login", customer);
-        req.getRequestDispatcher("/index.jsp").forward(req,resp);
+        req.getRequestDispatcher("/trangChu.jsp").forward(req,resp);
     }
     private void loginFacebook (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
@@ -99,7 +99,7 @@ public class CustomerSerlvet extends HttpServlet {
         customer = cusDao.checkProviderUserID(id);
         HttpSession session = req.getSession();
         session.setAttribute("customer_login", customer);
-        req.getRequestDispatcher("/index.jsp").forward(req,resp);
+        req.getRequestDispatcher("/trangChu.jsp").forward(req,resp);
     }
     private void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String username = req.getParameter("username");
@@ -109,7 +109,7 @@ public class CustomerSerlvet extends HttpServlet {
         if(customer != null){
             HttpSession session = req.getSession();
             session.setAttribute("customer_login", customer);
-            url = "/index.jsp" ;
+            url = "/trangChu.jsp" ;
         }else {
             req.setAttribute("error_login", "Tên đăng nhập hoặc mật khẩu không đúng!");
             url = "/dangNhap.jsp";
