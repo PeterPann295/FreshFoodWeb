@@ -77,14 +77,6 @@ public class ApiGHN {
             connection.setRequestProperty("Token", token);
             connection.setDoOutput(true);
 
-            // Print request details for debugging
-            System.out.println("Request URL: " + apiUrl);
-            System.out.println("Request Headers:");
-            System.out.println("  Content-Type: application/json");
-            System.out.println("  ShopId: " + shopId);
-            System.out.println("  Token: " + token);
-            System.out.println("Request Payload: " + jsonData);
-
             try (OutputStream os = connection.getOutputStream()) {
                 byte[] input = jsonData.getBytes("utf-8");
                 os.write(input, 0, input.length);

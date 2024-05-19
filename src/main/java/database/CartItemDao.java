@@ -60,6 +60,32 @@ public class CartItemDao extends AbsDao<CartItem> {
         }
         return 0;
     }
+
+    @Override
+    public CartItem selectById(int id) {
+        List<CartItem> cartItems = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM CartItems WHERE id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+            CartDao cartDao = new CartDao();
+            ProductDao productDao = new ProductDao();
+            while (rs.next()) {
+                CartItem item = new CartItem();
+                item.setId(rs.getInt("id"));
+                item.setCart(cartDao.selectById(rs.getInt("cart_id")));
+                item.setProduct(productDao.selectById(rs.getInt("product_id")));
+                item.setQuantity(rs.getInt("quantity"));
+                cartItems.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cartItems.isEmpty() ? null : cartItems.get(0);
+    }
+
     public List<CartItem> selectCartItemsByCartId(int cartId) {
         List<CartItem> cartItems = new ArrayList<>();
         try {
@@ -72,6 +98,7 @@ public class CartItemDao extends AbsDao<CartItem> {
             ProductDao productDao = new ProductDao();
             while (rs.next()) {
                 CartItem item = new CartItem();
+                item.setId(rs.getInt("id"));
                 item.setCart(cartDao.selectById(rs.getInt("cart_id")));
                 item.setProduct(productDao.selectById(rs.getInt("product_id")));
                 item.setQuantity(rs.getInt("quantity"));

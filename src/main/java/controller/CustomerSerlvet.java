@@ -5,9 +5,8 @@ import database.CartItemDao;
 import database.CustomerDao;
 import database.ProductDao;
 import model.*;
-import utils.Encode;
-import utils.GoogleAccount;
-import utils.GoogleLogin;
+import org.apache.http.client.fluent.Response;
+import utils.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +17,9 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.HttpJspPage;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -239,27 +240,26 @@ public class CustomerSerlvet extends HttpServlet {
         session.setAttribute("prices", prices);
         resp.getWriter().write(String.valueOf(prices));
     }
-    private void goConfirmAddress(HttpServletRequest req, HttpServletResponse resp) {
+    private void goConfirmAddress(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         String[] selectedProductIds = req.getParameterValues("selectedProducts");
-
+        System.out.println(selectedProductIds.length);
         if (selectedProductIds != null) {
-            ArrayList<Product> products = new ArrayList<Product>();
-            for (String productId : selectedProductIds) {
-                products.add(prodDao.selectById(Integer.parseInt(productId)));
+            ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+            for (String cartId : selectedProductIds) {
+                System.out.println("id" + cartId);
+                cartItems.add(cartItemDao.selectById(Integer.parseInt(cartId)));
             }
+            System.out.println("so san pham duoc chon:" + cartItems);
             double totalPrice = 0;
             double totalWeight = 0;
-            for (Product product : products) {
-                totalPrice += product.getFinalPrice();
-                totalWeight += product.getWeight();
-            }
             HttpSession session = req.getSession();
-            session.setAttribute("totalPrice", totalPrice);
-            session.setAttribute("totalWeight", totalWeight);
-            session.setAttribute("selectedProducts", products);
+            session.setAttribute("selectedCartItems", cartItems);
         } else {
             System.out.println("No products selected.");
         }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/customer/chonDiaChi.jsp");
 
     }
     private void confirmAddress(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -274,8 +274,24 @@ public class CustomerSerlvet extends HttpServlet {
         String[] districtId = req.getParameterValues("districtId");
         String[] wardId = req.getParameterValues("wardId");
         String addressDetail = req.getParameter("address_detail");
-        Address address = new Address(customer, name, numberPhone,Integer.parseInt(provinceId[0]), Integer.parseInt(districtId[0]), Integer.parseInt(wardId[0]), addressDetail);
-        System.out.println(address.toString());
-
+        DataRespone dataRespone = ApiGHN.getData(addressDetail,wardId[0], districtId[0]);
+        List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+        String fromAddress = "Khu Phố 6, Phường Linh Trung, Thành Phố Thủ Đức, Thành Phố Hồ Chí Minh ";
+        double deliveryFee = Double.parseDouble(dataRespone.getDeliveryFee());
+        Timestamp deliveryDate = TransDate.formate(dataRespone.getDeliveryDate());
+        String note = "";
+        double totalPrice = 0;
+        Order order = new Order(customer,name, totalPrice,null,numberPhone, fromAddress, addressDetail, deliveryFee, deliveryDate, "", null, null, null, null);
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        for (CartItem cartItem : cartItems) {
+            orderItems.add(new OrderItem(order, cartItem.getProduct(), cartItem.getQuantity()));
+            totalPrice += cartItem.getProduct().getFinalPrice() * cartItem.getQuantity();
+        }
+        order.setOrderItems(orderItems);
+        order.setTotal(totalPrice + deliveryFee);
+        session.setAttribute("order", order);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/customer/xacNhanDatHang.jsp");
     }
 }

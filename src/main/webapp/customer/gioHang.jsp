@@ -96,7 +96,7 @@
 
                             <tr>
                                 <td class="text-center align-middle">
-                                    <input type="checkbox" name="selectedProducts" value="${p.product.id}" class="custom-checkbox" data-product-id="${p.product.id}">
+                                    <input type="checkbox" name="selectedProducts" value="${p.id}" class="custom-checkbox" data-product-id="${p.product.id}">
                                 </td>
                                 <td class="text-center align-middle">${p.product.name}</td>
                                 <td>

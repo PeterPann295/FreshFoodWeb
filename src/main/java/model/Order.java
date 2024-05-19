@@ -6,8 +6,10 @@ import java.util.List;
 public class Order {
     private int id;
     private Customer customer;
+    private String toName;
     private double total;
     private Timestamp date;
+    private String numberPhone;
     private String from_address;
     private String to_address;
     private double deliveryFee;
@@ -19,11 +21,13 @@ public class Order {
     private List<OrderItem> orderItems;
     public Order() {}
 
-    public Order(int id, Customer customer, double total, Timestamp date, String from_address, String to_address, double deliveryFee, Timestamp deliveryDate, String note, PaymentMethod paymentMethod, OrderStatus status, Voucher voucher, List<OrderItem> orderItems) {
+    public Order(int id, Customer customer,String toName, double total, Timestamp date,String numberPhone, String from_address, String to_address, double deliveryFee, Timestamp deliveryDate, String note, PaymentMethod paymentMethod, OrderStatus status, Voucher voucher, List<OrderItem> orderItems) {
         this.id = id;
         this.customer = customer;
+        this.toName = toName;
         this.total = total;
         this.date = date;
+        this.numberPhone = numberPhone;
         this.from_address = from_address;
         this.to_address = to_address;
         this.deliveryFee = deliveryFee;
@@ -35,11 +39,12 @@ public class Order {
         this.orderItems = orderItems;
     }
 
-    public Order(Customer customer, double total, Timestamp date, String from_address, String to_address, double deliveryFee, Timestamp deliveryDate, String note, PaymentMethod paymentMethod, OrderStatus status, Voucher voucher, List<OrderItem> orderItems) {
-        this.id = id;
+    public Order(Customer customer,String toName, double total, Timestamp date,String numberPhone, String from_address, String to_address, double deliveryFee, Timestamp deliveryDate, String note, PaymentMethod paymentMethod, OrderStatus status, Voucher voucher, List<OrderItem> orderItems) {
         this.customer = customer;
+        this.toName = toName;
         this.total = total;
         this.date = date;
+        this.numberPhone = numberPhone;
         this.from_address = from_address;
         this.to_address = to_address;
         this.deliveryFee = deliveryFee;
@@ -155,6 +160,22 @@ public class Order {
         this.orderItems = orderItems;
     }
 
+    public String getToName() {
+        return toName;
+    }
+
+    public void setToName(String toName) {
+        this.toName = toName;
+    }
+
+    public String getNumberPhone() {
+        return numberPhone;
+    }
+
+    public void setNumberPhone(String numberPhone) {
+        this.numberPhone = numberPhone;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -172,5 +193,8 @@ public class Order {
                 ", voucher=" + voucher +
                 ", orderItems=" + orderItems +
                 '}';
+    }
+    public double totalPriceProduct(){
+        return total - deliveryFee;
     }
 }
