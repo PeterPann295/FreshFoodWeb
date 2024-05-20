@@ -123,22 +123,22 @@
                                         <td class="text-center align-middle"><span
                                                 class="text-success"> <fmt:formatNumber
                                                 value="${p.product.getFinalPrice()}"
-                                                type="currency" currencyCode="VND" />
+                                                type="currency" currencyCode="VND" minFractionDigits="0" />
 											</span> <span
                                                 style="text-decoration: line-through; padding-left: 5px">
 													<fmt:formatNumber value="${p.product.price}"
-                                                                      type="currency" currencyCode="VND" />
+                                                                      type="currency" currencyCode="VND" minFractionDigits="0" />
 											</span></td>
                                     </c:when>
                                     <c:otherwise>
                                         <td class="text-center align-middle"><fmt:formatNumber value="${p.product.getFinalPrice()}"
-                                                                                               type="currency" currencyCode="VND" /> </td>
+                                                                                               type="currency" currencyCode="VND" minFractionDigits="0"/> </td>
                                     </c:otherwise>
                                 </c:choose>
 
                                 <td class="text-center align-middle"><fmt:formatNumber
                                         value="${p.product.getFinalPrice() * p.quantity}"
-                                        type="currency" currencyCode="VND" /></td>
+                                        type="currency" currencyCode="VND" minFractionDigits="0" /></td>
                             </tr>
                         </c:forEach>
                     </table>

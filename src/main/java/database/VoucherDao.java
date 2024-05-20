@@ -35,13 +35,32 @@ public class VoucherDao implements IDao<Voucher> {
         Voucher voucher = null;
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "Select * from voucher where id = ?";
+            String sql = "Select * from vouchers where id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             while(rs.next()) {
                 int id_pm = rs.getInt("id");
                 String name = rs.getNString("name");
+                double discount = rs.getDouble("discount");
+                voucher = new Voucher(id_pm, name, discount);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return voucher;
+    }
+    public Voucher selectByCode(String code) {
+        Voucher voucher = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from vouchers where code = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, code);
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()) {
+                int id_pm = rs.getInt("id");
+                String name = rs.getNString("code");
                 double discount = rs.getDouble("discount");
                 voucher = new Voucher(id_pm, name, discount);
             }

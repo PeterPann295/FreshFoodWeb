@@ -27,7 +27,7 @@ public class VnPayServlet extends HttpServlet {
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         String orderType = "other";
-        long amount = 10000*100;
+        long amount = Long.valueOf(req.getParameter("amount"))*100;
         String bankCode = req.getParameter("bankCode");;
 
         String vnp_TxnRef = Config.getRandomNumber(8);
