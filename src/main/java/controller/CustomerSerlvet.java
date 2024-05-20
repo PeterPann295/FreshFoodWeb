@@ -29,6 +29,8 @@ public class CustomerSerlvet extends HttpServlet {
     private CartItemDao cartItemDao = new CartItemDao();
     private ProductDao prodDao = new ProductDao();
     private VoucherDao voucherDao = new VoucherDao();
+    private OrderStatusDao orderStatusDao = new OrderStatusDao();
+    private PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -334,16 +336,22 @@ public class CustomerSerlvet extends HttpServlet {
         Voucher voucher = voucherDao.selectByCode(voucherCode);
         order.setNote(note);
         order.setVoucher(voucher);
+        order.setStatus(orderStatusDao.selectById(1));
+        order.setDate(new Timestamp(System.currentTimeMillis()));
         if(voucher != null){
             order.setTotal(order.getTotal() + order.getDeliveryFee() - order.getVoucher().getDiscount());
         }else {
             order.setTotal(order.getTotal() + order.getDeliveryFee());
+
         }
         if(paymentMethods[0].equals("2")){
             String amount = String.valueOf(order.getTotal());
             amount = amount.replaceAll("\\.0$", "");
             System.out.println(amount);
             resp.sendRedirect("http://localhost:8080/vnpay?amount="+amount);
+        }else {
+            order.setPaymentMethod(paymentMethodDao.selectById(Integer.parseInt(paymentMethods[0])));
+
         }
     }
 }
