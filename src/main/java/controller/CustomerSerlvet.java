@@ -1,9 +1,8 @@
 package controller;
 
-import database.CartDao;
-import database.CartItemDao;
-import database.CustomerDao;
-import database.ProductDao;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import database.*;
 import model.*;
 import org.apache.http.client.fluent.Response;
 import utils.*;
@@ -29,6 +28,7 @@ public class CustomerSerlvet extends HttpServlet {
     private CartDao cartDao = new CartDao();
     private CartItemDao cartItemDao = new CartItemDao();
     private ProductDao prodDao = new ProductDao();
+    private VoucherDao voucherDao = new VoucherDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -58,9 +58,12 @@ public class CustomerSerlvet extends HttpServlet {
             goConfirmAddress(req, resp);
         } else if(action.equals("confirmAddress")) {
             confirmAddress(req, resp);
+        } else if (action.equals("confirmVoucher")) {
+            confirmVoucher(req,resp);
+        } else if (action.equals("order")) {
+            order(req, resp);
         }
     }
-
 
 
 
@@ -293,5 +296,54 @@ public class CustomerSerlvet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/customer/xacNhanDatHang.jsp");
+    }
+    private void confirmVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String voucherCode = req.getParameter("voucherCode");
+        Voucher voucher = voucherDao.selectByCode(voucherCode);
+        JsonObject jsonResponse = new JsonObject();
+        Gson gson = new Gson();
+        HttpSession session = req.getSession();
+        Order order = (Order) session.getAttribute("order");
+        if(voucher == null) {
+            jsonResponse.addProperty("status", "incorrect");
+            System.out.println(order.getTotal());
+            jsonResponse.addProperty("totalPrice", order.getTotal());
+        }else {
+            jsonResponse.addProperty("status", "correct");
+            jsonResponse.addProperty("discount", voucher.getDiscount());
+            jsonResponse.addProperty("totalPrice", order.getTotal()-voucher.getDiscount());
+        }
+
+        String json = gson.toJson(jsonResponse);
+        System.out.println(json);
+        resp.getWriter().write(json);
+    }
+    private void order(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+
+        HttpSession session = req.getSession();
+        Order order = (Order) session.getAttribute("order");
+        String note = req.getParameter("note");
+        String voucherCode = req.getParameter("voucher_code");
+        String[] paymentMethods = req.getParameterValues("payment_method");
+        Voucher voucher = voucherDao.selectByCode(voucherCode);
+        order.setNote(note);
+        order.setVoucher(voucher);
+        if(voucher != null){
+            order.setTotal(order.getTotal() + order.getDeliveryFee() - order.getVoucher().getDiscount());
+        }else {
+            order.setTotal(order.getTotal() + order.getDeliveryFee());
+        }
+        if(paymentMethods[0].equals("2")){
+            String amount = String.valueOf(order.getTotal());
+            amount = amount.replaceAll("\\.0$", "");
+            System.out.println(amount);
+            resp.sendRedirect("http://localhost:8080/vnpay?amount="+amount);
+        }
     }
 }
