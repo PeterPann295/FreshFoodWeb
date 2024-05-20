@@ -3,7 +3,7 @@ package model;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class Order {
+public class Order implements IModel {
     private int id;
     private Customer customer;
     private String toName;
