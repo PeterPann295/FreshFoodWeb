@@ -31,6 +31,8 @@ public class CustomerSerlvet extends HttpServlet {
     private VoucherDao voucherDao = new VoucherDao();
     private OrderStatusDao orderStatusDao = new OrderStatusDao();
     private PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
+    private OrderDao orderDao = new OrderDao();
+    private OrderItemDao orderItemDao = new OrderItemDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -64,6 +66,8 @@ public class CustomerSerlvet extends HttpServlet {
             confirmVoucher(req,resp);
         } else if (action.equals("order")) {
             order(req, resp);
+        } else if (action.equals("confirmBank")) {
+            confirmBanK(req, resp);
         }
     }
 
@@ -339,11 +343,12 @@ public class CustomerSerlvet extends HttpServlet {
         order.setStatus(orderStatusDao.selectById(1));
         order.setDate(new Timestamp(System.currentTimeMillis()));
         if(voucher != null){
-            order.setTotal(order.getTotal() + order.getDeliveryFee() - order.getVoucher().getDiscount());
+            order.setTotal(order.getTotal()  - order.getVoucher().getDiscount());
         }else {
-            order.setTotal(order.getTotal() + order.getDeliveryFee());
+            order.setTotal(order.getTotal());
 
         }
+
         if(paymentMethods[0].equals("2")){
             String amount = String.valueOf(order.getTotal());
             amount = amount.replaceAll("\\.0$", "");
@@ -351,7 +356,32 @@ public class CustomerSerlvet extends HttpServlet {
             resp.sendRedirect("http://localhost:8080/vnpay?amount="+amount);
         }else {
             order.setPaymentMethod(paymentMethodDao.selectById(Integer.parseInt(paymentMethods[0])));
-
+            int orderId = orderDao.insert(order);
+            order.setId(orderId);
+            for(OrderItem orderItem : order.getOrderItems()){
+                orderItem.setId(orderItem.getId());
+                orderItemDao.insert(orderItem);
+            }
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/customer/datHangThanhCong.jsp");
         }
+    }
+    private void confirmBanK(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Order order = (Order) session.getAttribute("order");
+        order.setPaymentMethod(paymentMethodDao.selectById(2));
+        int orderId = orderDao.insert(order);
+        order.setId(orderId);
+        for(OrderItem orderItem : order.getOrderItems()){
+            orderItem.setId(orderItem.getId());
+            orderItemDao.insert(orderItem);
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/customer/datHangThanhCong.jsp");
     }
 }

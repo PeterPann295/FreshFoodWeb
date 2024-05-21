@@ -14,7 +14,7 @@ public class OrderDao extends AbsDao<Order>{
         int generatedId = 0;
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "INSERT INTO orders (customer_id, total, time, delivery_fee, expected_delivery_time, from_address, delivery_address, note, payment_method_id, status_id, voucher_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO orders (customer_id, total, time_order, delivery_fee, expected_delivery_time, from_address, delivery_address, note, payment_method_id, status_id, voucher_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             pst.setInt(1, order.getCustomer().getId());
