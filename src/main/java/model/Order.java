@@ -197,4 +197,19 @@ public class Order implements IModel {
     public double totalPriceProduct(){
         return total - deliveryFee;
     }
+
+    @Override
+    public String table() {
+        return "";
+    }
+
+    @Override
+    public String beforeData() {
+        return "";
+    }
+
+    @Override
+    public String afterData() {
+        return "";
+    }
 }
