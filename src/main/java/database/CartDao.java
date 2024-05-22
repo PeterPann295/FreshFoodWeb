@@ -71,6 +71,7 @@ public class CartDao implements IDao<Cart>{
                 double totalPrice = rs.getFloat("totalPrice");
                 cart = new Cart(cartId, cus, totalPrice);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,6 +92,7 @@ public class CartDao implements IDao<Cart>{
                 double totalPrice = rs.getFloat("totalPrice");
                 cart = new Cart(cartId, cus, totalPrice);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,6 +114,7 @@ public class CartDao implements IDao<Cart>{
                 double totalPrice = rs.getFloat("totalPrice");
                 cart = new Cart(id, cus, totalPrice);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
