@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.HttpJspPage;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -72,6 +73,10 @@ public class CustomerSerlvet extends HttpServlet {
             order(req, resp);
         } else if (action.equals("confirmBank")) {
             confirmBanK(req, resp);
+        } else if(action.equals("getOrderStatus")){
+            getOrderStatus(req, resp);
+        } else if(action.equals("updateOrder")){
+            updateOrder(req,resp);
         }
     }
 
@@ -473,5 +478,48 @@ public class CustomerSerlvet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/customer/datHangThanhCong.jsp");
+    }
+    private void getOrderStatus(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        String statusParam = req.getParameter("status");
+        int status = Integer.parseInt(statusParam);
+        System.out.println("da vao day " + status);
+        ArrayList<Order> orders;
+        if(status == 0){
+            orders = orderDao.selectByCustomerId(customer.getId());
+        }else {
+            orders = orderDao.selectByCustomerIdAndStatusId(customer.getId(), status);
+        }
+        session.setAttribute("status", status);
+        if(orders.size() == 0){
+            session.setAttribute("empty", " Không có đơn hàng nào ");
+            session.removeAttribute("orderStatusList");
+        }else {
+            session.setAttribute("orderStatusList", orders);
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/customer/trangThaiCacDonHang.jsp");
+    }
+    private void updateOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String statusParam = req.getParameter("status");
+        int status = Integer.parseInt(statusParam);
+        String orderIdParam = req.getParameter("orderId");
+        int orderId = Integer.parseInt(orderIdParam);
+        Order order = orderDao.selectById(orderId);
+        if(status == 5 && order.getStatus().getId() < 3){
+            order.setStatus(orderStatusDao.selectById(status));
+            orderDao.update(order);
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/customer?action=getOrderStatus&status="+status);
     }
 }

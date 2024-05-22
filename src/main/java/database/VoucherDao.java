@@ -41,9 +41,9 @@ public class VoucherDao implements IDao<Voucher> {
             ResultSet rs = pst.executeQuery();
             while(rs.next()) {
                 int id_pm = rs.getInt("id");
-                String name = rs.getNString("name");
+                String code = rs.getNString("code");
                 double discount = rs.getDouble("discount");
-                voucher = new Voucher(id_pm, name, discount);
+                voucher = new Voucher(id_pm,code, discount);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,5 +68,9 @@ public class VoucherDao implements IDao<Voucher> {
             e.printStackTrace();
         }
         return voucher;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new VoucherDao().selectById(2));
     }
 }
