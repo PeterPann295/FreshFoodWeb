@@ -2,16 +2,16 @@ package model;
 
 public class Voucher {
     private int id;
-    private String name;
+    private String code;
     private double discount;
 
     public Voucher(int id, String name, double discount) {
         this.id = id;
-        this.name = name;
+        this.code = name;
         this.discount = discount;
     }
     public Voucher(String name, double discount) {
-        this.name = name;
+        this.code = name;
         this.discount = discount;
     }
 
@@ -23,12 +23,12 @@ public class Voucher {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCode() {
+        return code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCode(String name) {
+        this.code = name;
     }
 
     public double getDiscount() {
@@ -39,12 +39,5 @@ public class Voucher {
         this.discount = discount;
     }
 
-    @Override
-    public String toString() {
-        return "Voucher{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", discount=" + discount +
-                '}';
-    }
+
 }

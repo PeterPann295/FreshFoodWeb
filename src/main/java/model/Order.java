@@ -176,26 +176,28 @@ public class Order implements IModel {
         this.numberPhone = numberPhone;
     }
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", customer=" + customer +
-                ", total=" + total +
-                ", date=" + date +
-                ", from_address='" + from_address + '\'' +
-                ", to_address='" + to_address + '\'' +
-                ", deliveryFee=" + deliveryFee +
-                ", deliveryDate=" + deliveryDate +
-                ", note='" + note + '\'' +
-                ", paymentMethod=" + paymentMethod +
-                ", status=" + status +
-                ", voucher=" + voucher +
-                ", orderItems=" + orderItems +
-                '}';
-    }
+
     public double totalPriceProduct(){
         return total - deliveryFee;
+    }
+    @Override
+    public String toString() {
+        return "Order{id=" + id +
+                ", customer=" + customer.getId() + // Tránh gọi customer.toString()
+                ", toName='" + toName +
+                "', total=" + total +
+                ", date=" + date +
+                ", numberPhone='" + numberPhone +
+                "', from_address='" + from_address +
+                "', to_address='" + to_address +
+                "', deliveryFee=" + deliveryFee +
+                ", deliveryDate=" + deliveryDate +
+                ", note='" + note +
+                "', paymentMethod=" + paymentMethod.getId() + // Tránh gọi paymentMethod.toString()
+                ", status=" + status.getId() + // Tránh gọi status.toString()
+                ", voucher=" + (voucher != null ? voucher.getId() : "null") + // Tránh gọi voucher.toString()
+                ", orderItems=" + (orderItems != null ? orderItems.size() : "null") + // Không gọi orderItems.toString()
+                "}";
     }
 
     @Override

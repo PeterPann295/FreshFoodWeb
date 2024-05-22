@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Order Management</h1>
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pending-orders-tab" data-bs-toggle="pill" data-bs-target="#pending-orders" type="button" role="tab" aria-controls="pending-orders" aria-selected="false">Pending</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-orders-tab" data-bs-toggle="pill" data-bs-target="#all-orders" type="button" role="tab" aria-controls="all-orders" aria-selected="true">All Orders</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="delivered-orders-tab" data-bs-toggle="pill" data-bs-target="#delivered-orders" type="button" role="tab" aria-controls="delivered-orders" aria-selected="false">Delivered</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cancelled-orders-tab" data-bs-toggle="pill" data-bs-target="#cancelled-orders" type="button" role="tab" aria-controls="cancelled-orders" aria-selected="false">Cancelled</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="all-orders" role="tabpanel" aria-labelledby="all-orders-tab">
+            <div class="order-status" data-status="all">
+                <!-- All Orders will be displayed here -->
+            </div>
+        </div>
+        <div class="tab-pane fade" id="pending-orders" role="tabpanel" aria-labelledby="pending-orders-tab">
+            <div class="order-status" data-status="pending">
+                <!-- Pending Orders will be displayed here -->
+            </div>
+        </div>
+        <div class="tab-pane fade" id="delivered-orders" role="tabpanel" aria-labelledby="delivered-orders-tab">
+            <div class="order-status" data-status="delivered">
+                <!-- Delivered Orders will be displayed here -->
+            </div>
+        </div>
+        <div class="tab-pane fade" id="cancelled-orders" role="tabpanel" aria-labelledby="cancelled-orders-tab">
+            <div class="order-status" data-status="cancelled">
+                <!-- Cancelled Orders will be displayed here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function loadOrders(status) {
+            // Example of fetching data via AJAX
+            // In reality, you would make an actual AJAX request here
+            // For demonstration purposes, we'll use static data
+            const orders = {
+                all: [
+                    {id: 1, status: 'Pending', description: 'Order 1'},
+                    {id: 2, status: 'Delivered', description: 'Order 2'},
+                    {id: 3, status: 'Cancelled', description: 'Order 3'}
+                ],
+                pending: [
+                    {id: 1, status: 'Pending', description: 'Order 1'}
+                ],
+                delivered: [
+                    {id: 2, status: 'Delivered', description: 'Order 2'}
+                ],
+                cancelled: [
+                    {id: 3, status: 'Cancelled', description: 'Order 3'}
+                ]
+            };
+
+            let ordersToDisplay = orders[status];
+            let container = document.querySelector(`.order-status[data-status="${status}"]`);
+            container.innerHTML = ordersToDisplay.map(order => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Order #${order.id}</h5>
+                        <p class="card-text">${order.description}</p>
+                        <p class="card-text"><small class="text-muted">${order.status}</small></p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        const tabs = document.querySelectorAll('.nav-link');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                const status = tab.getAttribute('aria-controls').split('-')[0];
+                loadOrders(status);
+            });
+        });
+
+        // Load all orders initially
+        loadOrders('all');
+    });
+</script>
+</body>
+</html>
