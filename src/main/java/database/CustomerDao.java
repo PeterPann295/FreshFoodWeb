@@ -29,6 +29,7 @@ public class CustomerDao extends AbsDao<Customer> {
             int i = pst.executeUpdate();
             if (i > 0) {
                 super.insert(customer);
+                JDBCUtil.closeConnection(con);
                 return i;
             }
 
@@ -64,6 +65,7 @@ public class CustomerDao extends AbsDao<Customer> {
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, username);
             ResultSet rs = pst.executeQuery();
+            JDBCUtil.closeConnection(con);
             return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,6 +90,7 @@ public class CustomerDao extends AbsDao<Customer> {
                 super.user_id = c.getId();
                 super.login(c);
             }
+            JDBCUtil.closeConnection(con);
             return c;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,6 +123,7 @@ public class CustomerDao extends AbsDao<Customer> {
                 super.user_id = c.getId();
                 super.login(c);
             }
+            JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
             e.printStackTrace();
         }

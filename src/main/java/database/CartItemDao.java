@@ -21,6 +21,7 @@ public class CartItemDao extends AbsDao<CartItem> {
             pst.setDouble(2, cartItem.getProduct().getId());
             pst.setInt(3, cartItem.getQuantity());
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,6 +39,7 @@ public class CartItemDao extends AbsDao<CartItem> {
             pst.setInt(2, cartItem.getCart().getId());
             pst.setInt(3, cartItem.getProduct().getId());
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,6 +55,7 @@ public class CartItemDao extends AbsDao<CartItem> {
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, cartItem.getId());
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,6 +82,7 @@ public class CartItemDao extends AbsDao<CartItem> {
                 item.setQuantity(rs.getInt("quantity"));
                 cartItems.add(item);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,6 +107,7 @@ public class CartItemDao extends AbsDao<CartItem> {
                 item.setQuantity(rs.getInt("quantity"));
                 cartItems.add(item);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -127,6 +132,7 @@ public class CartItemDao extends AbsDao<CartItem> {
                 item.setQuantity(rs.getInt("quantity"));
                 cartItems.add(item);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }

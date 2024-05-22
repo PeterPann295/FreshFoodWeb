@@ -107,11 +107,11 @@
 
                                 <td class="text-center align-middle"> <span id="quantity">${p.quantity}</span>
                                     <div class="btn-group">
-                                        <button type="button" id="btn-minus" value="${p.id}" data-cart-id="${p.id}"  class="btn btn-info btn-sm">
+                                        <button type="button"  value="${p.id}" data-cart-id="${p.id}"  class="btn-minus btn btn-info btn-sm">
                                             <a ><i
                                                     class="bi bi-dash icon"></i></a>
                                         </button>
-                                        <button type="button" id="btn-plus" class="btn btn-info btn-sm" value="${p.id}" data-cart-id="${p.id}" >
+                                        <button type="button"  class="btn-plus btn btn-info btn-sm" value="${p.id}" data-cart-id="${p.id}" >
                                             <a ><i
                                                     class="bi bi-plus icon"></i></a>
                                         </button>
@@ -181,13 +181,13 @@
             checkboxes.prop('checked', selectAllChecked);
             updateAllCart(selectAllChecked);
         });
-        $('#btn-minus').click(function() {
+        $('.btn-minus').click(function() {
             var cartId = $(this).data('cart-id');
             updateQuantity(cartId, 'minus');
         });
 
         // Lắng nghe sự kiện click của nút "btn-plus"
-        $('#btn-plus').click(function() {
+        $('.btn-plus').click(function() {
             var cartId = $(this).data('cart-id');
             updateQuantity(cartId, 'plus');
         });
