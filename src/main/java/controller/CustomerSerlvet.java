@@ -58,6 +58,10 @@ public class CustomerSerlvet extends HttpServlet {
             addToCart(req, resp);
         }else if(action.equals("selectProductOnCart")){
             selectProductOnCart(req, resp);
+        }else if(action.equals("selectAllProductsOnCart")){
+            selectAllProductsOnCart(req, resp);
+        }else if(action.equals("updateQuantityOnCart")){
+            updateQuantityOnCart(req, resp);
         } else if (action.equals("goConfirmAddress")) {
             goConfirmAddress(req, resp);
         } else if(action.equals("confirmAddress")) {
@@ -201,6 +205,8 @@ public class CustomerSerlvet extends HttpServlet {
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html; charset=UTF-8");
         HttpSession session = req.getSession();
+        String quantityParam = (req.getParameter("quantity")==null) ? "1" : req.getParameter("quantity");
+        int quantity = Integer.parseInt(quantityParam);
         Customer customer = (Customer) session.getAttribute("customer_login");
         Cart cart = cartDao.selectByCustomerId(customer.getId());
         if(cart == null) {
@@ -208,14 +214,23 @@ public class CustomerSerlvet extends HttpServlet {
             cart.setCustomer(customer);
             cart.setTotalPrice(0);
             cartDao.insert(cart);
+            cart = cartDao.selectByCustomerId(customer.getId());
+            System.out.println(cart);
         }
         int productId = Integer.parseInt(req.getParameter("productId"));
         Product product = prodDao.selectById(productId);
-        CartItem cartItem = new CartItem();
-        cartItem.setProduct(product);
-        cartItem.setQuantity(1);
-        cartItem.setCart(cart);
-        cartItemDao.insert(cartItem);
+
+        CartItem cartItem = cartItemDao.selectCartItemsByCartIdAndProductId(cart.getId(), productId);
+        if(cartItem != null) {
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartItemDao.update(cartItem);
+        }else{
+            cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setQuantity(1);
+            cartItem.setCart(cart);
+            cartItemDao.insert(cartItem);
+        }
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/customer/gioHang.jsp");
@@ -225,8 +240,8 @@ public class CustomerSerlvet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("text/html; charset=UTF-8");
-        String productId = req.getParameter("productId");
-        int id = Integer.parseInt(productId);
+        String cartId = req.getParameter("cartId");
+        int id = Integer.parseInt(cartId);
         boolean isChecked = Boolean.parseBoolean(req.getParameter("isChecked"));
         // Kiểm tra xem prices có tồn tại không
         HttpSession session = req.getSession();
@@ -235,20 +250,81 @@ public class CustomerSerlvet extends HttpServlet {
         if (prices == null) {
             prices = (double) 0;
         }
-
+        CartItem cartItem = cartItemDao.selectById(id);
         // Nếu isChecked là true, thêm giá sản phẩm vào prices, ngược lại, trừ giá sản phẩm ra khỏi prices
         if (isChecked) {
             // Lấy giá sản phẩm từ cơ sở dữ liệu hoặc các nguồn khác và thêm vào prices
-            double productPrice = prodDao.selectById(id).getFinalPrice(); // Hàm này cần phải được triển khai
+            double productPrice = cartItem.getQuantity() * cartItem.getProduct().getFinalPrice(); // Hàm này cần phải được triển khai
             prices += productPrice;
         } else {
             // Lấy giá sản phẩm từ cơ sở dữ liệu hoặc các nguồn khác và trừ ra khỏi prices
-            double productPrice = prodDao.selectById(id).getFinalPrice(); // Hàm này cần phải được triển khai
+            double productPrice = cartItem.getQuantity() * cartItem.getProduct().getFinalPrice(); // Hàm này cần phải được triển khai
             prices -= productPrice;
         }
+        System.out.println("prices: " + prices);
         session.setAttribute("prices", prices);
         resp.getWriter().write(String.valueOf(prices));
     }
+    private void selectAllProductsOnCart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        boolean isChecked = Boolean.parseBoolean(req.getParameter("isChecked"));
+        HttpSession session = req.getSession();
+        Double prices = (Double) session.getAttribute("prices");
+        if (prices == null) {
+            prices = 0.0;
+        }
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        List<CartItem> cartItems = cartItemDao.selectCartItemsByCartId(cartDao.selectByCustomerId(customer.getId()).getId());
+
+        if (isChecked) {
+            // Cộng giá tất cả sản phẩm trong giỏ hàng
+            prices = 0.0;
+            for (CartItem cartItem : cartItems) {
+                prices += cartItem.getQuantity() * cartItem.getProduct().getFinalPrice();
+            }
+
+        } else {
+            // Nếu bỏ chọn tất cả thì đặt lại giá bằng 0
+            prices = 0.0;
+        }
+
+        session.setAttribute("prices", prices);
+        resp.getWriter().write(String.valueOf(prices));
+    }
+    private void updateQuantityOnCart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String cartIdParam = req.getParameter("cartId");
+        String action = req.getParameter("update");
+        System.out.println("action:" + action);
+        CartItem cartItem = cartItemDao.selectById(Integer.parseInt(cartIdParam));
+        String status = "";
+        if(action.equals("minus")) {
+            cartItem.setQuantity(cartItem.getQuantity() - 1);
+            if(cartItem.getQuantity() == 0) {
+                cartItemDao.delete(cartItem);
+                status = "delete";
+            }else {
+                cartItemDao.update(cartItem);
+                status = "update";
+            }
+        }else if(action.equals("plus")) {
+            status = "update";
+            cartItem.setQuantity(cartItem.getQuantity() + 1);
+            cartItemDao.update(cartItem);
+        }
+        JsonObject jsonResponse = new JsonObject();
+        Gson gson = new Gson();
+        double priceUpdate = cartItem.getProduct().getFinalPrice() * cartItem.getQuantity();
+        jsonResponse.addProperty("status", status);
+        jsonResponse.addProperty("quantity", cartItem.getQuantity());
+        jsonResponse.addProperty("priceUpdate", priceUpdate);
+        resp.getWriter().write(gson.toJson(jsonResponse));
+    }
+
     private void goConfirmAddress(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException {
         String[] selectedProductIds = req.getParameterValues("selectedProducts");
         System.out.println(selectedProductIds.length);
@@ -320,11 +396,11 @@ public class CustomerSerlvet extends HttpServlet {
         }else {
             jsonResponse.addProperty("status", "correct");
             jsonResponse.addProperty("discount", voucher.getDiscount());
-            jsonResponse.addProperty("totalPrice", order.getTotal()-voucher.getDiscount());
+            double totalPrice = (order.getTotal() - voucher.getDiscount()<0) ?0: order.getTotal() - voucher.getDiscount();
+            jsonResponse.addProperty("totalPrice", totalPrice);
         }
 
         String json = gson.toJson(jsonResponse);
-        System.out.println(json);
         resp.getWriter().write(json);
     }
     private void order(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -344,17 +420,27 @@ public class CustomerSerlvet extends HttpServlet {
         order.setDate(new Timestamp(System.currentTimeMillis()));
         if(voucher != null){
             order.setTotal(order.getTotal()  - order.getVoucher().getDiscount());
+            if(order.getTotal() < 0){
+                order.setTotal(0);
+            }
         }else {
             order.setTotal(order.getTotal());
 
         }
 
         if(paymentMethods[0].equals("2")){
+            String url = "";
             String amount = String.valueOf(order.getTotal());
             amount = amount.replaceAll("\\.0$", "");
             System.out.println(amount);
-            resp.sendRedirect("http://localhost:8080/vnpay?amount="+amount);
+            url = ("http://localhost:8080/vnpay?amount="+amount);
+            resp.sendRedirect(url);
+
         }else {
+            List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+            for(CartItem cartItem : cartItems){
+                cartItemDao.delete(cartItem);
+            }
             order.setPaymentMethod(paymentMethodDao.selectById(Integer.parseInt(paymentMethods[0])));
             int orderId = orderDao.insert(order);
             order.setId(orderId);
@@ -379,6 +465,10 @@ public class CustomerSerlvet extends HttpServlet {
         for(OrderItem orderItem : order.getOrderItems()){
             orderItem.setId(orderItem.getId());
             orderItemDao.insert(orderItem);
+        }
+        List<CartItem> cartItems = (List<CartItem>) session.getAttribute("selectedCartItems");
+        for(CartItem cartItem : cartItems){
+            cartItemDao.delete(cartItem);
         }
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();

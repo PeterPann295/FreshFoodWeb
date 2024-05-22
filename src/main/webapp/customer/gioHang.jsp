@@ -94,9 +94,9 @@
 
                         <c:forEach items="${cartItemDao.selectCartItemsByCartId(cartDao.selectByCustomerId(sessionScope.customer_login.id).id)}" var="p">
 
-                            <tr>
+                            <tr id="cart-item-${p.id}">
                                 <td class="text-center align-middle">
-                                    <input type="checkbox" name="selectedProducts" value="${p.id}" class="custom-checkbox" data-product-id="${p.product.id}">
+                                    <input type="checkbox" name="selectedProducts" value="${p.id}" class="custom-checkbox" data-cart-id="${p.id}">
                                 </td>
                                 <td class="text-center align-middle">${p.product.name}</td>
                                 <td>
@@ -105,14 +105,14 @@
                                     </div>
                                 </td>
 
-                                <td class="text-center align-middle">${p.quantity}
+                                <td class="text-center align-middle"> <span id="quantity">${p.quantity}</span>
                                     <div class="btn-group">
-                                        <button class="btn btn-info btn-sm">
-                                            <a href="MinusSanPham?product=${p.product.id}"><i
+                                        <button type="button" id="btn-minus" value="${p.id}" data-cart-id="${p.id}"  class="btn btn-info btn-sm">
+                                            <a ><i
                                                     class="bi bi-dash icon"></i></a>
                                         </button>
-                                        <button class="btn btn-info btn-sm">
-                                            <a href="PlusSanPham?product=${p.product.id}"><i
+                                        <button type="button" id="btn-plus" class="btn btn-info btn-sm" value="${p.id}" data-cart-id="${p.id}" >
+                                            <a ><i
                                                     class="bi bi-plus icon"></i></a>
                                         </button>
                                     </div>
@@ -136,9 +136,9 @@
                                     </c:otherwise>
                                 </c:choose>
 
-                                <td class="text-center align-middle"><fmt:formatNumber
+                                <td class="text-center align-middle"> <span id="price"><fmt:formatNumber
                                         value="${p.product.getFinalPrice() * p.quantity}"
-                                        type="currency" currencyCode="VND" minFractionDigits="0" /></td>
+                                        type="currency" currencyCode="VND" minFractionDigits="0" /></span> </td>
                             </tr>
                         </c:forEach>
                     </table>
@@ -151,7 +151,8 @@
                             <button type="submit" class="btn btn-success">Thanh Toán</button>
 <%--                        </a>--%>
                     </div>
-                </form>
+                </div></form>
+
                 </div>
 
             </div>
@@ -164,44 +165,89 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Lắng nghe sự kiện click trên checkbox "Chọn tất cả"
-        document.getElementById('selectAll').addEventListener('change', function() {
+    $(document).ready(function() {
+        // Lắng nghe sự kiện thay đổi của checkbox "selectedProducts"
+        $('input[name="selectedProducts"]').change(function() {
+            updateCart($(this));
+        });
+
+        // Lắng nghe sự kiện thay đổi của checkbox "selectAll"
+        $('#selectAll').change(function() {
             // Lấy danh sách tất cả các checkbox
-            var checkboxes = document.querySelectorAll('input[name="selectedProducts"]');
+            var checkboxes = $('input[name="selectedProducts"]');
+            var selectAllChecked = $(this).prop('checked');
 
             // Đặt trạng thái checked của tất cả các checkbox theo trạng thái của checkbox "Chọn tất cả"
-            checkboxes.forEach(function(checkbox) {
-                checkbox.checked = document.getElementById('selectAll').checked;
-            });
+            checkboxes.prop('checked', selectAllChecked);
+            updateAllCart(selectAllChecked);
         });
-    });
-    $(document).ready(function() {
-        // Lắng nghe sự kiện thay đổi của checkbox
-        $('input[name="selectedProducts"]').change(function() {
-            // Lấy ID sản phẩm từ thuộc tính data-product-id
-            var productId = $(this).data('product-id');
-            // Lấy trạng thái checked của checkbox
-            var isChecked = $(this).prop('checked');
+        $('#btn-minus').click(function() {
+            var cartId = $(this).data('cart-id');
+            updateQuantity(cartId, 'minus');
+        });
 
-            // Gửi yêu cầu Ajax
+        // Lắng nghe sự kiện click của nút "btn-plus"
+        $('#btn-plus').click(function() {
+            var cartId = $(this).data('cart-id');
+            updateQuantity(cartId, 'plus');
+        });
+        function updateQuantity(cartId, action) {
+            $.ajax({
+                url: '../customer?action=updateQuantityOnCart',
+                method: 'POST',
+                data: {
+                    cartId: cartId,
+                    update: action
+                },
+                success: function(response) {
+                    if(response.status == 'update'){
+                        // Xử lý phản hồi từ server cho việc cập nhật số lượng
+                        // Cập nhật giao diện người dùng nếu cần
+                        var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(response.priceUpdate);
+                        $('#price').text(formattedPrice);
+                        // Cập nhật số lượng hiển thị
+                        $('#quantity').text(response.quantity);
+                    }else if(response.status == 'delete'){
+                        $('#cart-item-' + cartId).remove();
+                    }
+                },
+            });
+        }
+
+        // Hàm để cập nhật giỏ hàng
+        function updateCart(checkbox) {
+            var cartId = checkbox.data('cart-id');
+            var isChecked = checkbox.prop('checked');
             $.ajax({
                 url: '../customer?action=selectProductOnCart',
                 method: 'POST',
                 data: {
-                    productId: productId,
+                    cartId: cartId,
                     isChecked: isChecked
-
                 },
                 success: function(response) {
+                    // Định dạng giá trị tổng thành tiền và cập nhật vào thẻ có id là "totalPrice"
                     var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(response);
-                    // Gán giá trị đã định dạng vào thẻ có id là "totalPrice"
                     $('#totalPrice').text(formattedPrice);
                 },
-
             });
-        });
+        }
+        function updateAllCart(isChecked) {
+            $.ajax({
+                url: '../customer?action=selectAllProductsOnCart',
+                method: 'POST',
+                data: {
+                    isChecked: isChecked
+                },
+                success: function(response) {
+                    // Định dạng giá trị tổng thành tiền và cập nhật vào thẻ có id là "totalPrice"
+                    var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(response);
+                    $('#totalPrice').text(formattedPrice);
+                },
+            });
+        }
     });
+
 </script>
-</body>
+    </body>
 </html>

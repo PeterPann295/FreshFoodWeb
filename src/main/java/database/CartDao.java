@@ -57,7 +57,24 @@ public class CartDao implements IDao<Cart>{
 
     @Override
     public Cart selectById(int id) {
-        return null;
+        Cart cart = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from carts where id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+            CustomerDao cusDao = new CustomerDao();
+            while(rs.next()) {
+                int cartId = rs.getInt("id");
+                Customer cus = cusDao.selectById(rs.getInt("customer_id"));
+                double totalPrice = rs.getFloat("totalPrice");
+                cart = new Cart(cartId, cus, totalPrice);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cart;
     }
     public Cart selectByCustomerId(int customer_id) {
         Cart cart = null;

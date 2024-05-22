@@ -49,10 +49,9 @@ public class CartItemDao extends AbsDao<CartItem> {
     public int delete(CartItem cartItem) {
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "DELETE FROM CartItems WHERE cart_id = ? AND product_id = ?";
+            String sql = "DELETE FROM CartItems WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
-            pst.setInt(1, cartItem.getCart().getId());
-            pst.setInt(2, cartItem.getProduct().getId());
+            pst.setInt(1, cartItem.getId());
             int i = pst.executeUpdate();
             return i;
         } catch (Exception e) {
@@ -108,6 +107,30 @@ public class CartItemDao extends AbsDao<CartItem> {
             e.printStackTrace();
         }
         return cartItems;
+    }
+    public CartItem selectCartItemsByCartIdAndProductId(int cartId, int product_id) {
+        List<CartItem> cartItems = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM CartItems WHERE cart_id = ? and product_id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, cartId);
+            pst.setInt(2, product_id);
+            ResultSet rs = pst.executeQuery();
+            CartDao cartDao = new CartDao();
+            ProductDao productDao = new ProductDao();
+            while (rs.next()) {
+                CartItem item = new CartItem();
+                item.setId(rs.getInt("id"));
+                item.setCart(cartDao.selectById(rs.getInt("cart_id")));
+                item.setProduct(productDao.selectById(rs.getInt("product_id")));
+                item.setQuantity(rs.getInt("quantity"));
+                cartItems.add(item);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return cartItems.isEmpty() ? null : cartItems.get(0);
     }
 
     public static void main(String[] args) {
