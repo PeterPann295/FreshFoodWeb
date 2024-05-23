@@ -90,10 +90,13 @@
                                 </c:if>
                                 <li><hr class="dropdown-divider"></li>
                                 <c:if test="${sessionScope.customer_login.role == true}">
-                                    <li><a class="dropdown-item" href="dashBoard.jsp">Trang quản trị</a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/admin/adminHome.jsp">Trang quản trị</a>
+
+                                    </li>
 
                                 </c:if>
-                                <li><a class="dropdown-item" href="dangxuat">Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="logOutServlet">Đăng xuất</a></li>
                             </ul>
 
                         </div>
@@ -105,7 +108,7 @@
                             <button type="button" class="btn btn-outline-light me-2">
                                 Đăng Nhập</button>
                         </a>
-                        <a href="dangKiTaiKhoan.jsp">
+                        <a href="dangKi.jsp">
                             <button type="button" class="btn btn-warning btn-outline-light">
                                 Đăng Kí</button>
                         </a>

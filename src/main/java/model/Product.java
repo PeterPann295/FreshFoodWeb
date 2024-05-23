@@ -10,12 +10,14 @@ public class Product implements IModel {
     private String unit;
     private double weight;
     private boolean available;
+    private int status; // Thay đổi kiểu dữ liệu của status thành int
     private Category category;
     private Discount discount;
     private String beforeData;
+
     public Product() {}
 
-    public Product(String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
+    public Product(String name, String description, double price, String imageUrl, String unit, double weight, boolean available, int status, Category category, Discount discount) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -23,12 +25,13 @@ public class Product implements IModel {
         this.unit = unit;
         this.weight = weight;
         this.available = available;
+        this.status = status;
         this.category = category;
         this.discount = discount;
         this.beforeData = toString();
     }
 
-    public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
+    public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, int status, Category category, Discount discount) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -37,6 +40,7 @@ public class Product implements IModel {
         this.unit = unit;
         this.weight = weight;
         this.available = available;
+        this.status = status;
         this.category = category;
         this.discount = discount;
         this.beforeData = toString();
@@ -106,6 +110,14 @@ public class Product implements IModel {
         this.available = available;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -133,10 +145,12 @@ public class Product implements IModel {
                 ", unit='" + unit + '\'' +
                 ", weight=" + weight +
                 ", available=" + available +
+                ", status=" + status +
                 ", category=" + category +
                 ", discount=" + discount +
                 '}';
     }
+
     @Override
     public String table() {
         return "Products";
@@ -151,6 +165,7 @@ public class Product implements IModel {
     public String afterData() {
         return toString();
     }
+
     public double getFinalPrice() {
         if (discount != null) {
             double pc = (double) discount.getPercent() / 100;
@@ -160,5 +175,4 @@ public class Product implements IModel {
             return price;
         }
     }
-
 }
