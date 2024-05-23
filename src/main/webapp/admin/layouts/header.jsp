@@ -16,7 +16,7 @@
 <header class="navbar sticky-top bg-success flex-md-nowrap p-0 shadow"
         data-bs-theme="dark">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white bg-success "
-       href="../adminHome.jsp">Fresh Food <img
+       href="dashBoard.jsp">Fresh Food <img
             style="width: 40px; height: 40px" src="../assets/images/logo.png" alt="Logo"
             class="logo-image"> </a>
 
