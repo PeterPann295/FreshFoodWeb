@@ -7,8 +7,125 @@
     <meta charset="UTF-8">
     <title>Admin - Thêm Sản Phẩm</title>
 </head>
+<style>
+    .home {
+        display: grid;
+        grid-template-columns: 0.5fr  2.5fr;
+        gap: 50px;
+        height: 90vh;
+    }
+    .adminHeader {
+        width: 100%;
+    }
+
+    .home-section {
+        width: 100%;
+        border: 1px solid #4F6F52;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0 20px 5px 5px;
+        max-width: 95%;
+    }
+    /* Title styling */
+    .manager-product .title {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+    }
+
+    /* Form styling */
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    @media (min-width: 768px) {
+        .form-group.col-md-3 {
+            width: calc(33.333% - 20px);
+        }
+
+        .form-group.col-md-6 {
+            width: calc(66.666% - 20px);
+        }
+    }
+
+    label.control-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+        color: #555;
+    }
+
+    input.form-control,
+    textarea.form-control,
+    select.form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+    }
+
+    input.form-control:focus,
+    textarea.form-control:focus,
+    select.form-control:focus {
+        border-color: #007bff;
+    }
+
+    textarea.form-control {
+        height: 100px;
+        resize: vertical;
+    }
+
+    /* Button styling */
+    button.btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button.btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive design */
+    @media screen and (max-width: 768px) {
+        .home-section {
+            padding: 15px;
+        }
+
+        .form-group {
+            width: 100%;
+        }
+
+        button.btn {
+            width: 100%;
+        }
+    }
+
+</style>
 <body>
-<%@include file="adminHeader.jsp" %>
+<div class="home">
+    <div class="adminHeader">
+        <%@ include file="adminHeader.jsp" %>
+    </div>
+
 <section class="home-section">
     <div class="home-content">
         <div class="manager-product">
@@ -57,5 +174,6 @@
         </div>
     </div>
 </section>
+</div>
 </body>
 </html>

@@ -2,9 +2,11 @@ package controller;
 
 import database.CategoryDao;
 import database.DiscountDao;
+import database.ParentCategoryDao;
 import database.ProductDao;
 import model.Category;
 import model.Discount;
+import model.ParentCategory;
 import model.Product;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -33,8 +35,15 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        if ("addParentCategory".equals(action)) {
-            addParentCategory(req, resp);
+        if (action.equals("addParentCategory")) {
+            String name = req.getParameter("name");
+            String imageURL = req.getParameter("imageURL");
+
+            ParentCategory parentCategory = new ParentCategory(name, imageURL);
+            ParentCategoryDao parentCategoryDao = new ParentCategoryDao();
+            parentCategoryDao.insert(parentCategory);
+
+            resp.sendRedirect("adminAddProduct.jsp");
         } else if ("addProduct".equals(action)) {
             addProduct(req, resp);
         }
