@@ -13,7 +13,7 @@ public class LogDao implements IDao<Log>{
         try {
             System.out.println("da vao insert Log");
             Connection con = JDBCUtil.getConnection();
-            String sql = "insert into logs (action, table_name , level, beforeData, afterData, username, time)  values (?,?,?,?,?,?,?)";
+            String sql = "insert into logs (action, table_name , level, beforeData, afterData, user_id, time)  values (?,?,?,?,?,?,?)";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setNString(1, log.getAction());
             pst.setNString(2, log.getTable());
