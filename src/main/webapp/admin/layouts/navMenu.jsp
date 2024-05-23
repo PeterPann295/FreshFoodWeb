@@ -23,7 +23,7 @@
             <ul class="nav flex-column">
                 <li class="nav-item"><a
                         class="nav-link d-flex align-items-center gap-2 active"
-                        aria-current="page" href="dashBoard.jsp"> <svg class="bi">
+                        aria-current="page" href="../adminHome.jsp"> <svg class="bi">
                     <use xlink:href="#graph-up" /></svg> Thống Kê
                 </a></li>
                 <li class="nav-item"><a

@@ -1,0 +1,115 @@
+/* Style for header */
+header {
+    background-color: #2ecc71;
+    color: #ffffff;
+    padding: 10px 0;
+}
+
+header a {
+    color: #ffffff;
+}
+
+header a:hover {
+    text-decoration: none;
+}
+
+/* Style for overview boxes */
+.overview-boxes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.box {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.box-topic {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.number {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* Style for sales boxes */
+.sales-boxes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.recent-sales, .top-sales {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1;
+    margin-right: 10px;
+}
+
+.recent-sales .title, .top-sales .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.recent-sales table, .top-sales ul {
+    width: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recent-sales table th, .recent-sales table td, .top-sales ul li {
+    padding: 10px 0;
+}
+
+.recent-sales table th, .recent-sales table td {
+    border-bottom: 1px solid #eeeeee;
+}
+
+.recent-sales .button {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.recent-sales .button a {
+    color: #2ecc71;
+    text-decoration: none;
+}
+
+.recent-sales .button a:hover {
+    text-decoration: underline;
+}
+
+.top-sales ul li {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product {
+    font-size: 16px;
+}
+
+.price {
+    font-weight: bold;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    .overview-boxes, .sales-boxes {
+        flex-direction: column;
+    }
+
+    .box, .recent-sales, .top-sales {
+        margin: 0;
+        margin-bottom: 20px;
+    }
+}
