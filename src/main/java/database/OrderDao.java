@@ -45,6 +45,7 @@ public class OrderDao extends AbsDao<Order>{
                     }
                 }
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +73,7 @@ public class OrderDao extends AbsDao<Order>{
             pst.setInt(13, order.getVoucher().getId());
             pst.setInt(14, order.getId()); // Đặt tham số ID của Order cần cập nhật
             rowsAffected = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }

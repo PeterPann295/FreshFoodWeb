@@ -23,6 +23,7 @@ public class LogDao implements IDao<Log>{
             pst.setInt(6, log.getUser_id());
             pst.setTimestamp(7, log.getTime());
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             if (i > 0) {
                 return i;
             }

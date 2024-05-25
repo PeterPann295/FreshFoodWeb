@@ -325,6 +325,8 @@ public class CustomerSerlvet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/json; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) req.getSession().getAttribute("customer_login");
         String cartIdParam = req.getParameter("cartId");
         String action = req.getParameter("update");
         System.out.println("action:" + action);
@@ -344,10 +346,12 @@ public class CustomerSerlvet extends HttpServlet {
             cartItem.setQuantity(cartItem.getQuantity() + 1);
             cartItemDao.update(cartItem);
         }
+        int cartSize = cartDao.selectByCustomerId(customer.getId()).getCartItems().size();
         JsonObject jsonResponse = new JsonObject();
         Gson gson = new Gson();
         double priceUpdate = cartItem.getProduct().getFinalPrice() * cartItem.getQuantity();
         jsonResponse.addProperty("status", status);
+        jsonResponse.addProperty("cartSize", cartSize);
         jsonResponse.addProperty("quantity", cartItem.getQuantity());
         jsonResponse.addProperty("priceUpdate", priceUpdate);
         resp.getWriter().write(gson.toJson(jsonResponse));

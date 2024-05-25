@@ -38,6 +38,7 @@ public class ProductDao extends AbsDao<Product> {
                 }
                 super.insert(product);
             }
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +75,8 @@ public class ProductDao extends AbsDao<Product> {
                 Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
                 products.add(product);
             }
+            JDBCUtil.closeConnection(con);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,6 +109,8 @@ public class ProductDao extends AbsDao<Product> {
 
                 return new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
             }
+            JDBCUtil.closeConnection(con);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,6 +144,7 @@ public class ProductDao extends AbsDao<Product> {
                 Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
                 products.add(product);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }

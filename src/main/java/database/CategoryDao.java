@@ -45,6 +45,7 @@ public class CategoryDao extends AbsDao<Category> {
                 Category category = new Category(id, name, dao.selectById(id_parent));
                 categories.add(category);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,6 +67,7 @@ public class CategoryDao extends AbsDao<Category> {
                 int id_parent = rs.getInt("id_parent");
                 category = new Category(id_cate, name, dao.selectById(id_parent));
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }

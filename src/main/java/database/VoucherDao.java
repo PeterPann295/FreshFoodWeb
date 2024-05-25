@@ -45,6 +45,8 @@ public class VoucherDao implements IDao<Voucher> {
                 double discount = rs.getDouble("discount");
                 voucher = new Voucher(id_pm,code, discount);
             }
+            JDBCUtil.closeConnection(con);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,6 +66,8 @@ public class VoucherDao implements IDao<Voucher> {
                 double discount = rs.getDouble("discount");
                 voucher = new Voucher(id_pm, name, discount);
             }
+            JDBCUtil.closeConnection(con);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
