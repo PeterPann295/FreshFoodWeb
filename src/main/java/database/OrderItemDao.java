@@ -21,6 +21,7 @@ public class OrderItemDao implements IDao<OrderItem>{
             pst.setInt(2, orderItem.getProduct().getId());
             pst.setInt(3, orderItem.getQuantity());
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,6 +65,7 @@ public class OrderItemDao implements IDao<OrderItem>{
                 orderItem.setProduct(productDao.selectById(rs.getInt("product_id")));
                 orderItems.add(orderItem);
             }
+            JDBCUtil.closeConnection(con);
         }catch(Exception e) {
             e.printStackTrace();
         }

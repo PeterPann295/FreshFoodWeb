@@ -2,7 +2,7 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false"%>
-
+<jsp:useBean id="cartSize" class="database.CartDao" scope="page"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -67,7 +67,7 @@
                 <button class="btn btn-success">
                     <i class="bi bi-cart3"></i> Giỏ Hàng <span id="cart-size"
                                                                class="badge bg-danger cart-size"> <c:if test="${customer_login==null}" >0</c:if>
-                <c:if test="${customer_login != null}" > 1 </c:if>
+                <c:if test="${customer_login != null}" > ${cartSize.selectByCustomerId(customer_login.id).cartItems.size()} </c:if>
                 </span>
                 </button>
             </a>

@@ -39,6 +39,7 @@ public class OrderStatusDao implements IDao<OrderStatus>{
                 String name = rs.getNString("name");
                 orderStatuses.add(new OrderStatus(id_pm, name));
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,6 +60,7 @@ public class OrderStatusDao implements IDao<OrderStatus>{
                 String name = rs.getNString("name");
                 orderStatus = new OrderStatus(id_pm, name);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }

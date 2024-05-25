@@ -209,6 +209,7 @@
                         $('#quantity-'+cartId).text(response.quantity);
                     }else if(response.status == 'delete'){
                         $('#cart-item-' + cartId).remove();
+                        $('#cart-size').text(response.cartSize);
                     }
                 },
             });
