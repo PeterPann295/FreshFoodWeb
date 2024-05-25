@@ -105,7 +105,7 @@
                                     </div>
                                 </td>
 
-                                <td class="text-center align-middle"> <span id="quantity">${p.quantity}</span>
+                                <td class="text-center align-middle"> <span id="quantity-${p.id}">${p.quantity}</span>
                                     <div class="btn-group">
                                         <button type="button"  value="${p.id}" data-cart-id="${p.id}"  class="btn-minus btn btn-info btn-sm">
                                             <a ><i
@@ -136,7 +136,7 @@
                                     </c:otherwise>
                                 </c:choose>
 
-                                <td class="text-center align-middle"> <span id="price"><fmt:formatNumber
+                                <td class="text-center align-middle"> <span id="price-${p.id}"><fmt:formatNumber
                                         value="${p.product.getFinalPrice() * p.quantity}"
                                         type="currency" currencyCode="VND" minFractionDigits="0" /></span> </td>
                             </tr>
@@ -204,9 +204,9 @@
                         // Xử lý phản hồi từ server cho việc cập nhật số lượng
                         // Cập nhật giao diện người dùng nếu cần
                         var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(response.priceUpdate);
-                        $('#price').text(formattedPrice);
+                        $('#price-'+cartId).text(formattedPrice);
                         // Cập nhật số lượng hiển thị
-                        $('#quantity').text(response.quantity);
+                        $('#quantity-'+cartId).text(response.quantity);
                     }else if(response.status == 'delete'){
                         $('#cart-item-' + cartId).remove();
                     }
