@@ -53,11 +53,17 @@ public class CustomerSerlvet extends HttpServlet {
             loginFacebook(req, resp);
         } else if(action.equals("login")){
             login(req, resp);
-        } else if(action.equals("register")){
+        }else if(action.equals("logout")){
+            logout(req, resp);
+        }
+        else if(action.equals("register")){
              register(req, resp);
         } else if (action.equals("addToCart")) {
             addToCart(req, resp);
-        }else if(action.equals("selectProductOnCart")){
+        } else if(action.equals("checkLoginCustomer")){
+            checkLoginCustomer(req, resp);
+        }
+        else if(action.equals("selectProductOnCart")){
             selectProductOnCart(req, resp);
         }else if(action.equals("selectAllProductsOnCart")){
             selectAllProductsOnCart(req, resp);
@@ -77,6 +83,8 @@ public class CustomerSerlvet extends HttpServlet {
             getOrderStatus(req, resp);
         } else if(action.equals("updateOrder")){
             updateOrder(req,resp);
+        } else if(action.equals("detailOrder")){
+            detailOrder(req, resp);
         }
     }
 
@@ -133,6 +141,13 @@ public class CustomerSerlvet extends HttpServlet {
             url = "/dangNhap.jsp";
         }
         req.getRequestDispatcher(url).forward(req,resp);
+    }
+    private void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        session.invalidate();
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/trangChu.jsp");
     }
     private void register(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -208,7 +223,7 @@ public class CustomerSerlvet extends HttpServlet {
     private void addToCart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
         HttpSession session = req.getSession();
         String quantityParam = (req.getParameter("quantity")==null) ? "1" : req.getParameter("quantity");
         int quantity = Integer.parseInt(quantityParam);
@@ -236,10 +251,18 @@ public class CustomerSerlvet extends HttpServlet {
             cartItem.setCart(cart);
             cartItemDao.insert(cartItem);
         }
-        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
-                + req.getContextPath();
-        resp.sendRedirect(link + "/customer/gioHang.jsp");
-
+        cart = cartDao.selectByCustomerId(customer.getId());
+        int cartSize = cart.getCartItems().size();
+        System.out.println(cartSize);
+        resp.getWriter().write("{\"cartSize\": " + cartSize + "}");
+    }
+    private void checkLoginCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        HttpSession session = req.getSession();
+        boolean isLoggedIn = (req.getSession().getAttribute("customer_login") != null);
+        resp.getWriter().write("{\"isLoggedIn\": " + isLoggedIn + "}");
     }
     private void selectProductOnCart(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -521,5 +544,16 @@ public class CustomerSerlvet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/customer?action=getOrderStatus&status="+status);
+    }
+    private void detailOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String orderIdParam = req.getParameter("orderId");
+        int orderId = Integer.parseInt(orderIdParam);
+        Order order = orderDao.selectById(orderId);
+        req.setAttribute("orderDetail", order);
+        req.getRequestDispatcher("/customer/chiTietDonHang.jsp").forward(req, resp);
+
     }
 }

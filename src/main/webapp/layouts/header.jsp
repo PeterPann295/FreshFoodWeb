@@ -2,6 +2,7 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,7 +66,9 @@
             <a class="me-2" href="GioHang">
                 <button class="btn btn-success">
                     <i class="bi bi-cart3"></i> Giỏ Hàng <span id="cart-size"
-                                                               class="badge bg-danger cart-size">${sessionScope.cartSize}</span>
+                                                               class="badge bg-danger cart-size"> <c:if test="${customer_login==null}" >0</c:if>
+                <c:if test="${customer_login != null}" > 1 </c:if>
+                </span>
                 </button>
             </a>
 
@@ -93,7 +96,7 @@
                                     <li><a class="dropdown-item" href="dashBoard.jsp">Trang quản trị</a></li>
 
                                 </c:if>
-                                <li><a class="dropdown-item" href="dangxuat">Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="../customer?action=logout">Đăng xuất</a></li>
                             </ul>
 
                         </div>

@@ -165,10 +165,10 @@
         									</p>
         									<span class="discount-percentage"> Giảm
         										${product.discount.percent}% </span>
-											<a href="customer?action=addToCart&productId=${product.id}" class="ms-1 btn btn-success add-to-cart-btn"
-											   data-product-id="${product.id}">
+											<button class="ms-1 btn btn-success add-to-cart-btn"
+													data-product-id="${product.id}">
 												<i class="bi bi-cart3"></i> Thêm Vào Giỏ
-											</a>
+											</button>
         								</div>
 
         							</div>
@@ -191,10 +191,10 @@
         										</span>
         									</p>
 
-											<a href="customer?action=addToCart&productId=${product.id}" class="ms-1 btn btn-success add-to-cart-btn"
+											<button class="ms-1 btn btn-success add-to-cart-btn"
 											   data-product-id="${product.id}">
 												<i class="bi bi-cart3"></i> Thêm Vào Giỏ
-											</a>
+											</button>
         								</div>
 
         							</div>
@@ -204,7 +204,49 @@
         				</div>
         			</c:forEach>
     </div>
+	<input type="hidden" id="amount" value="1">
 </div>
+<script>
+	$(document).ready(function() {
+		$(".add-to-cart-btn").click(function() {
+			// Lưu trữ $(this) vào biến để sử dụng trong hàm success
+			var addButton = $(this);
 
+			// Kiểm tra session của khách hàng
+			$.ajax({
+				type: "post",
+				url: "customer?action=checkLoginCustomer",
+				success: function(response) {
+					if (response.isLoggedIn) {
+						// Nếu đã đăng nhập, thực hiện AJAX request để thêm vào giỏ hàng
+						var productId = addButton.data("product-id"); // Sử dụng biến addButton thay vì $(this)
+						var amount = document.getElementById('amount').value;
+						$.ajax({
+							type: "post",
+							url: "customer?action=addToCart",
+							data: {
+								productId: productId,
+								quantity: amount
+							},
+							success: function(response) {
+								console.log(response.cartSize)
+								$("#cart-size").text(response.cartSize);
+							},
+							error: function(error) {
+								console.log("Error: " + error);
+							}
+						});
+					} else {
+						window.location.href = "dangNhap.jsp";
+					}
+				},
+				error: function(error) {
+					console.log("Error: " + error);
+				}
+			});
+		});
+	});
+
+</script>
 </body>
 </html>
