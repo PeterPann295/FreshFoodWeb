@@ -1,6 +1,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="model.Category" %>
 <%@ page import="database.CategoryDao" %>
+<%@ page import="model.Discount" %>
+<%@ page import="database.DiscountDao" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head>
@@ -130,7 +132,7 @@
     <div class="home-content">
         <div class="manager-product">
             <div class="title">Thêm Sản Phẩm</div>
-            <form class="row" action="AdminServlet?action=addProduct" method="post" enctype="multipart/form-data">
+            <form action="<%= request.getContextPath() %>/admin?action=addProduct" method="post" enctype="multipart/form-data">
                 <div class="form-group col-md-3" style="display: none" type="hidden">
                     <input class="form-control" value="" type="hidden" placeholder="" name="id">
                 </div>
@@ -142,6 +144,15 @@
                     <label class="control-label">Mô tả sản phẩm</label>
                     <textarea class="form-control" name="description" required></textarea>
                 </div>
+                <div class="form-group col-md-6">
+                    <label class="control-label">Đơn vị</label>
+                    <textarea class="form-control" name="unit" required></textarea>
+                </div>
+                <div class="form-group col-md-6">
+                    <label class="control-label">Trọng lượng</label>
+                    <textarea class="form-control" name="weight" required></textarea>
+                </div>
+
                 <div class="form-group col-md-3">
                     <label class="control-label">Giá sản phẩm (VNĐ)</label>
                     <input class="form-control" type="number" name="price" required>
@@ -161,8 +172,15 @@
                     </select>
                 </div>
                 <div class="form-group col-md-3">
-                    <label class="control-label">Giảm giá (%)</label>
-                    <input class="form-control" type="number" name="discountPercent">
+                    <label for="discount">Giảm giá:</label><br>
+                    <select id="discount" name="discount">
+                        <option value="none">Không</option>
+                        <%-- Thay đổi danh sách giảm giá tùy theo cách bạn lấy dữ liệu --%>
+                        <% List<Discount> discounts = new DiscountDao().selectAll(); %>
+                        <% for (Discount discount : discounts) { %>
+                        <option value="<%= discount.getId() %>"><%= discount.getName() %></option>
+                        <% } %>
+                    </select><br>
                 </div>
                 <div class="form-group col-md-6">
                     <label class="control-label">Hình ảnh sản phẩm</label>
@@ -176,4 +194,6 @@
 </section>
 </div>
 </body>
+
+
 </html>

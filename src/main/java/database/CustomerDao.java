@@ -51,8 +51,32 @@ public class CustomerDao extends AbsDao<Customer> {
 
     @Override
     public ArrayList<Customer> selectAll() {
-        return super.selectAll();
+        ArrayList<Customer> customers = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from Customers";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String username = rs.getNString("username");
+                String password = rs.getNString("password");
+                String fullName = rs.getNString("fullName");
+                String numberPhone = rs.getNString("numberPhone");
+                String email = rs.getNString("email");
+                boolean role = rs.getBoolean("role");
+                String provider = rs.getNString("provider");
+                String provider_user_id = rs.getNString("provider_user_id");
+                Customer customer = new Customer(id, username, password, fullName, numberPhone, email, role, provider, provider_user_id);
+                customers.add(customer);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
     }
+
 
     @Override
     public Customer selectById(int id) {
@@ -153,4 +177,22 @@ public class CustomerDao extends AbsDao<Customer> {
         return c;
     }
 
+    public void updateRole(int id, int role) {
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Update Customers set role=? where id=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, role);
+            pst.setInt(2, id);
+            pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        CustomerDao customerDao = new CustomerDao();
+        System.out.println(customerDao.selectAll());
+    }
 }

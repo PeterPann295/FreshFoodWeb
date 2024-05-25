@@ -83,7 +83,7 @@
                                 Xin Chào ${customer_login.fullName}
                             </a>
                             <ul class="dropdown-menu text-small shadow">
-                                <li><a class="dropdown-item" href="lichsumuahang">Lịch sử mua hàng</a></li>
+                                <li><a class="dropdown-item" href="lichsumuahang.jsp">Lịch sử mua hàng</a></li>
                                 <c:if test="${sessionScope.customer_login.provider == null}">
                                     <li><a class="dropdown-item" href="thayDoiMatKhau.jsp">Thay đổi mật khẩu</a></li>
                                     <li><a class="dropdown-item" href="thayDoiThongTinKhachHang.jsp">Thay đổi thông tin</a></li>

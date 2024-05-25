@@ -40,8 +40,25 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
 
     @Override
     public ParentCategory selectById(int id) {
-        return super.selectById(id);
+        ParentCategory parentCategory = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM ParentCategories WHERE id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, id);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                int categoryID = rs.getInt("id");
+                String name = rs.getNString("name");
+                String url = rs.getNString("imageUrl");
+                parentCategory = new ParentCategory(categoryID, name, url);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return parentCategory;
     }
+
 
     @Override
     public ArrayList<ParentCategory> selectAll() {
@@ -66,6 +83,7 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
 
     public static void main(String[] args) {
         ParentCategoryDao dao = new ParentCategoryDao();
-        System.out.println(dao.selectAll().size());
+        ParentCategory parentCategory = new ParentCategory("Test", "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\categories\\cá.jpg");
+        System.out.println(dao.selectById(1));
     }
 }

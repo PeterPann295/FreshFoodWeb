@@ -68,7 +68,7 @@
     </div>
     <ul class="nav-links">
         <li>
-            <a href="#">Trang chủ</a>
+            <a href="adminHome.jsp">Trang chủ</a>
         </li>
         <li>
             <a href="adminProduct.jsp">Quản lý sản phẩm</a>
@@ -77,7 +77,8 @@
             <a href="adminOrder.jsp">Quản lý đơn hàng</a>
         </li>
         <li>
-            <a href="adminCustomer.jsp">Quản lý tài khoản</a>
+            <a href="<%= request.getContextPath() %>/admin?action=listCustomer">Quản lý tài khoản</a>
+
         </li>
         <li>
             <a href="adminContact.jsp">Quản lý phản hồi</a>

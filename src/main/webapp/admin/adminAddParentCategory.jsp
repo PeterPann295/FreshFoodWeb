@@ -5,7 +5,24 @@
     <title>Admin - Thêm Danh Mục Cha</title>
 </head>
 <style>
-    /* Styles for the add parent category form */
+    .home {
+        display: grid;
+        grid-template-columns: 0.5fr  2.5fr; /* Chia layout thành 2 cột */
+        gap: 50px;
+        height: 90vh;
+    }
+    .adminHeader {
+        width: 100%; /* Đặt chiều rộng của phần adminHeader */
+    }
+
+    .home-section {
+        width: 100%; /* Đặt chiều rộng của phần home-content */
+        border: 1px solid #4F6F52;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0 20px 5px 5px;
+        max-width: 95%;
+    }
     .add-category-form {
         max-width: 600px;
         margin: 50px auto;
@@ -50,21 +67,28 @@
     }
 </style>
 <body>
-<div class="add-category-form">
-    <h2>Thêm Danh Mục Cha</h2>
-    <form action="AdminServlet?action=addParentCategory" method="post">
-        <div class="form-group">
-            <label for="name">Tên danh mục cha</label>
-            <input type="text" id="name" name="name" required>
+<div class="home">
+    <div class="adminHeader">
+        <%@ include file="adminHeader.jsp" %>
+    </div>
+    <section class="home-section">
+        <div class="add-category-form">
+            <h2>Thêm Danh Mục Cha</h2>
+            <form action="<%= request.getContextPath() %>/admin?action=addParentCategory" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                    <label for="name">Tên danh mục cha</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="imageURL">Ảnh danh mục</label>
+                    <input type="file" id="imageURL" name="imageURL" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Thêm danh mục cha</button>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="imageURL">URL hình ảnh</label>
-            <input type="url" id="imageURL" name="imageURL" required>
-        </div>
-        <div class="form-group">
-            <button type="submit">Thêm danh mục cha</button>
-        </div>
-    </form>
+    </section>
 </div>
 </body>
 </html>

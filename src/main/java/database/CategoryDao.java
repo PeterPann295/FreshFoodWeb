@@ -71,4 +71,11 @@ public class CategoryDao extends AbsDao<Category> {
         }
         return category;
     }
+
+    public static void main(String[] args) {
+        CategoryDao dao = new CategoryDao();
+        ParentCategoryDao parentCategoryDao = new ParentCategoryDao();
+        Category category = new Category("Test", parentCategoryDao.selectById(1));
+        System.out.println(dao.insert(category));
+    }
 }

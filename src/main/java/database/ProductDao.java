@@ -152,9 +152,9 @@ public class ProductDao extends AbsDao<Product> {
 
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
-        ArrayList<Product> products = productDao.selectNewestProducts();
-        for (Product product : products) {
-            System.out.println(product);
-        }
+        Category category = new CategoryDao().selectById(1);
+        Product product = new Product("Product 1", "Description 1", 1000, "image1.jpg", "unit", 1, true, category, null);
+        System.out.println(productDao.insert(product));
+
     }
 }

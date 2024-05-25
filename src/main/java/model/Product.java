@@ -31,6 +31,18 @@ public class Product implements IModel {
         this.beforeData = toString();
     }
 
+    public Product(String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.unit = unit;
+        this.weight = weight;
+        this.available = available;
+        this.category = category;
+        this.discount = discount;
+    }
+
     public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, int status, Category category, Discount discount) {
         this.id = id;
         this.name = name;
