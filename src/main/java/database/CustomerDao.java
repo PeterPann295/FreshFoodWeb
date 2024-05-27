@@ -41,7 +41,26 @@ public class CustomerDao extends AbsDao<Customer> {
 
     @Override
     public int update(Customer customer) {
-        return super.update(customer);
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Update Customers set  fullName=?, numberPhone=?, email=?, role=? where id=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setNString(1, customer.getFullName());
+            pst.setNString(2, customer.getNumberPhone());
+            pst.setNString(3, customer.getEmail());
+            pst.setBoolean(4, customer.isRole());
+            pst.setInt(5, customer.getId());
+
+            int i = pst.executeUpdate();
+            if (i > 0) {
+                super.update(customer);
+                JDBCUtil.closeConnection(con);
+                return i;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override
@@ -191,13 +210,13 @@ public class CustomerDao extends AbsDao<Customer> {
         return c;
     }
 
-    public void updateRole(int id, int role) {
+    public void updateRole(Customer customer, int role) {
         try {
             Connection con = JDBCUtil.getConnection();
             String sql = "Update Customers set role=? where id=?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, role);
-            pst.setInt(2, id);
+            pst.setInt(2, customer.getId());
             pst.executeUpdate();
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
@@ -207,7 +226,7 @@ public class CustomerDao extends AbsDao<Customer> {
 
     public static void main(String[] args) {
         CustomerDao customerDao = new CustomerDao();
-        Customer customer = customerDao.selectById(2);
-        System.out.println(customerDao.delete(customer));
+        Customer customer = customerDao.selectById(1);
+        customerDao.updateRole(customer, 1);
     }
 }

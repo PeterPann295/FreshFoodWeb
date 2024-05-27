@@ -50,9 +50,35 @@ public class AdminServlet extends HttpServlet {
             editRoleCustomer(req, resp);
         } else if ("deleteCustomer".equals(action)) {
             deleteCustomer(req, resp);
+        }   else if ("editCustomer".equals(action)) {
+            handleEditCustomer(req, resp);
         }
 
     }
+    private void handleEditCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int customerId = Integer.parseInt(request.getParameter("id"));
+        String editedName = request.getParameter("name");
+        String editedNumberPhone = request.getParameter("numberPhone");
+        String editedEmail = request.getParameter("email");
+        // Cập nhật thông tin khách hàng trong cơ sở dữ liệu
+        CustomerDao customerDao = new CustomerDao();
+        Customer customer = new Customer();
+        customer.setId(customerId);
+        customer.setFullName(editedName);
+        customer.setNumberPhone(editedNumberPhone);
+        customer.setEmail(editedEmail);
+
+        // Gọi hàm update để cập nhật thông tin khách hàng
+        int rowsAffected = customerDao.update(customer);
+
+        // Gửi kết quả trả về cho client (JavaScript)
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print("{\"success\":" + (rowsAffected > 0) + "}");
+        out.flush();
+    }
+
     private void deleteCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         if ("deleteCustomer".equals(action)) {
@@ -80,17 +106,19 @@ public class AdminServlet extends HttpServlet {
     private void editRoleCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=UTF-8");
+        resp.setContentType("application/json");
 
         int id = Integer.parseInt(req.getParameter("id"));
         int role = Integer.parseInt(req.getParameter("role"));
 
         CustomerDao customerDao = new CustomerDao();
-        customerDao.updateRole(id, role);
+        Customer customer = customerDao.selectById(id);
+        customerDao.updateRole(customer, role);
 
-        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
-                + req.getContextPath();
-        resp.sendRedirect(link + "/admin/adminCustomer.jsp");
+        PrintWriter out = resp.getWriter();
+        out.write("{\"success\": true}");
+        out.flush();
+
     }
     private void addCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -235,7 +263,6 @@ public class AdminServlet extends HttpServlet {
                             count ++;
                             break;
                         default:
-                            // Xử lý trường dữ liệu khác nếu cần
                     }
                 } else { // Xử lý trường thông tin là file
                     if ("imgProduct".equals(fileItem.getFieldName())) {

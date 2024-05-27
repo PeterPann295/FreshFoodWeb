@@ -65,7 +65,7 @@
             border: 1px solid #dee2e6;
         }
         .table th, .table td {
-            padding: 12px 15px;
+            padding: 10px 13px;
             text-align: left;
             border: 1px solid #dee2e6;
         }
@@ -120,8 +120,8 @@
             <tr>
                 <th>Mã khách hàng</th>
                 <th>Tên người dùng</th>
-                <th>Email</th>
                 <th>Số điện thoại</th>
+                <th>Email</th>
                 <th>Vai trò</th>
                 <th>Chức năng</th>
             </tr>
@@ -133,22 +133,46 @@
             <tr>
                 <td><%= customer.getId()%></td>
                 <td><%= customer.getFullName()%></td>
-                <td><%= customer.getEmail()%></td>
                 <td><%= customer.getNumberPhone()%></td>
-                <td><%= customer.isRole() ? "Quản trị viên" : "Khách hàng" %></td>
+                <td><%= customer.getEmail()%></td>
+                <td>
+                    <%= customer.isRole() ? "Quản trị viên" : "Khách hàng" %>
+
+                </td>
                 <td>
                     <a href="javascript:void(0);" class="icon-container delete-btn" data-id="<%= customer.getId() %>" title="Xóa">
                         <i class="fas fa-trash-alt"></i>
                     </a>
-                    <a href="adminEditCustomer?id=<%= customer.getId() %>" class="icon-container" title="Chỉnh sửa">
+                    <a href="javascript:void(0);" class="icon-container edit-btn" data-id="<%= customer.getId() %>" title="Chỉnh sửa">
                         <i class="fas fa-edit"></i>
                     </a>
+                    <a href="javascript:void(0);" class="icon-container edit-role-btn" data-id="<%= customer.getId() %>" title="Chỉnh sửa vai trò">
+                        <i class="fas fa-user-cog"></i>
+                    </a>
+
                 </td>
             </tr>
             <% }
             } %>
             </tbody>
         </table>
+        <!-- Form chỉnh sửa thông tin khách hàng (ẩn đi ban đầu) -->
+        <div id="editForm" style="display: none;">
+            <input type="hidden" id="editCustomerId">
+            <input type="text" id="editCustomerName" placeholder="Tên khách hàng">
+            <input type="text" id="editCustomerPhone" placeholder="Số điện thoại">
+            <input type="email" id="editCustomerEmail" placeholder="Email">
+            <button id="saveEditBtn">Lưu</button>
+        </div>
+        <!-- Form chỉnh sửa vai trò của khách hàng (ẩn đi ban đầu) -->
+        <div id="editRoleForm" style="display: none;">
+            <input type="hidden" id="editRoleCustomerId">
+            <select id="editCustomerRole">
+                <option value="1">Quản trị viên</option>
+                <option value="0">Khách hàng</option>
+            </select>
+            <button id="saveEditRoleBtn">Lưu</button>
+        </div>
     </div>
 </section>
 </div>
@@ -159,7 +183,7 @@
     $(document).ready(function() {
         $('#customer-table').DataTable();
 
-        $('.delete-btn').on('click', function() {
+        $('.delete-btn').on('click', function () {
             const customerId = $(this).data('id');
             const row = $('#customer-' + customerId);
 
@@ -171,20 +195,126 @@
                         action: 'deleteCustomer',
                         id: customerId
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.success) {
                             row.remove();
                         } else {
                             alert('Xóa khách hàng thất bại.');
                         }
                     },
-                    error: function() {
+                    error: function () {
                         alert('Có lỗi xảy ra. Vui lòng thử lại.');
                     }
                 });
             }
         });
     });
+    $(document).ready(function() {
+        // Sự kiện khi nhấn vào biểu tượng chỉnh sửa
+        $('.edit-btn').on('click', function() {
+            var customerId = $(this).data('id');
+            var customerName = $(this).data('name');
+            var customerPhone = $(this).data('phone');
+            var customerEmail = $(this).data('email');
+
+            // Điền thông tin khách hàng vào form chỉnh sửa
+            $('#editCustomerId').val(customerId);
+            $('#editCustomerName').val(customerName);
+            $('#editCustomerPhone').val(customerPhone);
+            $('#editCustomerEmail').val(customerEmail);
+
+            // Hiển thị form chỉnh sửa
+            $('#editForm').show();
+        });
+
+        // Sự kiện khi click vào nút lưu sau khi chỉnh sửa thông tin khách hàng
+        $('#saveEditBtn').on('click', function() {
+            var customerId = $('#editCustomerId').val();
+            var editedName = $('#editCustomerName').val();
+            var editedPhone = $('#editCustomerPhone').val();
+            var editedEmail = $('#editCustomerEmail').val();
+
+            $.ajax({
+                url: 'admin',
+                type: 'POST',
+                data: {
+                    action: 'editCustomer',
+                    id: customerId,
+                    name: editedName,
+                    numberPhone: editedPhone,
+                    email: editedEmail
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Chỉnh sửa thông tin khách hàng thành công.');
+
+                        // Cập nhật thông tin khách hàng trong bảng
+                        var row = $('button[data-id="' + customerId + '"]').closest('tr');
+                        row.find('.customerName').text(editedName);
+                        row.find('.customerPhone').text(editedPhone);
+                        row.find('.customerEmail').text(editedEmail);
+
+                        // Ẩn form chỉnh sửa
+                        $('#editForm').hide();
+                    } else {
+                        alert('Chỉnh sửa thông tin khách hàng thất bại.');
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                }
+            });
+        });
+    });
+    $(document).ready(function() {
+        // Sự kiện khi nhấn vào biểu tượng chỉnh sửa vai trò
+        $('.edit-role-btn').on('click', function() {
+            var customerId = $(this).data('id');
+            var customerRole = $(this).data('role');
+
+            // Điền thông tin khách hàng vào form chỉnh sửa vai trò
+            $('#editRoleCustomerId').val(customerId);
+            $('#editCustomerRole').val(customerRole);
+
+            // Hiển thị form chỉnh sửa vai trò
+            $('#editRoleForm').show();
+        });
+
+        // Sự kiện khi click vào nút lưu sau khi chỉnh sửa vai trò khách hàng
+        $('#saveEditRoleBtn').on('click', function() {
+            var customerId = $('#editRoleCustomerId').val();
+            var newRole = $('#editCustomerRole').val();
+
+            $.ajax({
+                url: 'admin',
+                type: 'POST',
+                data: {
+                    action: 'editRoleCustomer',
+                    id: customerId,
+                    role: newRole
+                },
+                success: function(response) {
+                    if (response.success) {
+                        alert('Chỉnh sửa vai trò khách hàng thành công.');
+
+                        // Cập nhật vai trò khách hàng trong bảng
+                        var row = $('button[data-id="' + customerId + '"]').closest('tr');
+                        row.find('.customerRole').text(newRole == 1 ? 'Quản trị viên' : 'Khách hàng');
+
+                        // Ẩn form chỉnh sửa vai trò
+                        $('#editRoleForm').hide();
+                    } else {
+                        alert('Chỉnh sửa vai trò khách hàng thất bại.');
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                }
+            });
+        });
+    });
+
+
 </script>
 </body>
 </html>
