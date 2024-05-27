@@ -145,7 +145,7 @@
         					<c:choose>
         						<c:when test="${product.discount != null}">
         							<div class="card">
-        								<a href="chitietsanpham?productID=${product.id}"><img
+        								<a href="customer?action=productDetail&productId=${product.id}"><img
         									class="card-img-top" src="${product.imageUrl}" alt=""></a>
         								<div class="card-body">
         									<h5 class="card-title">
@@ -176,7 +176,7 @@
         						</c:when>
         						<c:otherwise>
         							<div class="card">
-        								<a href="chitietsanpham?productID=${product.id}"><img
+        								<a href="customer?action=productDetail&productId=${product.id}"><img
         									class="card-img-top" src="${product.imageUrl}" alt=""></a>
         								<div class="card-body">
         									<h5 class="card-title">

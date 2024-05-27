@@ -150,10 +150,42 @@ public class ProductDao extends AbsDao<Product> {
         }
         return products;
     }
+    public ArrayList<Product> selectProductsByCategoryId(int category_id) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM products where category_id = ? ORDER BY id DESC LIMIT 5"; // Sắp xếp giảm dần theo ID và giới hạn kết quả là 10
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, category_id);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+                DiscountDao discountDao = new DiscountDao();
+                Discount discount = discountDao.selectById(discountId);
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
+                products.add(product);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
 
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
-        ArrayList<Product> products = productDao.selectNewestProducts();
+        ArrayList<Product> products = productDao.selectProductsByCategoryId(2);
         for (Product product : products) {
             System.out.println(product);
         }
