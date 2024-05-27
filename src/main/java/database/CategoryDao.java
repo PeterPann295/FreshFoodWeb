@@ -73,4 +73,26 @@ public class CategoryDao extends AbsDao<Category> {
         }
         return category;
     }
+    public ArrayList<Category> selectByParentId(int parentId) {
+        ArrayList<Category> categories = new ArrayList<Category>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from Categories where  id_parent = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, parentId);
+            ResultSet rs = pst.executeQuery();
+            ParentCategoryDao dao = new ParentCategoryDao();
+            while(rs.next()) {
+                int id_cate = rs.getInt("id");
+                String name = rs.getNString("name");
+                int id_parent = rs.getInt("id_parent");
+                Category c = new Category(id_cate, name, dao.selectById(id_parent));
+                categories.add(c);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return categories;
+    }
 }

@@ -569,7 +569,7 @@ public class CustomerSerlvet extends HttpServlet {
         String productIdParam = req.getParameter("productId");
         int productId = Integer.parseInt(productIdParam);
         Product productDetail = prodDao.selectById(productId);
-        List<Product> productRelate = prodDao.selectProductsByCategoryId(productDetail.getCategory().getId());
+        List<Product> productRelate = prodDao.selectProductRealte(productDetail);
         System.out.println(productRelate.size());
         req.setAttribute("productDetail", productDetail);
         req.setAttribute("productRelate", productRelate);
