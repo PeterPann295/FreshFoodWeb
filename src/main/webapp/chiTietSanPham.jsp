@@ -175,7 +175,7 @@
                 <c:choose>
                     <c:when test="${product.discount != null}">
                         <div class="card">
-                            <a href="chitietsanpham?productID=${product.id}"><img class="card-img-top"
+                            <a href="customer?action=productDetail&productId=${product.id}"><img class="card-img-top"
                                                                                          src="${product.imageUrl}" alt=""></a>
                             <div class="card-body">
                                 <h5 class="card-title">
@@ -206,7 +206,7 @@
                     </c:when>
                     <c:otherwise>
                         <div class="card">
-                                                      <a href="chitietsa-npham?productID=${product.id}"><img class="card-img-top"
+                                                      <a href="customer?action=productDetail&productId=${product.id}"><img class="card-img-top"
                                                                                          src="${product.imageUrl}" alt=""></a>
                             <div class="card-body">
                                 <h5 class="card-title">
@@ -291,6 +291,45 @@
                 }
             });
         });
+        $(".add-to-cart-btn-one").click(function() {
+            // Lưu trữ $(this) vào biến để sử dụng trong hàm success
+            var addButton = $(this);
+
+            // Kiểm tra session của khách hàng
+            $.ajax({
+                type: "post",
+                url: "customer?action=checkLoginCustomer",
+                success: function(response) {
+                    if (response.isLoggedIn) {
+                        // Nếu đã đăng nhập, thực hiện AJAX request để thêm vào giỏ hàng
+                        var productId = addButton.data("product-id"); // Sử dụng biến addButton thay vì $(this)
+                        var amount = 1;
+                        console.log(amount)
+                        $.ajax({
+                            type: "post",
+                            url: "customer?action=addToCart",
+                            data: {
+                                productId: productId,
+                                quantity: amount
+                            },
+                            success: function(response) {
+                                console.log(response.cartSize)
+                                $("#cart-size").text(response.cartSize);
+                            },
+                            error: function(error) {
+                                console.log("Error: " + error);
+                            }
+                        });
+                    } else {
+                        window.location.href = "dangNhap.jsp";
+                    }
+                },
+                error: function(error) {
+                    console.log("Error: " + error);
+                }
+            });
+        });
+
     });
 </script>
 </html>

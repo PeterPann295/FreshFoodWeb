@@ -15,7 +15,7 @@ public class ApiGHN {
         DataRespone dataRespone = new DataRespone();
         String apiUrl = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create";
         String token = "80117275-f321-11ee-8bfa-8a2dda8ec551";
-        String shopId = "191687";
+        String shopId = "0345778312-191687";
 
         // JSON data to send in the POST request
         String jsonData = "{\n" +
