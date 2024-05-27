@@ -85,6 +85,8 @@ public class CustomerSerlvet extends HttpServlet {
             updateOrder(req,resp);
         } else if(action.equals("detailOrder")){
             detailOrder(req, resp);
+        } else if(action.equals("productDetail")){
+            productDetail(req, resp);
         }
     }
 
@@ -247,7 +249,7 @@ public class CustomerSerlvet extends HttpServlet {
         }else{
             cartItem = new CartItem();
             cartItem.setProduct(product);
-            cartItem.setQuantity(1);
+            cartItem.setQuantity(quantity);
             cartItem.setCart(cart);
             cartItemDao.insert(cartItem);
         }
@@ -559,5 +561,18 @@ public class CustomerSerlvet extends HttpServlet {
         req.setAttribute("orderDetail", order);
         req.getRequestDispatcher("/customer/chiTietDonHang.jsp").forward(req, resp);
 
+    }
+    private void productDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String productIdParam = req.getParameter("productId");
+        int productId = Integer.parseInt(productIdParam);
+        Product productDetail = prodDao.selectById(productId);
+        List<Product> productRelate = prodDao.selectProductsByCategoryId(productDetail.getCategory().getId());
+        System.out.println(productRelate.size());
+        req.setAttribute("productDetail", productDetail);
+        req.setAttribute("productRelate", productRelate);
+        req.getRequestDispatcher("/chiTietSanPham.jsp").forward(req, resp);
     }
 }
