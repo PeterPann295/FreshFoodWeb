@@ -2,6 +2,7 @@ package controller;
 
 import database.*;
 import model.Category;
+import model.Customer;
 import model.ParentCategory;
 import model.Product;
 import org.apache.commons.fileupload.FileItem;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 
@@ -46,6 +48,27 @@ public class AdminServlet extends HttpServlet {
             addProduct(req, resp);
         }   else if ("editRoleCustomer".equals(action)) {
             editRoleCustomer(req, resp);
+        } else if ("deleteCustomer".equals(action)) {
+            deleteCustomer(req, resp);
+        }
+
+    }
+    private void deleteCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String action = req.getParameter("action");
+        if ("deleteCustomer".equals(action)) {
+            int id = Integer.parseInt(req.getParameter("id"));
+            Customer customer = new Customer();
+            CustomerDao customerDao = new CustomerDao();
+            customer.setId(id);
+            int result = customerDao.delete(customer);
+            resp.setContentType("application/json");
+            PrintWriter out = resp.getWriter();
+            if (result > 0) {
+                out.write("{\"success\": true}");
+            } else {
+                out.write("{\"success\": false}");
+            }
+            out.flush();
         }
 
     }

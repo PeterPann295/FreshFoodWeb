@@ -28,19 +28,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <style>
-    /* Style for home section */
     .home {
         display: grid;
-        grid-template-columns: 0.5fr  2.5fr; /* Chia layout thành 2 cột */
+        grid-template-columns: 0.5fr  2.5fr;
         gap: 50px;
         height: 90vh;
     }
     .adminHeader {
-        width: 100%; /* Đặt chiều rộng của phần adminHeader */
+        width: 100%;
     }
 
     .home-section {
-        width: 100%; /* Đặt chiều rộng của phần home-content */
+        width: 100%;
         border: 1px solid #4F6F52;
         border-radius: 10px;
         padding: 10px;
@@ -48,7 +47,6 @@
         max-width: 95%;
     }
 
-    /* Style for view box */
     .view-box {
         width: 100%;
     }
@@ -76,7 +74,6 @@
         text-decoration: underline;
     }
 
-    /* Style for overview boxes */
     .overview-boxes {
         display: flex;
         justify-content: space-between;
@@ -106,7 +103,6 @@
         font-weight: bold;
     }
 
-    /* Style for sales boxes */
     .sales-boxes {
         display: flex;
         justify-content: space-between;
@@ -167,7 +163,6 @@
         font-weight: bold;
     }
 
-    /* Responsive design */
     @media screen and (max-width: 768px) {
         .home-section {
             flex-direction: row;

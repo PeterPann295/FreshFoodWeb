@@ -28,7 +28,6 @@
         margin: 0 20px 5px 5px;
         max-width: 95%;
     }
-    /* Title styling */
     .manager-product .title {
         font-size: 28px;
         font-weight: bold;
@@ -37,7 +36,6 @@
         text-align: center;
     }
 
-    /* Form styling */
     form {
         display: flex;
         flex-wrap: wrap;
@@ -87,7 +85,6 @@
         resize: vertical;
     }
 
-    /* Button styling */
     button.btn {
         display: block;
         width: 100%;
@@ -106,7 +103,6 @@
         background-color: #0056b3;
     }
 
-    /* Responsive design */
     @media screen and (max-width: 768px) {
         .home-section {
             padding: 15px;
@@ -186,7 +182,6 @@
                     <label class="control-label">Hình ảnh sản phẩm</label>
                     <input class="form-control" type="file" name="image" required>
                 </div>
-                <!-- Các trường khác tùy ý -->
                 <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
             </form>
         </div>

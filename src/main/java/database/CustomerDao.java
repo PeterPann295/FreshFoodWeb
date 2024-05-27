@@ -46,7 +46,21 @@ public class CustomerDao extends AbsDao<Customer> {
 
     @Override
     public int delete(Customer customer) {
-        return super.delete(customer);
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Delete from Customers Where id=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, customer.getId());
+            int i = pst.executeUpdate();
+            if (i > 0) {
+                super.delete(customer);
+                JDBCUtil.closeConnection(con);
+                return i;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override
@@ -193,6 +207,7 @@ public class CustomerDao extends AbsDao<Customer> {
 
     public static void main(String[] args) {
         CustomerDao customerDao = new CustomerDao();
-        System.out.println(customerDao.selectAll());
+        Customer customer = customerDao.selectById(2);
+        System.out.println(customerDao.delete(customer));
     }
 }

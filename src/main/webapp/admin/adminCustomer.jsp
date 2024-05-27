@@ -5,29 +5,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Quản lý khách hàng</title>
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/all.min.css">
-    <link rel="stylesheet" href="./css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <style>
         .home {
             display: grid;
-            grid-template-columns: 0.5fr  2.5fr; /* Chia layout thành 2 cột */
-            gap: 50px;
-            height: 90vh;
+            grid-template-columns: 0.5fr  2.5fr;
+            gap: 30px;
+            height: 85vh;
         }
         .adminHeader {
-            width: 100%; /* Đặt chiều rộng của phần adminHeader */
+            width: 100%;
         }
 
         .home-section {
-            width: 100%; /* Đặt chiều rộng của phần home-content */
+            width: 100%;
             border: 1px solid #4F6F52;
             border-radius: 10px;
             padding: 10px;
             margin: 0 20px 5px 5px;
-            max-width: 95%;
+            max-width: 99%;
         }
         .icon-container {
             background-color: #5cb85c;
@@ -38,12 +35,6 @@
         }
         .icon-container i {
             font-size: 18px;
-        }
-        .home-section {
-            background-color: #f7f7f7;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .content-header {
             display: flex;
@@ -69,9 +60,9 @@
         }
         .table {
             width: 100%;
-            margin-bottom: 20px;
             background-color: #ffffff;
             border-collapse: collapse;
+            border: 1px solid #dee2e6;
         }
         .table th, .table td {
             padding: 12px 15px;
@@ -90,13 +81,14 @@
         .table tbody tr:hover {
             background-color: #e9ecef;
         }
+        .dataTables_info, .dataTables_paginate {
+            display: none;
+        }
         .icon-container {
             background-color: #28a745;
-            padding: 10px;
             border-radius: 50%;
             display: inline-block;
             color: #F6F5F2;
-            margin-right: 5px;
             transition: background-color 0.3s;
         }
         .icon-container i {
@@ -113,7 +105,6 @@
     <div class="adminHeader">
         <%@ include file="adminHeader.jsp" %>
     </div>
-
     <section class="home-section">
     <div class="content-header">
         <h2>Danh Sách Khách Hàng</h2>
@@ -146,7 +137,7 @@
                 <td><%= customer.getNumberPhone()%></td>
                 <td><%= customer.isRole() ? "Quản trị viên" : "Khách hàng" %></td>
                 <td>
-                    <a href="adminDeleteCustomer?id=<%= customer.getId() %>" class="icon-container" title="Xóa">
+                    <a href="javascript:void(0);" class="icon-container delete-btn" data-id="<%= customer.getId() %>" title="Xóa">
                         <i class="fas fa-trash-alt"></i>
                     </a>
                     <a href="adminEditCustomer?id=<%= customer.getId() %>" class="icon-container" title="Chỉnh sửa">
@@ -161,12 +152,38 @@
     </div>
 </section>
 </div>
-<script src="./js/jquery.min.js"></script>
-<script src="./js/bootstrap.bundle.min.js"></script>
-<script src="./js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
 <script>
     $(document).ready(function() {
         $('#customer-table').DataTable();
+
+        $('.delete-btn').on('click', function() {
+            const customerId = $(this).data('id');
+            const row = $('#customer-' + customerId);
+
+            if (confirm('Bạn có chắc chắn muốn xóa khách hàng này không?')) {
+                $.ajax({
+                    url: 'admin',
+                    type: 'POST',
+                    data: {
+                        action: 'deleteCustomer',
+                        id: customerId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            row.remove();
+                        } else {
+                            alert('Xóa khách hàng thất bại.');
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    }
+                });
+            }
+        });
     });
 </script>
 </body>
