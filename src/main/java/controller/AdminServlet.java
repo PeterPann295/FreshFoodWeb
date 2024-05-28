@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +33,11 @@ public class AdminServlet extends HttpServlet {
         String action = req.getParameter("action");
         if ("listCustomer".equals(action)) {
             listCustomer(req, resp);
+        } else if ("logOut".equals(action)) {
+            HttpSession session = req.getSession();
+            session.removeAttribute("customer");
+            session.invalidate();
+            resp.sendRedirect("trangChu.jsp");
         }
 
     }
@@ -55,6 +61,8 @@ public class AdminServlet extends HttpServlet {
         }
 
     }
+
+
     private void handleEditCustomer(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int customerId = Integer.parseInt(request.getParameter("id"));
         String editedName = request.getParameter("name");

@@ -96,12 +96,9 @@
                                     </li>
 
                                 </c:if>
-                                <li><a class="dropdown-item" href="logOutServlet">Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="<%= request.getContextPath() %>/admin?action=logOut">Đăng xuất</a></li>
                             </ul>
-
                         </div>
-
-
                     </c:when>
                     <c:otherwise>
                         <a href="dangNhap.jsp">

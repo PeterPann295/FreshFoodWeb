@@ -64,28 +64,29 @@
 <body>
 <div class="header">
     <div class="logo">
-        <a href="adminHome.jsp">ADMIN</a>
+        <a href="<%= request.getContextPath() %>/admin/adminHome.jsp">ADMIN</a>
     </div>
     <ul class="nav-links">
         <li>
-            <a href="adminHome.jsp">Trang chủ</a>
+            <a href="<%= request.getContextPath() %>/admin/adminHome.jsp">Trang chủ</a>
         </li>
         <li>
-            <a href="adminProduct.jsp">Quản lý sản phẩm</a>
+            <a href="<%= request.getContextPath() %>/admin/adminProduct.jsp">Quản lý sản phẩm</a>
         </li>
         <li>
-            <a href="adminOrder.jsp">Quản lý đơn hàng</a>
+            <a href="<%= request.getContextPath() %>/admin/adminOrder.jsp">Quản lý đơn hàng</a>
         </li>
         <li>
             <a href="<%= request.getContextPath() %>/admin?action=listCustomer">Quản lý tài khoản</a>
 
         </li>
         <li>
-            <a href="adminContact.jsp">Quản lý phản hồi</a>
+            <a href="<%= request.getContextPath() %>/admin/adminContact.jsp">Quản lý phản hồi</a>
         </li>
         <li id="logOut">
-            <a href="logOutServlet">Đăng xuất</a>
+            <a href="<%= request.getContextPath() %>/admin?action=logOut">Đăng xuất</a>
         </li>
+
     </ul>
 </div>
 </body>
