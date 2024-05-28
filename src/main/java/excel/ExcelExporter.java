@@ -45,7 +45,7 @@ public class ExcelExporter {
             row.createCell(7).setCellValue(product.isAvailable());
             row.createCell(8).setCellValue(product.getStatus());
             row.createCell(9).setCellValue(product.getCategory().getName()); // Tên danh mục
-            row.createCell(10).setCellValue(product.getDiscount().getName()); // Tên discount (nếu có)
+            row.createCell(10).setCellValue(product.getDiscount() != null ? product.getDiscount().getName() : ""); // Tên discount
         }
 
         // Ghi file Excel ra ổ đĩa
@@ -58,8 +58,10 @@ public class ExcelExporter {
 
     public static void main(String[] args) {
         String filePath = "C:\\IntelliJ\\FreshFoodWeb\\products.xlsx";
+        String imagePath = "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\categories";
         try {
-            List<Product> sampleProducts = generateSampleProducts(100);
+            List<ParentCategory> parentCategories = ParentCategoryExtractor.extractParentCategories(imagePath);
+            List<Product> sampleProducts = generateSampleProducts(70, parentCategories);
             new ExcelExporter().exportProductsToExcel(sampleProducts, filePath);
             System.out.println("Excel file created successfully!");
         } catch (IOException e) {
@@ -68,41 +70,36 @@ public class ExcelExporter {
     }
 
     // Tạo danh sách sản phẩm mẫu với các danh mục cha khác nhau
-    public static List<Product> generateSampleProducts(int numberOfProducts) {
-        // Tạo danh sách các sản phẩm mẫu
+    public static List<Product> generateSampleProducts(int numberOfProducts, List<ParentCategory> parentCategories) {
         List<Product> products = new ArrayList<>();
         Random random = new Random();
 
-        for (int i = 1; i <= numberOfProducts; i++) {
-            // Tạo sản phẩm ngẫu nhiên
-            Product product = new Product();
-            product.setId(i);
-            product.setName("Product " + i);
-            product.setDescription("Description for product " + i);
-            product.setPrice(100.0 + random.nextDouble() * 900.0);
-            product.setImageUrl("http://example.com/image" + i + ".jpg");
-            product.setUnit("Unit " + i);
-            product.setWeight(random.nextDouble() * 10);
-            product.setAvailable(random.nextBoolean());
-            product.setStatus(random.nextInt(2)); // 0 or 1 for status
-            product.setCategory(generateRandomCategory()); // Danh mục cha ngẫu nhiên
-            product.setDiscount(generateRandomDiscount()); // Discount ngẫu nhiên
+        int productsPerCategory = numberOfProducts / parentCategories.size();
+        int productId = 1;
 
-            products.add(product);
+        for (ParentCategory parentCategory : parentCategories) {
+            for (int i = 0; i < productsPerCategory; i++) {
+                Product product = new Product();
+                product.setId(productId++);
+                product.setName("Product " + productId);
+                product.setDescription("Description for product " + productId);
+                product.setPrice(100.0 + random.nextDouble() * 900.0);
+                product.setImageUrl(parentCategory.getImageURL()); // Sử dụng URL ảnh từ danh mục cha
+                product.setUnit("Unit " + productId);
+                product.setWeight(random.nextDouble() * 10);
+                product.setAvailable(random.nextBoolean());
+                product.setStatus(random.nextInt(2)); // 0 or 1 for status
+                product.setCategory(new Category(parentCategory.getName(), parentCategory)); // Danh mục cha
+                product.setDiscount(generateRandomDiscount()); // Discount ngẫu nhiên
+
+                products.add(product);
+            }
         }
 
         return products;
     }
 
-    // Tạo danh mục cha ngẫu nhiên
-    private static Category generateRandomCategory() {
-        Random random = new Random();
-        String[] categoryNames = {"Fish", "Meat", "Vegetables", "Soft drinks", "Fruits", "Canned food", "Groceries"};
-        int index = random.nextInt(categoryNames.length);
-        return new Category(index + 1, categoryNames[index], new ParentCategory(index + 1, "Parent " + categoryNames[index], "http://example.com/parent" + index + ".jpg"));
-    }
-
-    // Tạo discount ngẫu nhiên (có thể không có)
+    // Tạo discount ngẫu nhiên
     private static Discount generateRandomDiscount() {
         Random random = new Random();
         if (random.nextBoolean()) {
