@@ -13,7 +13,7 @@ public class ProductDao extends AbsDao<Product> {
     public int insert(Product product) {
         try {
             var con = JDBCUtil.getConnection();
-            String sql = "INSERT INTO products(name, description, price, imageUrl, unit, weight, available, category_id, discount_id, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO products(name, description, price, imageUrl, unit, weight, available, category_id, discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             pst.setString(1, product.getName());
             pst.setString(2, product.getDescription());
@@ -28,7 +28,6 @@ public class ProductDao extends AbsDao<Product> {
             } else {
                 pst.setNull(9, Types.INTEGER);
             }
-            pst.setInt(10, product.getStatus()); // Thêm trường status vào câu lệnh SQL
             int i = pst.executeUpdate();
             if (i > 0) {
                 ResultSet rs = pst.getGeneratedKeys();
@@ -72,7 +71,7 @@ public class ProductDao extends AbsDao<Product> {
                 DiscountDao discountDao = new DiscountDao();
                 Discount discount = discountDao.selectById(discountId);
 
-                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, status, category, discount); // Thêm trường status vào constructor
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount); // Thêm trường status vào constructor
                 products.add(product);
             }
         } catch (Exception e) {
@@ -107,7 +106,7 @@ public class ProductDao extends AbsDao<Product> {
                 DiscountDao discountDao = new DiscountDao();
                 Discount discount = discountDao.selectById(discountId);
 
-                return new Product(id, name, description, price, imageUrl, unit, weight, available, status, category, discount); // Thêm trường status vào constructor
+                return new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount); // Thêm trường status vào constructor
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,7 +140,7 @@ public class ProductDao extends AbsDao<Product> {
                 DiscountDao discountDao = new DiscountDao();
                 Discount discount = discountDao.selectById(discountId);
 
-                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, status, category, discount); // Thêm trường status vào constructor
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available,  category, discount); // Thêm trường status vào constructor
                 products.add(product);
             }
         } catch (Exception e) {
@@ -153,8 +152,6 @@ public class ProductDao extends AbsDao<Product> {
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
         Category category = new CategoryDao().selectById(1);
-        Product product = new Product("Product 1", "Description 1", 1000, "image1.jpg", "unit", 1, true, category, null);
-        System.out.println(productDao.insert(product));
 
     }
 }

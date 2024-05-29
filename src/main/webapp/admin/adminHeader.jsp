@@ -68,7 +68,7 @@
     </div>
     <ul class="nav-links">
         <li>
-            <a href="<%= request.getContextPath() %>/admin/adminHome.jsp">Trang chủ</a>
+            <a href="<%= request.getContextPath() %>/trangChu.jsp">Trang chủ</a>
         </li>
         <li>
             <a href="<%= request.getContextPath() %>/admin/adminProduct.jsp">Quản lý sản phẩm</a>

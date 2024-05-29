@@ -83,7 +83,6 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
 
     public static void main(String[] args) {
         ParentCategoryDao dao = new ParentCategoryDao();
-        ParentCategory parentCategory = new ParentCategory("Test", "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\categories\\cá.jpg");
-        System.out.println(dao.selectById(1));
+        System.out.println(dao.selectAll() + "\t");
     }
 }

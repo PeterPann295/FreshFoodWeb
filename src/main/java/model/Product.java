@@ -10,26 +10,11 @@ public class Product implements IModel {
     private String unit;
     private double weight;
     private boolean available;
-    private int status; // Thay đổi kiểu dữ liệu của status thành int
     private Category category;
     private Discount discount;
     private String beforeData;
 
     public Product() {}
-
-    public Product(String name, String description, double price, String imageUrl, String unit, double weight, boolean available, int status, Category category, Discount discount) {
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.unit = unit;
-        this.weight = weight;
-        this.available = available;
-        this.status = status;
-        this.category = category;
-        this.discount = discount;
-        this.beforeData = toString();
-    }
 
     public Product(String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
         this.name = name;
@@ -41,9 +26,9 @@ public class Product implements IModel {
         this.available = available;
         this.category = category;
         this.discount = discount;
+        this.beforeData = toString();
     }
-
-    public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, int status, Category category, Discount discount) {
+    public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -52,9 +37,20 @@ public class Product implements IModel {
         this.unit = unit;
         this.weight = weight;
         this.available = available;
-        this.status = status;
         this.category = category;
         this.discount = discount;
+        this.beforeData = toString();
+    }
+
+    public Product(String productName, String description, double price, String imgProduct, String unit, double weight, boolean availables, Category category) {
+        this.name = productName;
+        this.description = description;
+        this.price = price;
+        this.imageUrl = imgProduct;
+        this.unit = unit;
+        this.weight = weight;
+        this.available = availables;
+        this.category = category;
         this.beforeData = toString();
     }
 
@@ -122,13 +118,7 @@ public class Product implements IModel {
         this.available = available;
     }
 
-    public int getStatus() {
-        return status;
-    }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
 
     public Category getCategory() {
         return category;
@@ -157,7 +147,6 @@ public class Product implements IModel {
                 ", unit='" + unit + '\'' +
                 ", weight=" + weight +
                 ", available=" + available +
-                ", status=" + status +
                 ", category=" + category +
                 ", discount=" + discount +
                 '}';

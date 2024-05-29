@@ -286,7 +286,7 @@ public class AdminServlet extends HttpServlet {
         }
         if(count == 9){
             if(discountId == 0){
-                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), null);
+                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId) );
                 productDao.insert(product);
             }else {
                 Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), discountDao.selectById(discountId));
