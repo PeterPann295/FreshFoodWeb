@@ -10,13 +10,28 @@ import java.util.ArrayList;
 public class ParentCategoryDao extends AbsDao<ParentCategory> {
     @Override
     public int insert(ParentCategory parentCategory) {
+        int newParentCategoryId = 0;
+
         try {
             Connection con = JDBCUtil.getConnection();
 
-            String sql = "insert into ParentCategories( name , imageUrl) values (?,?)";
+            // Truy vấn để tìm ID lớn nhất hiện có trong bảng ParentCategories
+            String getMaxIdQuery = "SELECT MAX(id) AS maxId FROM ParentCategories";
+            PreparedStatement getMaxIdStatement = con.prepareStatement(getMaxIdQuery);
+            ResultSet resultSet = getMaxIdStatement.executeQuery();
+
+            // Lấy ID lớn nhất
+            if (resultSet.next()) {
+                int maxId = resultSet.getInt("maxId");
+                newParentCategoryId = maxId + 1; // Tạo ID mới bằng cách tăng thêm 1
+            }
+
+            // Chèn dữ liệu vào bảng ParentCategories với ID mới
+            String sql = "insert into ParentCategories( id,name , imageUrl) values (?,?,?)";
             PreparedStatement pst = con.prepareStatement(sql);
-            pst.setNString(1, parentCategory.getName());
-            pst.setString(2, parentCategory.getImageURL());
+            pst.setInt(1, newParentCategoryId);
+            pst.setString(2, parentCategory.getName());
+            pst.setString(3, parentCategory.getImageURL());
             int  i = pst.executeUpdate();
             if(i > 0) {
                 super.insert(parentCategory);
@@ -25,7 +40,7 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return newParentCategoryId;
     }
 
     @Override
@@ -83,6 +98,32 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
 
     public static void main(String[] args) {
         ParentCategoryDao dao = new ParentCategoryDao();
-        System.out.println(dao.selectAll() + "\t");
+        ParentCategory parentCategory = new ParentCategory("ParentCategory 1", "https://www.google.com");
+        int newParentCategoryId = dao.insert(parentCategory);
+        if (newParentCategoryId > 0) {
+            System.out.println("Đã thêm ParentCategory: " + parentCategory.getName());
+        } else {
+            System.out.println("Không thể thêm ParentCategory: " + parentCategory.getName());
+        }
+    }
+
+    public ParentCategory getParentCategoryByName(String name) {
+        ParentCategory parentCategory = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM ParentCategories WHERE name = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, name);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                int categoryID = rs.getInt("id");
+                String categoryName = rs.getNString("name");
+                String imageUrl = rs.getNString("imageUrl");
+                parentCategory = new ParentCategory(categoryID, categoryName, imageUrl);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return parentCategory;
     }
 }

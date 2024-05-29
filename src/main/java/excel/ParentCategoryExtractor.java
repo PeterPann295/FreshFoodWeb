@@ -1,5 +1,6 @@
 package excel;
 
+import database.ParentCategoryDao;
 import model.ParentCategory;
 
 import java.io.File;
@@ -52,8 +53,23 @@ public class ParentCategoryExtractor {
         return categoryName;
     }
 
+    private static void importParentCategories(List<ParentCategory> parentCategories) {
+        ParentCategoryDao parentCategoryDao = new ParentCategoryDao();
+
+        for (ParentCategory parentCategory : parentCategories) {
+            int parentCategoryId = parentCategoryDao.insert(parentCategory);
+            if (parentCategoryId > 0) {
+                System.out.println("Đã thêm ParentCategory: " + parentCategory.getName());
+            } else {
+                System.out.println("Không thể thêm ParentCategory: " + parentCategory.getName());
+            }
+        }
+    }
+
     public static void main(String[] args) {
         String imagePath = "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\categories";
         List<ParentCategory> parentCategories = extractParentCategories(imagePath);
+
+        importParentCategories(parentCategories);
     }
 }

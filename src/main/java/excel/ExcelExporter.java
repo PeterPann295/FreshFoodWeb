@@ -1,5 +1,6 @@
 package excel;
 
+import database.ParentCategoryDao;
 import model.Category;
 import model.Discount;
 import model.ParentCategory;
@@ -76,11 +77,17 @@ public class ExcelExporter {
 
     public static void main(String[] args) {
         String filePath = "C:\\IntelliJ\\FreshFoodWeb\\products.xlsx";
-        String imagePath = "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products";
         try {
-            List<ParentCategory> parentCategories = ParentCategoryExtractor.extractParentCategories(imagePath);
+            // Lấy danh sách danh mục cha từ cơ sở dữ liệu
+            ParentCategoryDao parentCategoryDao = new ParentCategoryDao();
+            List<ParentCategory> parentCategories = parentCategoryDao.selectAll();
+
+            // Tạo danh sách sản phẩm mẫu với mỗi danh mục cha có 10 sản phẩm
             List<Product> sampleProducts = generateSampleProducts(70, parentCategories);
+
+            // Xuất danh sách sản phẩm ra file Excel
             new ExcelExporter().exportProductsToExcel(sampleProducts, filePath);
+
             System.out.println("File Excel được tạo thành công!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,17 +98,18 @@ public class ExcelExporter {
     public static List<Product> generateSampleProducts(int numberOfProducts, List<ParentCategory> parentCategories) {
         List<Product> products = new ArrayList<>();
         Random random = new Random();
+        String imagePath = "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products";
 
-        int productsPerCategory = numberOfProducts / parentCategories.size();
         int productId = 1;
 
         for (ParentCategory parentCategory : parentCategories) {
-            File categoryFolder = new File(parentCategory.getImageURL());
+            File categoryFolder = new File(imagePath + File.separator + parentCategory.getName());
             File[] imageFiles = categoryFolder.listFiles((dir, name) -> name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png"));
 
-            if (imageFiles != null && imageFiles.length >= productsPerCategory) {
-                for (int i = 0; i < productsPerCategory; i++) {
-                    File imageFile = imageFiles[i];
+            if (imageFiles != null && imageFiles.length > 0) {
+                for (int i = 0; i < numberOfProducts / parentCategories.size(); i++) {
+                    int randomIndex = random.nextInt(imageFiles.length);
+                    File imageFile = imageFiles[randomIndex];
 
                     Product product = new Product();
                     product.setId(productId++);
@@ -118,7 +126,7 @@ public class ExcelExporter {
                     products.add(product);
                 }
             } else {
-                logger.warning("Không đủ ảnh trong thư mục: " + categoryFolder.getAbsolutePath());
+                logger.warning("Không có ảnh sản phẩm trong thư mục: " + categoryFolder.getAbsolutePath());
             }
         }
 
