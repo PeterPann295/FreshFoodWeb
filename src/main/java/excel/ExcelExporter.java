@@ -99,7 +99,7 @@ public class ExcelExporter {
         List<Product> products = new ArrayList<>();
         Random random = new Random();
         String imagePath = "C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products";
-
+        Category category = new Category();
         int productId = 1;
 
         for (ParentCategory parentCategory : parentCategories) {
@@ -120,7 +120,7 @@ public class ExcelExporter {
                     product.setUnit("Unit " + productId);
                     product.setWeight(random.nextDouble() * 10);
                     product.setAvailable(random.nextBoolean());
-                    product.setCategory(new Category(parentCategory.getName(), parentCategory));
+                    category.setId(parentCategory.getId());
                     product.setDiscount(generateRandomDiscount());
 
                     products.add(product);

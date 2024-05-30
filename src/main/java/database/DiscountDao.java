@@ -67,4 +67,12 @@ public class DiscountDao extends AbsDao<Discount> {
         }
         return discount;
     }
+
+    public static void main(String[] args) {
+        DiscountDao discountDao = new DiscountDao();
+        ArrayList<Discount> discounts = discountDao.selectAll();
+        for (Discount d : discounts) {
+            System.out.println(d);
+        }
+    }
 }

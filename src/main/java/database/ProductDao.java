@@ -13,31 +13,25 @@ public class ProductDao extends AbsDao<Product> {
     public int insert(Product product) {
         try {
             var con = JDBCUtil.getConnection();
-            String sql = "INSERT INTO products(name, description, price, imageUrl, unit, weight, available, category_id, discount_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO products(id,name, description, price, imageUrl, unit, weight, available, category_id) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pst.setString(1, product.getName());
-            pst.setString(2, product.getDescription());
-            pst.setDouble(3, product.getPrice());
-            pst.setString(4, product.getImageUrl());
-            pst.setString(5, product.getUnit());
-            pst.setDouble(6, product.getWeight());
-            pst.setBoolean(7, product.isAvailable());
-            pst.setInt(8, product.getCategory().getId());
-            if(product.getDiscount() != null) {
-                pst.setInt(9, product.getDiscount().getId());
-            } else {
-                pst.setNull(9, Types.INTEGER);
-            }
+            pst.setInt(1, product.getId());
+            pst.setString(2, product.getName());
+            pst.setString(3, product.getDescription());
+            pst.setDouble(4, product.getPrice());
+            pst.setString(5, product.getImageUrl());
+            pst.setString(6, product.getUnit());
+            pst.setDouble(7, product.getWeight());
+            pst.setBoolean(8, product.isAvailable());
+            pst.setInt(9, product.getCategory().getId());
+
             int i = pst.executeUpdate();
             if (i > 0) {
                 ResultSet rs = pst.getGeneratedKeys();
                 if (rs.next()) {
-                    int generatedId = rs.getInt(1);
-                    product.setId(generatedId);
+                    return rs.getInt(1);
                 }
-                super.insert(product);
             }
-            return i;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,8 +144,6 @@ public class ProductDao extends AbsDao<Product> {
     }
 
     public static void main(String[] args) {
-        ProductDao productDao = new ProductDao();
-        Category category = new CategoryDao().selectById(1);
-
     }
+
 }
