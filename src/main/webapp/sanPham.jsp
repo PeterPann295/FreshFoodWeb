@@ -26,6 +26,12 @@
             padding: 5px;
             font-weight: bold;
         }
+        .active {
+            background-color: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
     </style>
 
 </head>
@@ -36,27 +42,16 @@
     <jsp:include page="/layouts/filterProduct.jsp" />
 
     <div class="col-lg-9">
-        <div class="btn-toolbar mb-2 ">
-            <a href="bolocsanpham?hanhDong=giaGiam&trang=sanPham" style="margin-right: 5px">
-                <button type="button" class="btn btn-sm btn-outline-success">
-                    Giá Giảm Dần</button>
-            </a>
-            <a href="bolocsanpham?hanhDong=giaTang&trang=sanPham" style="margin-right: 5px">
-                <button type="button" class="btn btn-sm btn-outline-success">
-                    Giá Tăng Dần</button>
-            </a>
-            <a href="bolocsanpham?hanhDong=AZ&trang=sanPham" style="margin-right: 5px">
-                <button type="button" class="btn btn-sm btn-outline-success">
-                    A-Z</button>
-            </a>
-            <a href="bolocsanpham?hanhDong=ZA&trang=sanPham" style="margin-right: 5px">
-                <button type="button" class="btn btn-sm btn-outline-success">
-                    Z-A</button>
-            </a>
+        <div class="btn-toolbar mb-2  " style="margin-left: 8px">
+            <button type="button" id="sortPriceDesc" class="btn-sort btn btn-sm btn-outline-success" style="margin-right: 5px">Giá Giảm Dần</button>
+            <button type="button" id="sortPriceAsc" class="btn-sort btn btn-sm btn-outline-success" style="margin-right: 5px">Giá Tăng Dần</button>
+            <button type="button" id="sortAZ" class="btn-sort btn btn-sm btn-outline-success" style="margin-right: 5px">A-Z</button>
+            <button type="button" id="sortZA" class="btn-sort btn btn-sm btn-outline-success" style="margin-right: 5px">Z-A</button>
+
         </div>
         <input type="hidden" id="numberInput" value="1">
 
-        <div class="row" id="productContainer" style="margin-left: 30px">
+        <div class="row" id="productContainer" >
             <c:forEach var="product" items="${productDAO.selectAll()}">
                 <div class="col-lg-4 col-md-6 mb-4"
                      style="width: 216px; height: 355px">
@@ -130,11 +125,66 @@
 
 </body>
 <script>
+    let sortAction = '';
     $(document).ready(function() {
+        $('#productContainer').on('click', '.add-to-cart-btn-one', function() {
+            // Lưu trữ $(this) vào biến để sử dụng trong hàm success
+            var addButton = $(this);
+
+            // Kiểm tra session của khách hàng
+            $.ajax({
+                type: "post",
+                url: "customer?action=checkLoginCustomer",
+                success: function(response) {
+                    if (response.isLoggedIn) {
+                        // Nếu đã đăng nhập, thực hiện AJAX request để thêm vào giỏ hàng
+                        var productId = addButton.data("product-id"); // Sử dụng biến addButton thay vì $(this)
+                        var amount = document.getElementById('amount').value;
+                        $.ajax({
+                            type: "post",
+                            url: "customer?action=addToCart",
+                            data: {
+                                productId: productId,
+                                quantity: amount
+                            },
+                            success: function(response) {
+                                console.log(response.cartSize)
+                                $("#cart-size").text(response.cartSize);
+                            },
+                            error: function(error) {
+                                console.log("Error: " + error);
+                            }
+                        });
+                    } else {
+                        window.location.href = "dangNhap.jsp";
+                    }
+                },
+                error: function(error) {
+                    console.log("Error: " + error);
+                }
+            });
+        });
         // Lắng nghe sự kiện thay đổi của checkbox và radio button
         $('input[type="checkbox"], input[type="radio"]').change(function() {
             applyFilters();
         });
+
+        $('.btn-sort').click(function() {
+            // Remove the 'active' class from all buttons
+            $('.btn-sort').removeClass('active');
+
+            // Add the 'active' class to the clicked button
+            $(this).addClass('active');
+
+            // Perform the AJAX request
+            let action = '';
+            if (this.id === 'sortPriceDesc') sortAction = 'giaGiam';
+            else if (this.id === 'sortPriceAsc') sortAction = 'giaTang';
+            else if (this.id === 'sortAZ') sortAction = 'AZ';
+            else if (this.id === 'sortZA') sortAction = 'ZA';
+            applyFilters();
+        });
+
     });
 
     function applyFilters() {
@@ -154,7 +204,8 @@
             data: {
                 categories: categories,
                 price: price,
-                discount: discount
+                discount: discount,
+                sortAction: sortAction
             },
             traditional: true,
             success: function(response) {
@@ -179,7 +230,10 @@
         }
 
         var finalPrice = product.price - (product.price * (product.discount ? product.discount.percent / 100 : 0));
-        var originalPriceHtml = product.discount ? '<span style="text-decoration: line-through; padding-left: 5px">' + product.price + ' đ</span>' : '';
+        var formattedOrigin= new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price);
+        var originalPriceHtml = product.discount ? '<span style="text-decoration: line-through; padding-left: 5px">' + formattedOrigin + ' </span>' : '';
+        var formattedPriceFinal = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalPrice);
+
 
         var productHtml = `
     <div class="col-lg-4 col-md-6 mb-4" style="width: 216px; height: 355px">
@@ -191,7 +245,7 @@
                 </h5>
                 <p class="mt-1">ĐVT: `+ product.unit +`</p>
                 <p>
-                    <span class="text-success">`+ finalPrice +` đ</span> `+ originalPriceHtml +`
+                    <span class="text-success">`+ formattedPriceFinal  +` </span> `+ originalPriceHtml +`
                 </p>
                 `+ discountHtml +`
                 <button class="ms-1 btn btn-success add-to-cart-btn-one" data-product-id="`+ product.id +`">

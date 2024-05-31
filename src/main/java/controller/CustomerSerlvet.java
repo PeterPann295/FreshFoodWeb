@@ -602,14 +602,15 @@ public class CustomerSerlvet extends HttpServlet {
         String[] categoryParams = req.getParameterValues("categories");
         String priceParam = req.getParameter("price");
         String discountParam = req.getParameter("discount");
-
+        String sortByParam = req.getParameter("sortAction");
         String[] categories = categoryParams != null ? categoryParams : null;
         String price = priceParam != null ? priceParam : null;
         String discount = discountParam != null ? discountParam : null;
-        System.out.println("da vao day " + categories.length);
+        String sort = (sortByParam != null && sortByParam.length() > 0) ? sortByParam : null;
         System.out.println("da vao day " + price);
         System.out.println("da vao day " + discount);
-        ArrayList<Product> productList = prodDao.selectProductByFilter(categories, price, discount);
+        System.out.println("sort " + sort);
+        ArrayList<Product> productList = prodDao.selectProductByFilter(categories, price, discount, sort);
         System.out.println("so luong san pham: " + productList.size());
         Gson gson = new Gson();
         String json = gson.toJson(productList);
