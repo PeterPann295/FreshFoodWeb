@@ -11,6 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Insert title here</title>
+
 </head>
 <body>
 <div class="col-lg-3">
@@ -127,9 +128,7 @@
                         <label class="form-check-label" for="discount10"> Giảm
                             giá </label>
                     </div>
-                    <button type="submit" class="btn btn-sm btn-outline-success">
-                        Lọc </button>
-                    <!-- Thêm các checkbox khác tương tự cho các khoảng giá khác -->
+
             </div>
         </div>
 

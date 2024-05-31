@@ -215,14 +215,16 @@ public class ProductDao extends AbsDao<Product> {
         }
         return products;
     }
-    public ArrayList<Product> selectProductByFilter(String[] categories, String priceRange, String discount) {
+    public ArrayList<Product> selectProductByFilter(String[] categories, String priceRange, String discount, String sortBy) {
         ArrayList<Product> products = new ArrayList<>();
-        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM products WHERE ");
 
         boolean hasCategoryFilter = categories != null && categories.length > 0;
         boolean hasPriceFilter = priceRange != null;
         boolean hasDiscountFilter = discount != null;
-
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM products ");
+        if(hasCategoryFilter || hasPriceFilter || hasDiscountFilter){
+           queryBuilder = new StringBuilder("SELECT * FROM products WHERE ");
+        }
         if (hasCategoryFilter) {
             queryBuilder.append("(");
             for (int i = 0; i < categories.length; i++) {
@@ -246,6 +248,25 @@ public class ProductDao extends AbsDao<Product> {
                 queryBuilder.append(" AND ");
             }
             queryBuilder.append("discount_id is not null");
+        }
+        if (sortBy != null) {
+            queryBuilder.append(" ORDER BY ");
+            switch (sortBy) {
+                case "giaGiam":
+                    queryBuilder.append("price DESC");
+                    break;
+                case "giaTang":
+                    queryBuilder.append("price ASC");
+                    break;
+                case "AZ":
+                    queryBuilder.append("name ASC");
+                    break;
+                case "ZA":
+                    queryBuilder.append("name DESC");
+                    break;
+                default:
+                    break;
+            }
         }
         try {
             Connection con = JDBCUtil.getConnection();
@@ -286,10 +307,10 @@ public class ProductDao extends AbsDao<Product> {
 
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
-        String[] categories = {"1","5","10","20","50"};
-        ArrayList<Product> products = productDao.selectProductByFilter(categories,"price between 50000 and 200000", null);
+        String[] categories = {"1","2","3","5", "10"};
+        ArrayList<Product> products = productDao.selectProductByFilter(null,"price between 50000 and 200000", null, "ZA");
         for (Product product : products) {
-            System.out.println(product);
+            System.out.println("name: " + product.getName() + " - " + " price: "  + product.getPrice());
         }
     }
 
