@@ -30,8 +30,7 @@
 
 </head>
 <body>
-<jsp:include page="/layouts/header.jsp" />
-
+<jsp:include page="layouts/header.jsp" />
 <div class="row mt-4">
 
     <jsp:include page="/layouts/filterProduct.jsp" />
@@ -57,7 +56,7 @@
         </div>
         <input type="hidden" id="numberInput" value="1">
 
-        <div class="row" style="margin-left: 30px">
+        <div class="row" id="productContainer" style="margin-left: 30px">
             <c:forEach var="product" items="${productDAO.selectAll()}">
                 <div class="col-lg-4 col-md-6 mb-4"
                      style="width: 216px; height: 355px">
@@ -130,6 +129,79 @@
 </div>
 
 </body>
-<script src="javascript/scriptAjax2.js"></script>
+<script>
+    $(document).ready(function() {
+        // Lắng nghe sự kiện thay đổi của checkbox và radio button
+        $('input[type="checkbox"], input[type="radio"]').change(function() {
+            applyFilters();
+        });
+    });
 
+    function applyFilters() {
+        // Thu thập các giá trị đã chọn
+        var categories = [];
+        $('input[name="category"]:checked').each(function() {
+            categories.push($(this).val());
+        });
+        console.log(categories)
+        var price = $('input[name="price"]:checked').val();
+        var discount = $('input[name="discount"]:checked').val();
+
+        // Gửi yêu cầu Ajax
+        $.ajax({
+            url: 'customer?action=filterProduct',
+            type: 'POST',
+            data: {
+                categories: categories,
+                price: price,
+                discount: discount
+            },
+            traditional: true,
+            success: function(response) {
+                console.log("da vao day ")
+                var productContainer = $('#productContainer');
+                productContainer.html("");
+                response.forEach(function(product) {
+                    console.log("da vao day 2")
+                    var productHtml = createProductHtml(product);
+                    productContainer.append(productHtml);
+                });
+            }
+        });
+    }
+
+    function createProductHtml(product) {
+        var discountHtml = '';
+        console.log(product)
+        console.log(product.name+"la ten cua no")
+        if (product.discount != null) {
+            discountHtml = '<span class="discount-percentage"> Giảm ' + product.discount.percent + '% </span>';
+        }
+
+        var finalPrice = product.price - (product.price * (product.discount ? product.discount.percent / 100 : 0));
+        var originalPriceHtml = product.discount ? '<span style="text-decoration: line-through; padding-left: 5px">' + product.price + ' đ</span>' : '';
+
+        var productHtml = `
+    <div class="col-lg-4 col-md-6 mb-4" style="width: 216px; height: 355px">
+        <div class="card">
+            <a href="customer?action=productDetail&productId=`+ product.id +`"><img class="card-img-top" src="`+product.imageUrl+`" alt=""></a>
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="customer?action=productDetail&productId=`+ product.id +`" style="text-decoration: none">`+ product.name +`</a>
+                </h5>
+                <p class="mt-1">ĐVT: `+ product.unit +`</p>
+                <p>
+                    <span class="text-success">`+ finalPrice +` đ</span> `+ originalPriceHtml +`
+                </p>
+                `+ discountHtml +`
+                <button class="ms-1 btn btn-success add-to-cart-btn-one" data-product-id="`+ product.id +`">
+                    <i class="bi bi-cart3"></i> Thêm Vào Giỏ
+                </button>
+            </div>
+        </div>
+    </div>`;
+
+        return productHtml;
+    }
+</script>
 </html>

@@ -215,10 +215,79 @@ public class ProductDao extends AbsDao<Product> {
         }
         return products;
     }
+    public ArrayList<Product> selectProductByFilter(String[] categories, String priceRange, String discount) {
+        ArrayList<Product> products = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM products WHERE ");
+
+        boolean hasCategoryFilter = categories != null && categories.length > 0;
+        boolean hasPriceFilter = priceRange != null;
+        boolean hasDiscountFilter = discount != null;
+
+        if (hasCategoryFilter) {
+            queryBuilder.append("(");
+            for (int i = 0; i < categories.length; i++) {
+                queryBuilder.append("category_id = ?");
+                if (i < categories.length - 1) {
+                    queryBuilder.append(" OR ");
+                }
+            }
+            queryBuilder.append(")");
+        }
+
+        if (hasPriceFilter) {
+            if (hasCategoryFilter) {
+                queryBuilder.append(" AND ");
+            }
+            queryBuilder.append(priceRange);
+        }
+
+        if (hasDiscountFilter) {
+            if (hasCategoryFilter || hasPriceFilter) {
+                queryBuilder.append(" AND ");
+            }
+            queryBuilder.append("discount_id is not null");
+        }
+        try {
+            Connection con = JDBCUtil.getConnection();
+            PreparedStatement pst = con.prepareStatement(queryBuilder.toString());
+            int paramIndex = 1;
+
+            if (hasCategoryFilter) {
+                for (String categoryId : categories) {
+                    pst.setInt(paramIndex++, Integer.parseInt(categoryId));
+                }
+            }
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+                DiscountDao discountDao = new DiscountDao();
+                Discount dis = discountDao.selectById(discountId);
+                Product p = new Product(id, name, description, price, imageUrl, unit, weight, available, category, dis);
+                products.add(p);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
 
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
-        ArrayList<Product> products = productDao.selectProductsByCategoryId(2);
+        String[] categories = {"1","5","10","20","50"};
+        ArrayList<Product> products = productDao.selectProductByFilter(categories,"price between 50000 and 200000", null);
         for (Product product : products) {
             System.out.println(product);
         }

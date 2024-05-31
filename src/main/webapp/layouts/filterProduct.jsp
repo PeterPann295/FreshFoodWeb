@@ -9,7 +9,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <jsp:include page="common.jsp"/>
     <meta charset="UTF-8">
     <title>Insert title here</title>
 </head>
@@ -25,9 +24,10 @@
                 <div id="categoryCollapse" class="collapse show"
                      aria-labelledby="categoryHeading" data-parent="#filterAccordion" >
                     <div class="card-body" >
-                        <div class="accordion accordion-flush" id="accordionFlushExample">
                             <c:forEach var="p" items="${parentCategoryDAO.selectAll()}"
                                        varStatus="loop">
+                                <div class="accordion accordion-flush" id="accordionFlushExample">
+
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
 
@@ -46,15 +46,21 @@
                                             <c:forEach var="c"
                                                        items="${categoryDAO.selectByParentId(p.id)}"
                                                        varStatus="innerLoop">
-                                                <li><a style="text-decoration: none;"
-                                                       href="bolocsanpham?category=${c.id}&hanhDong=category">${c.name}</a></li>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="category${innerLoop.index}" name="category" value="${c.id}">
+                                                    <label class="form-check-label" for="category${innerLoop.index}">
+                                                            ${c.name}
+                                                    </label>
+                                                </div>
+
                                             </c:forEach>
                                             </ul>
                                         </div>
                                     </div>
                                 </div>
-                            </c:forEach>
                         </div>
+                            </c:forEach>
+
                     </div>
                 </div>
             </div>
@@ -64,55 +70,53 @@
                 <h5 class="mb-0 text-success">Chọn Mức Giá</h5>
             </div>
             <div class="card-body">
-                <form action="bolocsanpham" method="get" >
-                    <input type="hidden" name="hanhDong" value="price">
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="under10000"
-                               name="filter_Price" value="price < 10000"> <label
+                               name="price" value="price < 10000"> <label
                             class="form-check-label" for="under10000"> Dưới 10,000đ
                     </label>
                     </div>
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="10000to50000"
-                               name="filter_Price" value="price Between 10000 and 50000">
+                               name="price" value="price Between 10000 and 50000">
                         <label class="form-check-label" for="10000to50000"> Từ
                             10,000đ - 50,000đ </label>
                     </div>
 
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="50000to100000"
-                               name="filter_Price" value="price Between 50000 and 100000">
+                               name="price" value="price Between 50000 and 100000">
                         <label class="form-check-label" for="50000to100000"> Từ
                             50,000đ - 100,000đ </label>
                     </div>
 
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="100000to200000"
-                               name="filter_Price" value="price Between 100000 and 200000">
+                               name="price" value="price Between 100000 and 200000">
                         <label class="form-check-label" for="100000to200000"> Từ
                             100,000đ - 200,000đ </label>
                     </div>
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="200000to300000"
-                               name="filter_Price" value="price Between 200000 and 300000">
+                               name="price" value="price Between 200000 and 300000">
                         <label class="form-check-label" for="200000to300000"> Từ
                             200,000đ - 300,000đ </label>
                     </div>
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="300000to500000"
-                               name="filter_Price" value="price Between 300000 and 500000">
+                               name="price" value="price Between 300000 and 500000">
                         <label class="form-check-label" for="300000to500000"> Từ
                             300,000đ - 500,000đ </label>
                     </div>
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="500000to1000000"
-                               name="filter_Price" value="price Between 500000 and 1000000">
+                               name="price" value="price Between 500000 and 1000000">
                         <label class="form-check-label" for="500000to1000000"> Từ
                             500,000đ - 1000,000đ </label>
                     </div>
                     <div class="form-check mt-1 mb-1">
                         <input class="form-check-input" type="radio" id="above1000000"
-                               name="filter_Price" value="price > 1000000"> <label
+                               name="price" value="price > 1000000"> <label
                             class="form-check-label" for="above1000000"> Trên
                         1,000,000đ </label>
                     </div>
@@ -126,26 +130,13 @@
                     <button type="submit" class="btn btn-sm btn-outline-success">
                         Lọc </button>
                     <!-- Thêm các checkbox khác tương tự cho các khoảng giá khác -->
-                </form>
             </div>
         </div>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var accordionButtons = document.querySelectorAll('.accordion-button');
-
-                accordionButtons.forEach(function(button) {
-                    button.addEventListener('click', function() {
-                        var isOpen = this.getAttribute('aria-expanded') === 'true';
-                        this.setAttribute('aria-expanded', !isOpen);
-                    });
-                });
-            });
-        </script>
-
 
     </div>
 
 </div>
+
 
 </body>
 </html>
