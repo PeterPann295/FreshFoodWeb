@@ -19,7 +19,6 @@
 <head>
     <title>Title</title>
     <meta charset="UTF-8">
-    <%@ include file="layouts/common.jsp"%>
     <style>
         .card:hover {
             border: 2px solid;
