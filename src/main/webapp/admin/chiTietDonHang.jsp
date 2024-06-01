@@ -27,8 +27,12 @@
                             <th colspan="2" style="text-align: center;"> <h3 class="text-success">Chi Tiết Đơn Hàng  </h3> </th>
                         </tr>
                         <tr>
-                            <td> Người Đặt Hàng: </td>
+                            <td> Người Đặt Hàng (id): </td>
                             <td> ${orderDetail.customer.id} </td>
+                        </tr>
+                        <tr>
+                            <td> Người Đặt Hàng : </td>
+                            <td> ${orderDetail.customer.fullName} </td>
                         </tr>
                         <tr>
                             <td>Tên Người Nhận Hàng: </td>
@@ -112,6 +116,7 @@
 
                     </table>
                     <button type="submit" class="btn btn-primary" style="width: 100%;"> Quay về trang lịch sử mua hàng  </button>
+                </form>
             </div>
         </main>
     </div>

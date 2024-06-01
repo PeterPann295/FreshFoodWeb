@@ -1,10 +1,7 @@
 package controller;
 
 import database.*;
-import model.Customer;
-import model.Order;
-import model.ParentCategory;
-import model.Product;
+import model.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -32,6 +29,7 @@ public class AdminServlet extends HttpServlet {
     private PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
     private OrderDao orderDao = new OrderDao();
     private OrderItemDao orderItemDao = new OrderItemDao();
+    private ImportProductDao importProductDao = new ImportProductDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -52,6 +50,8 @@ public class AdminServlet extends HttpServlet {
             getOrderStatus(req, resp);
         } else if (action.equals("detailOrder")) {
             detailOrder(req, resp);
+        } else if(action.equals("importProduct")){
+            importProduct(req, resp);
         }
 
 
@@ -257,6 +257,24 @@ public class AdminServlet extends HttpServlet {
                 + req.getContextPath();
         resp.sendRedirect(link + "/admin/chiTietDonHang.jsp");
 
+    }
+    private void importProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        String productIdParam = req.getParameter("productId");
+        String quatityParam = req.getParameter("quatity");
+        int quatity = Integer.parseInt(quatityParam);
+        Product product = productDao.selectById(Integer.parseInt(productIdParam));
+        if(quatity > 0){
+            ImportProduct importProduct = new ImportProduct(product, Integer.parseInt(quatityParam),customer);
+            importProductDao.insert(importProduct);
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/nhapSanPham.jsp");
     }
 
 }
