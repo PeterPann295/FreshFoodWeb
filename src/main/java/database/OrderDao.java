@@ -183,6 +183,39 @@ public class OrderDao extends AbsDao<Order>{
         }
         return orders;
     }
+    public ArrayList<Order> selectByStatusId(int statusId) {
+        ArrayList<Order> orders = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from orders where status_id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, statusId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Order order = new Order();
+                order.setId(rs.getInt("id"));
+                order.setCustomer(customerDao.selectById(rs.getInt("customer_id")));
+                order.setToName(rs.getString("to_name"));
+                order.setTotal(rs.getDouble("total"));
+                order.setDate(rs.getTimestamp("time_order"));
+                order.setNumberPhone(rs.getString("numberPhone"));
+                order.setFrom_address(rs.getString("from_address"));
+                order.setTo_address(rs.getString("delivery_address"));
+                order.setDeliveryFee(rs.getDouble("delivery_fee"));
+                order.setDeliveryDate(rs.getTimestamp("expected_delivery_time"));
+                order.setNote(rs.getString("note"));
+                order.setPaymentMethod(paymentMethodDao.selectById(rs.getInt("payment_method_id")));
+                order.setStatus(orderStatusDao.selectById(rs.getInt("status_id")));
+                order.setVoucher(voucherDao.selectById(rs.getInt("voucher_id")));
+                order.setOrderItems(orderItemDao.selectByOrderId(order));
+                orders.add(order);
+            }
+            JDBCUtil.closeConnection(con);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
     public ArrayList<Order> selectByCustomerIdAndStatusId(int customerId, int statusId) {
         ArrayList<Order> orders = new ArrayList<>();
         try {
