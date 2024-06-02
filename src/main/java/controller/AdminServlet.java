@@ -265,9 +265,11 @@ public class AdminServlet extends HttpServlet {
         HttpSession session = req.getSession();
         Customer customer = (Customer) session.getAttribute("customer_login");
         String productIdParam = req.getParameter("productId");
+        System.out.println("id product: " + productIdParam);
         String quatityParam = req.getParameter("quatity");
         int quatity = Integer.parseInt(quatityParam);
         Product product = productDao.selectById(Integer.parseInt(productIdParam));
+        System.out.println(product);
         if(quatity > 0){
             ImportProduct importProduct = new ImportProduct(product, Integer.parseInt(quatityParam),customer);
             importProductDao.insert(importProduct);

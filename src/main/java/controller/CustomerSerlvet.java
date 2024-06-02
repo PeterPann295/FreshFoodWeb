@@ -35,7 +35,7 @@ public class CustomerSerlvet extends HttpServlet {
     private PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
     private OrderDao orderDao = new OrderDao();
     private OrderItemDao orderItemDao = new OrderItemDao();
-
+    private ImportProductDao importProductDao = new ImportProductDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -70,6 +70,8 @@ public class CustomerSerlvet extends HttpServlet {
             selectAllProductsOnCart(req, resp);
         } else if (action.equals("updateQuantityOnCart")) {
             updateQuantityOnCart(req, resp);
+        } else if (action.equals("removeCartItem")) {
+            removeCartItem(req, resp);
         } else if (action.equals("goConfirmAddress")) {
             goConfirmAddress(req, resp);
         } else if (action.equals("confirmAddress")) {
@@ -322,7 +324,9 @@ public class CustomerSerlvet extends HttpServlet {
             // Cộng giá tất cả sản phẩm trong giỏ hàng
             prices = 0.0;
             for (CartItem cartItem : cartItems) {
-                prices += cartItem.getQuantity() * cartItem.getProduct().getFinalPrice();
+                if(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) > 0){
+                    prices += cartItem.getQuantity() * cartItem.getProduct().getFinalPrice();
+                }
             }
 
         } else {
@@ -356,7 +360,9 @@ public class CustomerSerlvet extends HttpServlet {
             }
         } else if (action.equals("plus")) {
             status = "update";
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
+            if(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) > cartItem.getQuantity()){
+                cartItem.setQuantity(cartItem.getQuantity() + 1);
+            }
             cartItemDao.update(cartItem);
         }
         int cartSize = cartDao.selectByCustomerId(customer.getId()).getCartItems().size();
@@ -369,27 +375,58 @@ public class CustomerSerlvet extends HttpServlet {
         jsonResponse.addProperty("priceUpdate", priceUpdate);
         resp.getWriter().write(gson.toJson(jsonResponse));
     }
-
+    private void removeCartItem(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) req.getSession().getAttribute("customer_login");
+        String cartIdParam = req.getParameter("cartId");
+        CartItem cartItem = cartItemDao.selectById(Integer.parseInt(cartIdParam));
+        cartItemDao.delete(cartItem);
+        int cartSize = cartDao.selectByCustomerId(customer.getId()).getCartItems().size();
+        JsonObject jsonResponse = new JsonObject();
+        Gson gson = new Gson();
+        jsonResponse.addProperty("cartSize", cartSize);
+        jsonResponse.addProperty("success", true);
+        resp.getWriter().write(gson.toJson(jsonResponse));
+    }
     private void goConfirmAddress(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String[] selectedProductIds = req.getParameterValues("selectedProducts");
         System.out.println(selectedProductIds.length);
+        boolean error = false;
+        String response = "";
+        ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+        HttpSession session = req.getSession();
         if (selectedProductIds != null) {
-            ArrayList<CartItem> cartItems = new ArrayList<CartItem>();
+
             for (String cartId : selectedProductIds) {
                 System.out.println("id" + cartId);
                 cartItems.add(cartItemDao.selectById(Integer.parseInt(cartId)));
             }
-            System.out.println("so san pham duoc chon:" + cartItems);
-            double totalPrice = 0;
-            double totalWeight = 0;
-            HttpSession session = req.getSession();
-            session.setAttribute("selectedCartItems", cartItems);
-        } else {
-            System.out.println("No products selected.");
+            for(CartItem cartItem: cartItems){
+                if(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) < cartItem.getQuantity()){
+                    error = true;
+                    response += cartItem.getProduct().getName() + " không đủ số lượng. ";
+                    cartItem.setQuantity(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()));
+                    cartItemDao.update(cartItem);
+                }
+            }
         }
-        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
-                + req.getContextPath();
-        resp.sendRedirect(link + "/customer/chonDiaChi.jsp");
+        System.out.println("toi dang o day voi error:" + error);
+        if(!error){
+            session.setAttribute("selectedCartItems", cartItems);
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/customer/chonDiaChi.jsp");
+        }else {
+            session.setAttribute("response", response);
+            session.setAttribute("selectedCartItems", cartItems);
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/customer/gioHang.jsp");
+        }
+
 
     }
 

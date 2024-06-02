@@ -6,6 +6,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <jsp:useBean id="productDAO" class="database.ProductDao" />
+<jsp:useBean id="importProduct" class="database.ImportProductDao" />
+<jsp:useBean id="orderDao" class="database.OrderDao"/>
 
 <!DOCTYPE html>
 <html>
@@ -43,9 +45,9 @@
                     <th scope="col"></th>
                     <th scope="col">Tên Sản Phẩm</th>
                     <th scope="col">Giá Bán</th>
-                    <th scope="col">Số lượng nhập</th>
-                    <th scope="col">Số lượng bán</th>
-                    <th scope="col">Trình trạng</th>
+                    <th scope="col">Số lượng đã nhập</th>
+                    <th scope="col">Số lượng đã bán</th>
+                    <th scope="col">Tồn kho </th>
                     <th scope="col"></th>
 
 
@@ -60,19 +62,10 @@
                                  src="${p.imageUrl}" alt="Logo" class="logo-image"></td>
                         <td>${p.name}</td>
                         <td><fmt:formatNumber value="${p.price}" type="currency"
-                                              currencyCode="VND" /></td>
-                        <td>${p.category.name}</td>
-                        <td>10</td>
-                        <td><c:choose>
-                            <c:when test="${p.available}">
-
-                                Còn Hàng
-
-                            </c:when>
-                            <c:otherwise>
-                                Hết Hàng
-                            </c:otherwise>
-                        </c:choose></td>
+                                              currencyCode="VND" minFractionDigits="0"  /></td>
+                        <td class="text-center align-middle">${importProduct.selectTotalQuatityImportByProductId(p.id)}</td>
+                        <td class="text-center align-middle">${orderDao.selectTotalProductSold(p.id)}</td>
+                        <td class="text-center align-middle">${importProduct.selectToTalProductInStock(p.id)}</td>
                         <td>
                             <div class="modal fade" id="import-${p.id}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -81,8 +74,9 @@
                                             <h1 class="modal-title fs-5" id="exampleModalToggleLabel"> Nhập số lượng sản phẩm muốn nhập  </h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <form action="../admin?action=importProduct&productId=${p.id}" method="post">
+                                        <form action="../admin?action=importProduct" method="post">
                                         <div class="modal-body">
+                                            <input type="hidden" name="productId" value="${p.id}">
                                             <h5 style="text-align: center"> Sản phẩm: ${p.name} <img style="width: 60px; height: 50px"
                                                                           src="${p.imageUrl}" alt="Logo" class="logo-image"> </h5>
                                             <label for="imgProduct" class="form-label">Số lượng: </label> <input type="number" class="form-control" id="imgProduct"

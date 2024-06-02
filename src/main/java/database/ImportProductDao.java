@@ -66,9 +66,34 @@ public class ImportProductDao implements IDao<ImportProduct>{
         }
         return importProducts;
     }
-
+    public int selectTotalQuatityImportByProductId(int productId){
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT SUM(quatity) AS total_quatity\n" +
+                    "FROM import_products WHERE product_id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, productId);
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()) {
+                return rs.getInt("total_quatity");
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public int selectToTalProductInStock(int productId){
+        OrderDao orderDao = new OrderDao();
+        return selectTotalQuatityImportByProductId(productId) - orderDao.selectTotalProductSold(productId);
+    }
     @Override
     public ImportProduct selectById(int id) {
         return null;
+    }
+
+    public static void main(String[] args) {
+        ImportProductDao importProductDao = new ImportProductDao();
+        System.out.println(importProductDao.selectTotalQuatityImportByProductId(7));
     }
 }
