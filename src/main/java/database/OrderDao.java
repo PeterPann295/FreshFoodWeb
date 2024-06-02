@@ -250,7 +250,26 @@ public class OrderDao extends AbsDao<Order>{
         }
         return orders;
     }
-
+    public int selectTotalProductSold(int productId){
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT SUM(oi.quantity) AS total_quantity_sold\n" +
+                    "FROM order_items oi\n" +
+                    "JOIN orders o ON oi.order_id = o.id\n" +
+                    "WHERE oi.product_id = ? AND o.status_id = ?;\n";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, productId);
+            pst.setInt(2, 4);
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()) {
+                return rs.getInt("total_quantity_sold");
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     public static void main(String[] args) {
         OrderDao orderDao = new OrderDao();
         System.out.println(orderDao.selectByCustomerId(1));

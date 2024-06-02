@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<jsp:useBean id="importProduct" class="database.ImportProductDao" />
 
 <!DOCTYPE html>
 <html>
@@ -87,8 +88,8 @@
 
 
             <tr>
-                <td>Tình Trạng</td>
-                <td>Còn hàng</td>
+                <td>Số lượng trong kho</td>
+                <td>${importProduct.selectToTalProductInStock(productDetail.id)}</td>
             </tr>
 
             <tr>
@@ -111,7 +112,7 @@
                             <a><i class="bi bi-dash icon"></i></a>
                         </button>
                         <input type="text" class="form-control text-center input-sm"
-                               id="numberInput" name="amount" value="1" min="1" size="1">
+                               id="numberInput" name="amount" value="1" min="1" size="1" readonly>
                         <button type="button" class="btn btn-info btn-sm"
                                 onclick="increment()">
                             <a><i class="bi bi-plus icon"></i></a>
@@ -123,13 +124,18 @@
 
             </tbody>
         </table>
-
+        <c:if test="${importProduct.selectToTalProductInStock(productDetail.id) > 0}">
         <button class="ms-1 btn btn-success add-to-cart-btn"
                 data-product-id="${productDetail.id}">
             <i class="bi bi-cart3"></i> Thêm Vào Giỏ
         </button>
-
-
+        </c:if>
+        <c:if test="${importProduct.selectToTalProductInStock(productDetail.id) < 1}">
+            <button class="ms-1 btn btn-secondary"
+                    >
+                <i class="bi bi-cart3"></i> Đã hết hàng
+            </button>
+        </c:if>
 
 
         <table class="table mt-4">

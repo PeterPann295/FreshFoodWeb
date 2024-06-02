@@ -9,10 +9,11 @@
 <jsp:useBean id="parentCategoryDAO" class="database.ParentCategoryDao"
              scope="page" />
 <jsp:useBean id="productDAO" class="database.ProductDao" scope="page" />
-
+<jsp:useBean id="importProduct" class="database.ImportProductDao" />
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <html>
@@ -138,7 +139,41 @@
 
     <div class="row" style="margin-left: 30px">
         			<c:forEach var="product" items="${productDAO.selectNewestProducts()}">
-        				<div class="col-lg-4 col-md-6 mb-4 mt-2"
+        				<c:if test="${importProduct.selectToTalProductInStock(product.id) < 1}" >
+						<div class="col-lg-4 col-md-6 mb-4 mt-2"
+							 style="width: 216px; height: 355px">
+									<div class="card">
+										<a href="customer?action=productDetail&productId=${product.id}"><img
+												class="card-img-top" src="${product.imageUrl}" alt="" style="filter: grayscale(1)"></a>
+										<div class="card-body">
+											<h5 class="card-title">
+												<a href="#" style="text-decoration: none">
+														${product.name} </a>
+											</h5>
+											<p class="mt-1">ĐVT: ${product.unit}</p>
+											<p>
+        										<span class="text-success"> <fmt:formatNumber
+														value="${product.getFinalPrice()}" type="currency"
+														currencyCode="VND" minFractionDigits="0" />
+        										</span> <span
+													style="text-decoration: line-through; padding-left: 5px">
+        											<fmt:formatNumber value="${product.price}" type="currency"
+																	  currencyCode="VND" minFractionDigits="0" />
+        										</span>
+											</p>
+											<span class="discount-percentage">
+        										Sold out  </span>
+											<button class="ms-1 btn btn-secondary"
+													data-product-id="${product.id}">
+												<i class="bi bi-cart3"></i> Đã hết hàng
+											</button>
+										</div>
+									</div>
+						</div>
+						</c:if>
+						<c:if test="${importProduct.selectToTalProductInStock(product.id) > 0}" >
+
+												<div class="col-lg-4 col-md-6 mb-4 mt-2"
         					style="width: 216px; height: 355px">
 
         					<c:choose>
@@ -201,6 +236,7 @@
         					</c:choose>
 
         				</div>
+						</c:if>
         			</c:forEach>
     </div>
 	<input type="hidden" id="amount" value="1">
