@@ -21,7 +21,7 @@ public class Log {
         this.user_id = user_id;
         this.time = new Timestamp(System.currentTimeMillis());
     }
-
+    public Log(){}
     public Log(int id, String action, String table, String level, String beforeData, String afterData, int user_id, Timestamp time) {
         this.id = id;
         this.action = action;

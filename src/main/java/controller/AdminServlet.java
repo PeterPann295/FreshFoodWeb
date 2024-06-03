@@ -30,6 +30,7 @@ public class AdminServlet extends HttpServlet {
     private OrderDao orderDao = new OrderDao();
     private OrderItemDao orderItemDao = new OrderItemDao();
     private ImportProductDao importProductDao = new ImportProductDao();
+    private LogDao logDao = new LogDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -52,6 +53,16 @@ public class AdminServlet extends HttpServlet {
             detailOrder(req, resp);
         } else if(action.equals("importProduct")){
             importProduct(req, resp);
+        } else if(action.equals("deleteLog")){
+            deleteLog(req, resp);
+        } else if(action.equals("detailLog")){
+            detailLog(req, resp);
+        } else if(action.equals("goUpdateProduct")){
+            goUpdateProduct(req, resp);
+        } else if(action.equals("updateProduct")){
+            updateProduct(req, resp);
+        } else if(action.equals("deleteProduct")){
+            deleteProduct(req, resp);
         }
 
 
@@ -197,7 +208,7 @@ public class AdminServlet extends HttpServlet {
         }
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
-        resp.sendRedirect(link + "/admin/danhMucCha.jsp");
+        resp.sendRedirect(link + "/admin/sanPham.jsp");
     }
     private void updateOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -278,5 +289,163 @@ public class AdminServlet extends HttpServlet {
                 + req.getContextPath();
         resp.sendRedirect(link + "/admin/nhapSanPham.jsp");
     }
+    private void deleteLog(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String[] logIdParam = req.getParameterValues("selectedLog");
+        for (String id: logIdParam){
+            logDao.deleteById(Integer.parseInt(id));
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/quanLyLog.jsp");
+    }
+    private void detailLog(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        String logIdParam = req.getParameter("logId");
+        Log log = logDao.selectById(Integer.parseInt(logIdParam));
+        HttpSession session = req.getSession();
+        session.setAttribute("log", log);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/chiTietLog.jsp");
+    }
+    private void goUpdateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String productIdParam = req.getParameter("productId");
+        Product product = productDao.selectById(Integer.parseInt(productIdParam));
+        HttpSession session = req.getSession();
+        session.setAttribute("product", product);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/capNhatSanPham.jsp");
 
-}
+    }
+    private void updateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+
+        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+        diskFileItemFactory.setRepository(new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp"));
+        ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
+
+        String productId = req.getParameter("productId");
+        Product product = productDao.selectById(Integer.parseInt(productId));
+        String productName = null;
+        double price = 0;
+        String unit = null;
+        double weight = 0;
+        String imgProduct = null;
+        boolean availables = false;
+        int categoryId = 0;
+        int discountId = 0;
+        String description = "";
+        int count = 0;
+        try {
+            List<FileItem> fileItems = fileUpload.parseRequest(req);
+            for (FileItem fileItem : fileItems) {
+                if (fileItem.isFormField()) { // Xử lý các trường thông tin không phải là file
+                    String fieldName = fileItem.getFieldName();
+                    String fieldValue = fileItem.getString("UTF-8"); // Lấy giá trị của trường dữ liệu
+                    System.out.println(fieldValue);
+                    switch (fieldName) {
+
+                        case "productName":
+                            productName = fieldValue;
+                            if(productName != null){
+                                product.setName(productName);
+                            }
+                            break;
+                        case "price":
+                            price = Double.parseDouble(fieldValue);
+                            if(price > 0){
+                                product.setPrice(price);
+                            }
+                            break;
+                        case "unit":
+                            unit = fieldValue;
+                            if(unit != null){
+                                product.setUnit(unit);
+                            }
+                            break;
+                        case "weight":
+                            weight = Double.parseDouble(fieldValue);
+                            if(weight > 0){
+                                product.setWeight(weight);
+                            }
+                            break;
+
+                        case "availables":
+                            availables = Boolean.parseBoolean(fieldValue);
+                            product.setAvailable(availables);
+                            break;
+                        case "category":
+                            categoryId = Integer.parseInt(fieldValue);
+                            product.setCategory(categoryDao.selectById(categoryId));
+                            break;
+                        case "discount":
+                            if(fieldValue.equals("none")){
+                                product.setDiscount(null);
+                                break;
+                            }
+                            discountId = Integer.parseInt(fieldValue);
+                            product.setDiscount(discountDao.selectById(discountId));
+                            break;
+                        case "description":
+                            description = fieldValue;
+                            if (description != null){
+                                product.setDescription(description);
+                            }
+                            break;
+                        default:
+
+                    }
+                } else {
+                    if ("imgProduct".equals(fileItem.getFieldName())) {
+                        String fileName = fileItem.getName();
+                        if(fileName != null && !fileName.isEmpty()){
+                            File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/products/" + fileName);
+                            fileItem.write(file);
+                            imgProduct = "/assets/images/products/" + fileName;
+                        }
+                    }
+
+                }
+            }
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+        if(imgProduct != null){
+            product.setImageUrl(imgProduct);
+        }
+        productDao.update(product);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/sanPham.jsp");
+
+
+    }
+    private void deleteProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String productIdParam = req.getParameter("productId");
+        Product product = productDao.selectById(Integer.parseInt(productIdParam));
+        HttpSession session = req.getSession();
+        if(productDao.delete(product) < 1){
+            session.setAttribute("response", "Không thể xóa sản phẩm");
+        }else{
+            session.setAttribute("response", "Xóa sản phẩm thành công");
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/sanPham.jsp");
+    }
+
+    }

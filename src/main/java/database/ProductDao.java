@@ -47,6 +47,59 @@ public class ProductDao extends AbsDao<Product> {
     }
 
     @Override
+    public int update(Product product) {
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "UPDATE products SET name = ?, description = ?, price = ?, imageUrl = ?, unit = ?, weight = ?, available = ?, category_id = ?, discount_id = ? WHERE id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+
+            pst.setString(1, product.getName());
+            pst.setString(2, product.getDescription());
+            pst.setDouble(3, product.getPrice());
+            pst.setString(4, product.getImageUrl());
+            pst.setString(5, product.getUnit());
+            pst.setDouble(6, product.getWeight());
+            pst.setBoolean(7, product.isAvailable());
+            pst.setInt(8, product.getCategory().getId());
+            if(product.getDiscount() != null) {
+                pst.setInt(9, product.getDiscount().getId());
+            } else {
+                pst.setNull(9, Types.INTEGER);
+            }
+            pst.setInt(10, product.getId());
+
+            int i = pst.executeUpdate();
+            if(i > 0) {
+                super.update(product);
+            }
+            JDBCUtil.closeConnection(con);
+            return i;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public int delete(Product product) {
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "delete from products where id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, product.getId());
+            int i = pst.executeUpdate();
+            if(i > 0) {
+                super.delete(product);
+            }
+            JDBCUtil.closeConnection(con);
+            return i;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
     public ArrayList<Product> selectAll() {
         ArrayList<Product> products = new ArrayList<>();
         try {

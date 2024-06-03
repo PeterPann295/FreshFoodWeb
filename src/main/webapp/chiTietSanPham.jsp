@@ -112,7 +112,7 @@
                             <a><i class="bi bi-dash icon"></i></a>
                         </button>
                         <input type="text" class="form-control text-center input-sm"
-                               id="numberInput" name="amount" value="1" min="1" size="1" readonly>
+                               id="numberInput" name="amount" value="1" min="1" size="1" max="${importProduct.selectToTalProductInStock(productDetail.id)}" readonly>
                         <button type="button" class="btn btn-info btn-sm"
                                 onclick="increment()">
                             <a><i class="bi bi-plus icon"></i></a>
@@ -248,7 +248,11 @@
     function increment() {
         var inputElement = document.getElementById('numberInput');
         var currentValue = parseInt(inputElement.value, 10);
-        inputElement.value = currentValue + 1;
+        var maxValue = parseInt(inputElement.max);
+
+        if (currentValue < maxValue) {
+            inputElement.value = currentValue + 1;
+        }
     };
 
     function decrement() {
