@@ -139,7 +139,7 @@ public class Customer implements IModel {
 
         @Override
         public String table() {
-            return "Customers";
+            return "customers";
         }
 
         @Override
