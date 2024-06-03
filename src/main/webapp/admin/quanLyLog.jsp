@@ -18,6 +18,7 @@
             vertical-align: middle; /* Căn giữa theo chiều dọc */
         }
     </style>
+    <jsp:include page="layouts/cssDatatable.jsp" />
 </head>
 <body>
 
@@ -36,7 +37,7 @@
 
                 </div>
             </div>
-            <table class="table">
+            <table class="table" id="tableLog">
                 <thead>
                 <tr>
                     <th class="text-center"><input type="checkbox" id="selectAll" class="log-checkbox"></th>
@@ -46,7 +47,9 @@
                     <th scope="col"> Table </th>
                     <th scope="col"> Thời gian </th>
                     <th scope="col"></th>
-
+                    <th>Customer Id</th>
+                    <th>Before Data</th>
+                    <th>After Data</th>
 
                 </tr>
                 </thead>
@@ -84,6 +87,9 @@
                                 Chi tiết </button>
                         </a>
                     </td>
+                        <td> ${p.user_id} </td>
+                        <td> ${p.beforeData} </td>
+                        <td> ${p.afterData} </td>
 
                     </tr>
                 </c:forEach>
@@ -94,6 +100,54 @@
         </main>
     </div>
 </div>
+<jsp:include page="layouts/jsDatatable.jsp" />
+<script>
+    new DataTable('#tableLog', {
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: ':not(:eq(6))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: ':not(:eq(6))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:eq(6))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:eq(6))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':not(:eq(6))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+
+                ]
+            }
+        },
+        columnDefs: [
+            { targets: [0,6], orderable: false },
+            { "targets": [7,8,9], "visible": false }// Xét ordering cho cột thứ 6 (số thứ tự là 5)
+        ]
+    });
+
+</script>
+
 <script>
     // Hàm này được gọi khi checkbox "Select All" được nhấn
     function toggleSelectAll() {

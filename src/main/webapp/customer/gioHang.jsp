@@ -16,7 +16,6 @@
 <jsp:useBean id="importProduct" class="database.ImportProductDao" />
 <html>
 <head>
-    <%@ include file="/layouts/common.jsp"%>
     <style>
         .size {
             width: 100px;

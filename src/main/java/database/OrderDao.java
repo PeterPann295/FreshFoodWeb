@@ -3,11 +3,9 @@ package database;
 import model.Order;
 import model.OrderItem;
 import utils.JDBCUtil;
+import utils.OrderSummary;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class OrderDao extends AbsDao<Order>{
@@ -270,9 +268,29 @@ public class OrderDao extends AbsDao<Order>{
         }
         return 0;
     }
+    public ArrayList<OrderSummary> getTotalRevenue7Days(){
+        ArrayList<OrderSummary> orders = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT DATE(time_order) AS order_date, SUM(total) AS total_amount " +
+                    "FROM orders " +
+                    "WHERE status_id = 4 " +
+                    "GROUP BY DATE(time_order)";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while(rs.next()) {
+                Date orderDate = rs.getDate("order_date");
+                double totalAmount = rs.getDouble("total_amount");
+                orders.add(new OrderSummary(orderDate, totalAmount));
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
+    }
     public static void main(String[] args) {
         OrderDao orderDao = new OrderDao();
-        System.out.println(orderDao.selectByCustomerId(1));
-        System.out.println(orderDao.selectByCustomerIdAndStatusId(1,1));
+        System.out.println(orderDao.getTotalRevenue7Days().size());
     }
 }

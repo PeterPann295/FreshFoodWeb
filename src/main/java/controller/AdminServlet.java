@@ -1,10 +1,13 @@
 package controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import database.*;
 import model.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import utils.OrderSummary;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -70,6 +73,8 @@ public class AdminServlet extends HttpServlet {
             updateCustomer(req, resp);
         } else if(action.equals("deleteCustomer")){
             deleteCustomer(req, resp);
+        } else if(action.equals("getTotalRevenue7Days")){
+            getTotalRevenue7Days(req, resp);
         }
 
 
@@ -513,5 +518,13 @@ public class AdminServlet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort();
         resp.sendRedirect(link + "/admin/khachHang.jsp");
     }
-
+    private void getTotalRevenue7Days(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        ArrayList<OrderSummary> orderSummaries = orderDao.getTotalRevenue7Days();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(orderSummaries);
+        resp.getWriter().write(json);
+    }
     }
