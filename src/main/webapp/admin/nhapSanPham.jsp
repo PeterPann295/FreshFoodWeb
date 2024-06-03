@@ -19,6 +19,8 @@
             vertical-align: middle; /* Căn giữa theo chiều dọc */
         }
     </style>
+    <jsp:include page="layouts/cssDatatable.jsp" />
+
 </head>
 <body>
 
@@ -37,7 +39,7 @@
                     </a>
                 </div>
             </div>
-            <table class="table">
+            <table class="table" id="tableImportProduct">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -87,7 +89,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button class="btn btn-success" data-bs-target="#import-${p.id}" data-bs-toggle="modal">Nhập Hàng</button>
+                            <button class="btn btn-success" data-bs-target="#import-${p.id}" data-bs-toggle="modal"><i class="bi bi-plus-lg"></i></button>
                         </td>
                     </tr>
 
@@ -99,6 +101,52 @@
         </main>
     </div>
 </div>
+<jsp:include page="layouts/jsDatatable.jsp" />
+<script>
+    new DataTable('#tableImportProduct', {
+        layout: {
+            topStart: {
+                buttons: [
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: ':not(:eq(7))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: ':not(:eq(7))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:eq(7))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:eq(7))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':not(:eq(7))' // xuất tất cả các cột trừ cột thứ 6
+                        }
+                    },
+
+                ]
+            }
+        },
+        columnDefs: [
+            { targets: 7, orderable: false } ,
+        ]
+    });
+</script>
+
 
 </body>
 </html>

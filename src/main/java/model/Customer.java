@@ -13,7 +13,8 @@ public class Customer implements IModel {
         private String provider_user_id;
         private String beforeData;
 
-        public Customer(){}
+        public Customer(){
+        }
 
         public Customer(int id, String username, String password, String fullName, String email, String numberPhone, boolean role) {
             this.id = id;
@@ -108,23 +109,23 @@ public class Customer implements IModel {
             this.role = role;
         }
 
-    public String getProvider() {
+        public String getProvider() {
         return provider;
     }
 
-    public void setProvider(String provider) {
+        public void setProvider(String provider) {
         this.provider = provider;
     }
 
-    public String getProvider_user_id() {
+        public String getProvider_user_id() {
         return provider_user_id;
     }
 
-    public void setProvider_user_id(String provider_user_id) {
+        public void setProvider_user_id(String provider_user_id) {
         this.provider_user_id = provider_user_id;
     }
 
-    @Override
+        @Override
         public String toString() {
             return "Customer{" +
                     "id=" + id +
@@ -147,7 +148,11 @@ public class Customer implements IModel {
             return beforeData;
         }
 
-        @Override
+    public void setBeforeData(String beforeData) {
+        this.beforeData = beforeData;
+    }
+
+    @Override
         public String afterData() {
             return toString();
         }
