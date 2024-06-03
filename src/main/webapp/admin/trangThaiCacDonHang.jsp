@@ -40,7 +40,7 @@ if (status == null) {
             <div class="container">
                 <ul class="nav nav-pills mb-3 mt-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="a" href="../admin?action=getOrderStatus&status=0"><button class="nav-link <%= (status == 0) ? "active" : "" %>" id="all-orders" data-bs-toggle="pill"  type="button" role="tab" aria-controls="all-orders" aria-selected="false">Tất cả đơn hàng  </button></a>
+                        <a class="a" href="donHang.jsp"><button class="nav-link <%= (status == 0) ? "active" : "" %>" id="all-orders" data-bs-toggle="pill"  type="button" role="tab" aria-controls="all-orders" aria-selected="false">Tất cả đơn hàng  </button></a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="a" href="../admin?action=getOrderStatus&status=1"><button class="nav-link <%= (status == 1) ? "active" : "" %>" id="pending-orders" data-bs-toggle="pill" type="button" role="tab" aria-controls="pending-orders" aria-selected="true"> Chờ xác nhận  </button></a>
@@ -96,7 +96,7 @@ if (status == null) {
                                             <td class="text-center align-middle"><fmt:formatDate value="${p.date}" pattern="dd/MM/yyyy" /></td>
                                             <td class="text-center align-middle"> ${p.status.name} </td>
                                             <td class="text-center align-middle"><b><fmt:formatNumber value="${p.total}"
-                                                                                                      type="currency" currencyCode="VND" /></b></td>
+                                                                                                      type="currency" currencyCode="VND" minFractionDigits="0"/></b></td>
                                             <td class="text-center align-middle"> <a class="a" href="../admin?action=detailOrder&orderId=${p.id}"><button class="btn btn-success"> Chi tiết </button></a>
                                                 <c:if test="${p.status.id == 3}">
                                                     <a class="a" href="../admin?action=updateOrder&status=4&orderId=${p.id}"><button class="btn btn-success"> Đã giao hàng </button></a>

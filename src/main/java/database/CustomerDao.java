@@ -41,17 +41,78 @@ public class CustomerDao extends AbsDao<Customer> {
 
     @Override
     public int update(Customer customer) {
-        return super.update(customer);
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "UPDATE Customers SET username = ?, password = ?, fullName = ?, numberPhone = ?, email = ?, role = ?, provider = ?, provider_user_id = ? WHERE id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setNString(1, customer.getUsername());
+            pst.setNString(2, customer.getPassword());
+            pst.setNString(3, customer.getFullName());
+            pst.setNString(4, customer.getNumberPhone());
+            pst.setNString(5, customer.getEmail());
+            pst.setBoolean(6, customer.isRole());
+            pst.setNString(7, customer.getProvider());
+            pst.setNString(8, customer.getProvider_user_id());
+            pst.setInt(9, customer.getId()); // Thiết lập giá trị cho customerId để xác định bản ghi cần cập nhật
+            int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+            if (i > 0) {
+                super.update(customer);
+                return i;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override
     public int delete(Customer customer) {
-        return super.delete(customer);
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "DELETE FROM Customers WHERE id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, customer.getId());
+            int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+            if (i > 0) {
+                super.delete(customer);
+                return i;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override
     public ArrayList<Customer> selectAll() {
-        return super.selectAll();
+        ArrayList<Customer> customers = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from customers";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Customer customer = new Customer();
+                customer = new Customer();
+                customer.setId(rs.getInt("id"));
+                customer.setUsername(rs.getString("username"));
+                customer.setPassword(rs.getString("password"));
+                customer.setFullName(rs.getString("fullName"));
+                customer.setNumberPhone(rs.getString("numberPhone"));
+                customer.setEmail(rs.getString("email"));
+                customer.setRole(rs.getBoolean("role"));
+                customer.setProvider(rs.getString("provider"));
+                customer.setProvider_user_id(rs.getString("provider_user_id"));
+                customers.add(customer);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
     }
 
     @Override
@@ -74,6 +135,7 @@ public class CustomerDao extends AbsDao<Customer> {
                 customer.setRole(rs.getBoolean("role"));
                 customer.setProvider(rs.getString("provider"));
                 customer.setProvider_user_id(rs.getString("provider_user_id"));
+                customer.setBeforeData(customer.toString());
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
@@ -88,7 +150,6 @@ public class CustomerDao extends AbsDao<Customer> {
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, username);
             ResultSet rs = pst.executeQuery();
-            JDBCUtil.closeConnection(con);
             return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -151,6 +212,11 @@ public class CustomerDao extends AbsDao<Customer> {
             e.printStackTrace();
         }
         return c;
+    }
+
+    public static void main(String[] args) {
+        CustomerDao customerDao = new CustomerDao();
+        System.out.println(customerDao.selectById(1).beforeData());
     }
 
 }

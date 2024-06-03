@@ -31,6 +31,7 @@ public class AdminServlet extends HttpServlet {
     private OrderItemDao orderItemDao = new OrderItemDao();
     private ImportProductDao importProductDao = new ImportProductDao();
     private LogDao logDao = new LogDao();
+    private CustomerDao customerDao = new CustomerDao();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -63,6 +64,12 @@ public class AdminServlet extends HttpServlet {
             updateProduct(req, resp);
         } else if(action.equals("deleteProduct")){
             deleteProduct(req, resp);
+        } else if(action.equals("goUpdateCustomer")){
+            goUpdateCustomer(req, resp);
+        } else if(action.equals("updateCustomer")){
+            updateCustomer(req, resp);
+        } else if(action.equals("deleteCustomer")){
+            deleteCustomer(req, resp);
         }
 
 
@@ -446,6 +453,65 @@ public class AdminServlet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/admin/sanPham.jsp");
+    }
+    private void goUpdateCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String customerIdParam = req.getParameter("customerId");
+        System.out.println("id: " + customerIdParam);
+        Customer customer = customerDao.selectById(Integer.parseInt(customerIdParam));
+        HttpSession session = req.getSession();
+        session.setAttribute("updateCustomer", customer);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/capNhatKhachHang.jsp");
+    }
+    private void updateCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String customerIdParam = req.getParameter("customerId");
+        String fullName = req.getParameter("fullName");
+        String phone = req.getParameter("numberPhone");
+        String email = req.getParameter("email");
+        Customer customer = customerDao.selectById(Integer.parseInt(customerIdParam));
+        System.out.println(fullName + phone + email);
+        if(fullName != null && !fullName.isEmpty()){
+            customer.setFullName(fullName);
+        }
+        if(phone != null && !phone.isEmpty()){
+            customer.setNumberPhone(phone);
+        }
+        if(email != null && !email.isEmpty()){
+            customer.setEmail(email);
+        }
+        System.out.println(customer);
+        HttpSession session = req.getSession();
+        int i = customerDao.update(customer);
+        if( i > 0){
+            session.setAttribute("response", "Cập Nhật Thành Công ");
+        }else {
+            session.setAttribute("response", "Cập Nhật Thất Bại ");
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort();
+        resp.sendRedirect(link + "/admin/khachHang.jsp");
+    }
+    private void deleteCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String customerIdParam = req.getParameter("customerId");
+        Customer customer = customerDao.selectById(Integer.parseInt(customerIdParam));
+        HttpSession session = req.getSession();
+
+        if(customerDao.delete(customer) < 1){
+            session.setAttribute("response", "Xóa Thất Bại ");
+        }else {
+            session.setAttribute("response", "Xóa Thành Công ");
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort();
+        resp.sendRedirect(link + "/admin/khachHang.jsp");
     }
 
     }
