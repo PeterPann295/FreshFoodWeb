@@ -356,6 +356,83 @@ public class ProductDao extends AbsDao<Product> {
         }
         return products;
     }
+    public ArrayList<Product> selectByNameProduct(String nameProduct) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM products WHERE name like ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, "%" +nameProduct + "%");
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+
+                DiscountDao discountDao = new DiscountDao();
+                Discount discount = discountDao.selectById(discountId);
+
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
+                products.add(product);
+            }
+            JDBCUtil.closeConnection(con);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+    public ArrayList<Product> selectProductsByParentCategoryId(int parentId) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT p.*\n" +
+                    "FROM products p\n" +
+                    "JOIN categories c ON p.category_id = c.id\n" +
+                    "JOIN parentcategories pc ON c.id_parent = pc.id\n" +
+                    "WHERE pc.id = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, parentId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+
+                DiscountDao discountDao = new DiscountDao();
+                Discount discount = discountDao.selectById(discountId);
+
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
+                products.add(product);
+            }
+            JDBCUtil.closeConnection(con);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+
 
 
     public static void main(String[] args) {

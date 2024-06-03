@@ -36,6 +36,7 @@ public class CustomerSerlvet extends HttpServlet {
     private OrderDao orderDao = new OrderDao();
     private OrderItemDao orderItemDao = new OrderItemDao();
     private ImportProductDao importProductDao = new ImportProductDao();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -90,8 +91,12 @@ public class CustomerSerlvet extends HttpServlet {
             detailOrder(req, resp);
         } else if (action.equals("productDetail")) {
             productDetail(req, resp);
-        } else if(action.equals("filterProduct")){
+        } else if (action.equals("filterProduct")) {
             filterProduct(req, resp);
+        } else if (action.equals("searchByNameProduct")) {
+            searchByNameProduct(req, resp);
+        } else if (action.equals("searchByParentCategory")) {
+            searchByParentCategory(req, resp);
         }
     }
 
@@ -324,7 +329,7 @@ public class CustomerSerlvet extends HttpServlet {
             // Cộng giá tất cả sản phẩm trong giỏ hàng
             prices = 0.0;
             for (CartItem cartItem : cartItems) {
-                if(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) > 0){
+                if (importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) > 0) {
                     prices += cartItem.getQuantity() * cartItem.getProduct().getFinalPrice();
                 }
             }
@@ -360,7 +365,7 @@ public class CustomerSerlvet extends HttpServlet {
             }
         } else if (action.equals("plus")) {
             status = "update";
-            if(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) > cartItem.getQuantity()){
+            if (importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) > cartItem.getQuantity()) {
                 cartItem.setQuantity(cartItem.getQuantity() + 1);
             }
             cartItemDao.update(cartItem);
@@ -375,6 +380,7 @@ public class CustomerSerlvet extends HttpServlet {
         jsonResponse.addProperty("priceUpdate", priceUpdate);
         resp.getWriter().write(gson.toJson(jsonResponse));
     }
+
     private void removeCartItem(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
@@ -391,6 +397,7 @@ public class CustomerSerlvet extends HttpServlet {
         jsonResponse.addProperty("success", true);
         resp.getWriter().write(gson.toJson(jsonResponse));
     }
+
     private void goConfirmAddress(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String[] selectedProductIds = req.getParameterValues("selectedProducts");
         System.out.println(selectedProductIds.length);
@@ -404,8 +411,8 @@ public class CustomerSerlvet extends HttpServlet {
                 System.out.println("id" + cartId);
                 cartItems.add(cartItemDao.selectById(Integer.parseInt(cartId)));
             }
-            for(CartItem cartItem: cartItems){
-                if(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) < cartItem.getQuantity()){
+            for (CartItem cartItem : cartItems) {
+                if (importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()) < cartItem.getQuantity()) {
                     error = true;
                     response += cartItem.getProduct().getName() + " không đủ số lượng. ";
                     cartItem.setQuantity(importProductDao.selectToTalProductInStock(cartItem.getProduct().getId()));
@@ -414,12 +421,12 @@ public class CustomerSerlvet extends HttpServlet {
             }
         }
         System.out.println("toi dang o day voi error:" + error);
-        if(!error){
+        if (!error) {
             session.setAttribute("selectedCartItems", cartItems);
             String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                     + req.getContextPath();
             resp.sendRedirect(link + "/customer/chonDiaChi.jsp");
-        }else {
+        } else {
             session.setAttribute("response", response);
             session.setAttribute("selectedCartItems", cartItems);
             String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
@@ -657,5 +664,34 @@ public class CustomerSerlvet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         out.write(json);
         out.flush();
+    }
+
+    private void searchByNameProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+
+        String nameProduct = req.getParameter("nameProduct");
+        System.out.println(nameProduct);
+        ArrayList<Product> products = prodDao.selectByNameProduct(nameProduct);
+        HttpSession session = req.getSession();
+        session.setAttribute("searchProduct", products);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/timKiemSanPham.jsp");
+    }
+
+    private void searchByParentCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+
+        String parentCateId = req.getParameter("parentCateId");
+        ArrayList<Product> products = prodDao.selectProductsByParentCategoryId(Integer.parseInt(parentCateId));
+        HttpSession session = req.getSession();
+        session.setAttribute("searchProduct", products);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/timKiemSanPham.jsp");
     }
 }

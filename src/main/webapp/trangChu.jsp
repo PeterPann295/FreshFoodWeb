@@ -121,7 +121,7 @@
         					style="width: 160px; height: 150px">
         					<div class="card h-110">
         						<a
-        							href="bolocsanpham?parentCategoryID=${p.id}&hanhDong=parent-category"
+        							href="customer?action=searchByParentCategory&parentCateId=${p.id}"
         							style="text-decoration: none" class="text-success"><img
         							class="card-img-top" src="${p.imageURL}" alt="">
         							<div class="card-body">

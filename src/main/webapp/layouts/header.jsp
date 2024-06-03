@@ -51,8 +51,8 @@
                 <li><a href="#" class="nav-link px-2 text-white">Liên Hệ</a></li>
             </ul>
 
-            <form action="bolocsanpham" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                <input type="hidden" name="hanhDong" value="name">
+            <form action="../customer?action=searchByNameProduct" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="post">
+
                 <input type="search"
                        class="form-control form-control-dark text-bg-white"
                        placeholder="Tên thực phẩm..." aria-label="Search" name="nameProduct">
