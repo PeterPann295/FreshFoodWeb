@@ -13,7 +13,6 @@ public class Product implements IModel {
     private Category category;
     private Discount discount;
     private String beforeData;
-
     public Product() {}
 
     public Product(String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
@@ -28,6 +27,7 @@ public class Product implements IModel {
         this.discount = discount;
         this.beforeData = toString();
     }
+
     public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, Discount discount) {
         this.id = id;
         this.name = name;
@@ -39,31 +39,6 @@ public class Product implements IModel {
         this.available = available;
         this.category = category;
         this.discount = discount;
-        this.beforeData = toString();
-    }
-
-    public Product(int id, String name, String description, double price, String imageUrl, String unit, double weight, boolean available, Category category, String beforeData) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.unit = unit;
-        this.weight = weight;
-        this.available = available;
-        this.category = category;
-        this.beforeData = beforeData;
-    }
-
-    public Product(String productName, String description, double price, String imgProduct, String unit, double weight, boolean availables, Category category) {
-        this.name = productName;
-        this.description = description;
-        this.price = price;
-        this.imageUrl = imgProduct;
-        this.unit = unit;
-        this.weight = weight;
-        this.available = availables;
-        this.category = category;
         this.beforeData = toString();
     }
 
@@ -131,8 +106,6 @@ public class Product implements IModel {
         this.available = available;
     }
 
-
-
     public Category getCategory() {
         return category;
     }
@@ -164,10 +137,9 @@ public class Product implements IModel {
                 ", discount=" + discount +
                 '}';
     }
-
     @Override
     public String table() {
-        return "Products";
+        return "products";
     }
 
     @Override
@@ -179,7 +151,6 @@ public class Product implements IModel {
     public String afterData() {
         return toString();
     }
-
     public double getFinalPrice() {
         if (discount != null) {
             double pc = (double) discount.getPercent() / 100;
@@ -189,4 +160,5 @@ public class Product implements IModel {
             return price;
         }
     }
+
 }

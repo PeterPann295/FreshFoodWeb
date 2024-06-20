@@ -86,11 +86,13 @@ public class CartDao implements IDao<Cart>{
             pst.setInt(1, customer_id);
             ResultSet rs = pst.executeQuery();
             CustomerDao cusDao = new CustomerDao();
+            CartItemDao ciDao = new CartItemDao();
             while(rs.next()) {
                 int cartId = rs.getInt("id");
                 Customer cus = cusDao.selectById(rs.getInt("customer_id"));
                 double totalPrice = rs.getFloat("totalPrice");
                 cart = new Cart(cartId, cus, totalPrice);
+                cart.setCartItems(ciDao.selectCartItemsByCartId(cartId));
             }
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {
@@ -119,5 +121,11 @@ public class CartDao implements IDao<Cart>{
             e.printStackTrace();
         }
         return cart;
+    }
+
+    public static void main(String[] args) {
+        CartDao cartDao = new CartDao();
+        System.out.println(cartDao.selectByCustomerId(1).getCartItems().size()
+        );
     }
 }

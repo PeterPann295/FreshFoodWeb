@@ -43,21 +43,25 @@ public class CustomerDao extends AbsDao<Customer> {
     public int update(Customer customer) {
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "Update Customers set  fullName=?, numberPhone=?, email=?, role=? where id=?";
+            String sql = "UPDATE Customers SET username = ?, password = ?, fullName = ?, numberPhone = ?, email = ?, role = ?, provider = ?, provider_user_id = ? WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
-            pst.setNString(1, customer.getFullName());
-            pst.setNString(2, customer.getNumberPhone());
-            pst.setNString(3, customer.getEmail());
-            pst.setBoolean(4, customer.isRole());
-            pst.setInt(5, customer.getId());
-
+            pst.setNString(1, customer.getUsername());
+            pst.setNString(2, customer.getPassword());
+            pst.setNString(3, customer.getFullName());
+            pst.setNString(4, customer.getNumberPhone());
+            pst.setNString(5, customer.getEmail());
+            pst.setBoolean(6, customer.isRole());
+            pst.setNString(7, customer.getProvider());
+            pst.setNString(8, customer.getProvider_user_id());
+            pst.setInt(9, customer.getId()); // Thiết lập giá trị cho customerId để xác định bản ghi cần cập nhật
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             if (i > 0) {
                 super.update(customer);
-                JDBCUtil.closeConnection(con);
                 return i;
             }
-        } catch (SQLException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
@@ -67,16 +71,16 @@ public class CustomerDao extends AbsDao<Customer> {
     public int delete(Customer customer) {
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "Delete from Customers Where id=?";
+            String sql = "DELETE FROM Customers WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, customer.getId());
             int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
             if (i > 0) {
                 super.delete(customer);
-                JDBCUtil.closeConnection(con);
                 return i;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
@@ -87,20 +91,21 @@ public class CustomerDao extends AbsDao<Customer> {
         ArrayList<Customer> customers = new ArrayList<>();
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "Select * from Customers";
+            String sql = "Select * from customers";
             PreparedStatement pst = con.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String username = rs.getNString("username");
-                String password = rs.getNString("password");
-                String fullName = rs.getNString("fullName");
-                String numberPhone = rs.getNString("numberPhone");
-                String email = rs.getNString("email");
-                boolean role = rs.getBoolean("role");
-                String provider = rs.getNString("provider");
-                String provider_user_id = rs.getNString("provider_user_id");
-                Customer customer = new Customer(id, username, password, fullName, numberPhone, email, role, provider, provider_user_id);
+                Customer customer = new Customer();
+                customer = new Customer();
+                customer.setId(rs.getInt("id"));
+                customer.setUsername(rs.getString("username"));
+                customer.setPassword(rs.getString("password"));
+                customer.setFullName(rs.getString("fullName"));
+                customer.setNumberPhone(rs.getString("numberPhone"));
+                customer.setEmail(rs.getString("email"));
+                customer.setRole(rs.getBoolean("role"));
+                customer.setProvider(rs.getString("provider"));
+                customer.setProvider_user_id(rs.getString("provider_user_id"));
                 customers.add(customer);
             }
             JDBCUtil.closeConnection(con);
@@ -109,7 +114,6 @@ public class CustomerDao extends AbsDao<Customer> {
         }
         return customers;
     }
-
 
     @Override
     public Customer selectById(int id) {
@@ -131,6 +135,7 @@ public class CustomerDao extends AbsDao<Customer> {
                 customer.setRole(rs.getBoolean("role"));
                 customer.setProvider(rs.getString("provider"));
                 customer.setProvider_user_id(rs.getString("provider_user_id"));
+                customer.setBeforeData(customer.toString());
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
@@ -145,7 +150,6 @@ public class CustomerDao extends AbsDao<Customer> {
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, username);
             ResultSet rs = pst.executeQuery();
-            JDBCUtil.closeConnection(con);
             return rs.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -210,23 +214,9 @@ public class CustomerDao extends AbsDao<Customer> {
         return c;
     }
 
-    public void updateRole(Customer customer, int role) {
-        try {
-            Connection con = JDBCUtil.getConnection();
-            String sql = "Update Customers set role=? where id=?";
-            PreparedStatement pst = con.prepareStatement(sql);
-            pst.setInt(1, role);
-            pst.setInt(2, customer.getId());
-            pst.executeUpdate();
-            JDBCUtil.closeConnection(con);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(String[] args) {
         CustomerDao customerDao = new CustomerDao();
-        Customer customer = customerDao.selectById(1);
-        customerDao.updateRole(customer, 1);
+        System.out.println(customerDao.selectById(1).beforeData());
     }
+
 }

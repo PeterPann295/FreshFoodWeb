@@ -14,7 +14,7 @@
 <%@ include file="layouts/header.jsp" %>
 
 <div class="container_form content">
-    <form action="customer?action=login" method="post" class="form-container">
+    <form action="customer?action=login" id="form-login"  method="post" class="form-container">
         <h1 class="text-center mb-3 text-success ">
             Đăng Nhập <a href="#" class="logo-link"> <img
                 style="width: 60px; height: 60px" src="assets/images/rau.png" alt="Logo"
@@ -26,14 +26,21 @@
         <div class="form-group mb-2">
             <label class="margin-label" for="username">Tên đăng nhập:</label> <input
                 type="text" class="form-control" id="username" name="username"
-                placeholder="Nhập tên đăng nhập">
+                placeholder="Nhập tên đăng nhập" required>
+            <div id="error-username" style="color: red"></div>
         </div>
         <div class="form-group mb-2">
             <label class="margin-label" for="password">Mật khẩu:</label> <input
                 type="password" class="form-control" id="password" name="password"
-                placeholder="Nhập mật khẩu">
+                placeholder="Nhập mật khẩu" required>
+            <div id="error-password" style="color: red"></div>
+
         </div>
-        <button type="submit" style="height: 47.33px" class="btn btn-primary mb-2 margin-button">Đăng
+        <div class="g-recaptcha " style=""
+             data-sitekey="6LeIwO8pAAAAAORhIO7KFhVarndvrRWaZSN_PUYm"
+        > </div>
+        <div id="errorCaptcha" style="color: red"></div>
+              <button type="button" onclick="checkCaptcha()" style="height: 47.33px" class="btn btn-primary mb-2 margin-button">Đăng
             Nhập
         </button>
         <div>
@@ -64,6 +71,32 @@
     </form>
 </div>
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/vi_VN/sdk.js"></script>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
+<script>
+    function checkCaptcha() {
+        var form_login = document.getElementById("form-login");
+        var error = document.getElementById("errorCaptcha");
+        var error_username = document.getElementById("error-username");
+        var error_password = document.getElementById("error-password");
+
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        if(grecaptcha.getResponse().length !== 0){
+            if(username.length < 8){
+                error_username.textContent = "Tên người dùng phải có ít nhất 8 ký tự.";
+            }else if(password.length < 8){
+                error_password.textContent = "Mật khẩu phải có ít nhất 8 ký tự.";
+            }else{
+                form_login.submit();
+            }
+        }else {
+            error.textContent = "Vui lòng hãy xác nhận mình không phải là robot.";
+        }
+    }
+
+</script>
 </body>
 <footer>
     <%@ include file="layouts/footer.jsp" %>

@@ -2,6 +2,7 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page isELIgnored="false"%>
+<jsp:useBean id="cartSize" class="database.CartDao" scope="page"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,11 +23,7 @@
             /* Các thuộc tính CSS khác cho header */
         }
     </style>
-    <!-- Bao gồm Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Bao gồm Bootstrap JavaScript bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 <body>
@@ -37,7 +34,7 @@
 
             <div>
 
-                <a href="trangChu.jsp" class="logo-link"> <img
+                <a href="<c:url value='../trangChu.jsp'/>" class=" logo-link"> <img
                         style="width: 60px; height: 50px" src="/assets/images/logo.png" alt="Logo"
                         class="logo-image">
                 </a>
@@ -45,27 +42,29 @@
 
             <ul
                     class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                <li><a href="trangChu.jsp" class="nav-link px-2 text-white">Trang
+                <li><a href="<c:url value='../trangChu.jsp'/>" class="nav-link px-2 text-white">Trang
                     Chủ</a></li>
-                <li><a href="sanPham.jsp" class="nav-link px-2 text-white">Sản
+                <li><a href="<c:url value='../sanPham.jsp'/>" class="nav-link px-2 text-white">Sản
                     Phẩm</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">Giới
                     Thiệu</a></li>
-                <li><a href="lienHe.jsp" class="nav-link px-2 text-white">Liên Hệ</a></li>
+                <li><a href="#" class="nav-link px-2 text-white">Liên Hệ</a></li>
             </ul>
 
-            <form action="bolocsanpham" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                <input type="hidden" name="hanhDong" value="name">
+            <form action="../customer?action=searchByNameProduct" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="post">
+
                 <input type="search"
                        class="form-control form-control-dark text-bg-white"
                        placeholder="Tên thực phẩm..." aria-label="Search" name="nameProduct">
             </form>
 
 
-            <a class="me-2" href="GioHang">
+            <a class="me-2" href="<c:url value='../customer/gioHang.jsp'/>">
                 <button class="btn btn-success">
                     <i class="bi bi-cart3"></i> Giỏ Hàng <span id="cart-size"
-                                                               class="badge bg-danger cart-size">${sessionScope.cartSize}</span>
+                                                               class="badge bg-danger cart-size"> <c:if test="${customer_login==null}" >0</c:if>
+                <c:if test="${customer_login != null}" > ${cartSize.selectByCustomerId(customer_login.id).cartItems.size()} </c:if>
+                </span>
                 </button>
             </a>
 
@@ -83,29 +82,29 @@
                                 Xin Chào ${customer_login.fullName}
                             </a>
                             <ul class="dropdown-menu text-small shadow">
-                                <li><a class="dropdown-item" href="lichsumuahang.jsp">Lịch sử mua hàng</a></li>
+                                <li><a class="dropdown-item" href="<c:url value='../customer/lichSuMuaHang.jsp'/>">Lịch sử mua hàng</a></li>
                                 <c:if test="${sessionScope.customer_login.provider == null}">
-                                    <li><a class="dropdown-item" href="thayDoiMatKhau.jsp">Thay đổi mật khẩu</a></li>
-                                    <li><a class="dropdown-item" href="thayDoiThongTinKhachHang.jsp">Thay đổi thông tin</a></li>
+                                    <li><a class="dropdown-item" href="<c:url value='../customer/thayDoiMatKhau.jsp'/>">Thay đổi mật khẩu</a></li>
+                                    <li><a class="dropdown-item" href="<c:url value='../customer/thayDoiThongTin.jsp'/>">Thay đổi thông tin</a></li>
                                 </c:if>
                                 <li><hr class="dropdown-divider"></li>
                                 <c:if test="${sessionScope.customer_login.role == true}">
-                                    <li>
-                                        <a class="dropdown-item" href="${pageContext.request.contextPath}/admin/adminHome.jsp">Trang quản trị</a>
-
-                                    </li>
+                                    <li><a class="dropdown-item" href="<c:url value='../admin/thongKe.jsp'/>">Trang quản trị</a></li>
 
                                 </c:if>
-                                <li><a class="dropdown-item" href="<%= request.getContextPath() %>/admin?action=logOut">Đăng xuất</a></li>
+                                <li><a class="dropdown-item" href="../customer?action=logout">Đăng xuất</a></li>
                             </ul>
+
                         </div>
+
+
                     </c:when>
                     <c:otherwise>
-                        <a href="dangNhap.jsp">
+                        <a href="<c:url value='../dangNhap.jsp'/>">
                             <button type="button" class="btn btn-outline-light me-2">
                                 Đăng Nhập</button>
                         </a>
-                        <a href="dangKi.jsp">
+                        <a href="<c:url value='../dangKi.jsp'/>">
                             <button type="button" class="btn btn-warning btn-outline-light">
                                 Đăng Kí</button>
                         </a>

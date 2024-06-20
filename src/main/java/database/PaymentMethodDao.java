@@ -1,6 +1,5 @@
 package database;
 
-import model.Category;
 import model.PaymentMethod;
 import utils.JDBCUtil;
 
@@ -38,9 +37,12 @@ public class PaymentMethodDao implements IDao<PaymentMethod>{
                 String name = rs.getNString("name");
                 payments.add(new PaymentMethod(id_pm, name));
             }
+            JDBCUtil.closeConnection(con);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return payments;
     }
 
@@ -58,6 +60,8 @@ public class PaymentMethodDao implements IDao<PaymentMethod>{
                 String name = rs.getNString("name");
                 paymentMethod = new PaymentMethod(id, name);
             }
+            JDBCUtil.closeConnection(con);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

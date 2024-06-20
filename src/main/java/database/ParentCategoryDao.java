@@ -36,6 +36,7 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
             if(i > 0) {
                 super.insert(parentCategory);
             }
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +91,7 @@ public class ParentCategoryDao extends AbsDao<ParentCategory> {
                 ParentCategory cate = new ParentCategory(categoryID, name, url);
                 categories.add(cate);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }

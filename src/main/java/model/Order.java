@@ -180,6 +180,13 @@ public class Order implements IModel {
     public double totalPriceProduct(){
         return total - deliveryFee;
     }
+    public double priceProduct(){
+        double result = 0;
+        for(OrderItem orderItem : orderItems){
+            result +=orderItem.getQuantity() * orderItem.getProduct().getFinalPrice();
+        }
+        return result;
+    }
     @Override
     public String toString() {
         return "Order{id=" + id +

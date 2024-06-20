@@ -1,6 +1,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,28 +24,58 @@
             <ul class="nav flex-column">
                 <li class="nav-item"><a
                         class="nav-link d-flex align-items-center gap-2 active"
-                        aria-current="page" href="../adminHome.jsp"> <svg class="bi">
+                        aria-current="page" href="<c:url value='../admin/thongKe.jsp'/>"> <svg class="bi">
                     <use xlink:href="#graph-up" /></svg> Thống Kê
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="hoadonadmin"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/donHang.jsp'/>"> <svg
                         class="bi">
-                    <use xlink:href="#file-earmark" /></svg> Hóa Đơn
+                    <use xlink:href="#file-earmark" /></svg> Đơn Hàng
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="sanPhamAdmin.jsp"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/sanPham.jsp'/>"> <svg
                         class="bi">
                     <use xlink:href="#cart" /></svg> Sản Phẩm
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="khachHangAdmin.jsp"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#category" /></svg> Danh Mục Lớn
+                </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#category" /></svg> Danh Mục
+                </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#admin" /></svg> Admin
+                </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/khachHang.jsp'/>"> <svg
                         class="bi">
                     <use xlink:href="#people" /></svg> Khách Hàng
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="nguoiDungLaAdminAdmin.jsp"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/nhapSanPham.jsp'/>"> <svg
                         class="bi">
-                    <use xlink:href="#people" /></svg> Admin
+                    <use xlink:href="#import" /></svg> Nhập Hàng
+                </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#voucher" /></svg> Quản lí voucher
+                </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#discount" /></svg> Quản lí discount
+                </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/quanLyLog.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#log" /></svg> Quản Lí Log
                 </a></li>
 
             </ul>

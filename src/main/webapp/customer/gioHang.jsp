@@ -12,14 +12,10 @@
 <jsp:useBean id="cartDao" class="database.CartDao" />
 <jsp:useBean id="cartItemDao" class="database.CartItemDao" />
 <c:remove var="prices" scope="session" />
-<%--<c:set var="scheme" value="${pageContext.request.scheme}" />--%>
-<%--<c:set var="serverName" value="${pageContext.request.serverName}" />--%>
-<%--<c:set var="serverPort" value="${pageContext.request.serverPort}" />--%>
-<%--<c:set var="contextPath" value="${pageContext.request.contextPath}" />--%>
-<%--<c:set var="url1" value="${scheme}://${serverName}:${serverPort}${contextPath}"/>--%>
+
+<jsp:useBean id="importProduct" class="database.ImportProductDao" />
 <html>
 <head>
-    <%@ include file="/layouts/common.jsp"%>
     <style>
         .size {
             width: 100px;
@@ -72,7 +68,7 @@
 <%@ include file="/layouts/header.jsp"%>
 <div class="container">
     <h2 class="text-success text">Thông Tin Giỏ Hàng:  </h2>
-    <h4 class="text"> <span> </span> </h4>
+    <h4 class="text"> <span style="color: red;"> ${response} </span> </h4>
     <div class="col-md-12">
         <div class="card card-plain">
 
@@ -89,12 +85,53 @@
                             <th class="text-center">Đơn Vị Tính</th>
                             <th class="text-center">Đơn Giá</th>
                             <th class="text-center">Thành Tiền</th>
-
+                            <th></th>
                         </tr>
 
                         <c:forEach items="${cartItemDao.selectCartItemsByCartId(cartDao.selectByCustomerId(sessionScope.customer_login.id).id)}" var="p">
+                            <c:if test="${importProduct.selectToTalProductInStock(p.product.id) < 1}" >
+                                <tr id="cart-item-${p.id}">
+                                    <td class="text-center align-middle">
+                                    </td>
+                                    <td class="text-center align-middle">${p.product.name}</td>
+                                    <td>
+                                        <div class="img-container">
+                                            <img class="size" src="${p.product.imageUrl}" alt="" style="filter: grayscale(1)">
+                                        </div>
+                                    </td>
 
-                            <tr id="cart-item-${p.id}">
+                                    <td class="text-center align-middle">
+                                        <span style="color: red"> Hết hàng </span>
+                                    </td>
+                                    <td class="text-center align-middle">${p.product.unit}</td>
+                                    <c:choose>
+                                        <c:when test="${p.product.discount != null}">
+                                            <td class="text-center align-middle"><span
+                                                    class="text-success"> <fmt:formatNumber
+                                                    value="${p.product.getFinalPrice()}"
+                                                    type="currency" currencyCode="VND" minFractionDigits="0" />
+											</span> <span
+                                                    style="text-decoration: line-through; padding-left: 5px">
+													<fmt:formatNumber value="${p.product.price}"
+                                                                      type="currency" currencyCode="VND" minFractionDigits="0" />
+											</span></td>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <td class="text-center align-middle"><fmt:formatNumber value="${p.product.getFinalPrice()}"
+                                                                                                   type="currency" currencyCode="VND" minFractionDigits="0"/> </td>
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                    <td class="text-center align-middle"> <span id="price-${p.id}"><fmt:formatNumber
+                                            value="${p.product.getFinalPrice() * p.quantity}"
+                                            type="currency" currencyCode="VND" minFractionDigits="0" /></span> </td>
+                                    <td class="text-center align-middle"><button type="button" class="btn btn-remove btn-success" value="${p.id}" data-cart-id="${p.id}"> Xóa </button></td>
+
+                                </tr>
+                            </c:if>
+                            <c:if test="${importProduct.selectToTalProductInStock(p.product.id) > 0}" >
+
+                                                        <tr id="cart-item-${p.id}">
                                 <td class="text-center align-middle">
                                     <input type="checkbox" name="selectedProducts" value="${p.id}" class="custom-checkbox" data-cart-id="${p.id}">
                                 </td>
@@ -105,12 +142,14 @@
                                     </div>
                                 </td>
 
-                                <td class="text-center align-middle"> <span id="quantity">${p.quantity}</span>
+                                <td class="text-center align-middle">
+
                                     <div class="btn-group">
                                         <button type="button"  value="${p.id}" data-cart-id="${p.id}"  class="btn-minus btn btn-info btn-sm">
                                             <a ><i
                                                     class="bi bi-dash icon"></i></a>
                                         </button>
+                                        <input type="text" class="form-control text-center input-sm" id="quantity-${p.id}" name="quantity-${p.id}" value="${p.quantity}" size="1" readonly max="${importProduct.selectToTalProductInStock(p.product.id)}">
                                         <button type="button"  class="btn-plus btn btn-info btn-sm" value="${p.id}" data-cart-id="${p.id}" >
                                             <a ><i
                                                     class="bi bi-plus icon"></i></a>
@@ -136,10 +175,12 @@
                                     </c:otherwise>
                                 </c:choose>
 
-                                <td class="text-center align-middle"> <span id="price"><fmt:formatNumber
+                                <td class="text-center align-middle"> <span id="price-${p.id}"><fmt:formatNumber
                                         value="${p.product.getFinalPrice() * p.quantity}"
                                         type="currency" currencyCode="VND" minFractionDigits="0" /></span> </td>
+                                <td class="text-center align-middle"><button type="button" class="btn btn-remove btn-success" value="${p.id}" data-cart-id="${p.id}"> Xóa </button></td>
                             </tr>
+                            </c:if>
                         </c:forEach>
                     </table>
                     <div style="text-align: right; margin-right: 20px;">
@@ -164,6 +205,7 @@
 
     </div>
 </div>
+<c:remove var="response" scope="session" />
 <script>
     $(document).ready(function() {
         // Lắng nghe sự kiện thay đổi của checkbox "selectedProducts"
@@ -185,7 +227,22 @@
             var cartId = $(this).data('cart-id');
             updateQuantity(cartId, 'minus');
         });
-
+        $('.btn-remove').click(function (){
+            var cartId = $(this).data('cart-id');
+            $.ajax({
+                url: '../customer?action=removeCartItem',
+                method: 'POST',
+                data: {
+                    cartId: cartId
+                },
+                success: function(response) {
+                    if(response.success){
+                        $('#cart-item-' + cartId).remove();
+                        $('#cart-size').text(response.cartSize);
+                    }
+                },
+            });
+        });
         // Lắng nghe sự kiện click của nút "btn-plus"
         $('.btn-plus').click(function() {
             var cartId = $(this).data('cart-id');
@@ -204,11 +261,12 @@
                         // Xử lý phản hồi từ server cho việc cập nhật số lượng
                         // Cập nhật giao diện người dùng nếu cần
                         var formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(response.priceUpdate);
-                        $('#price').text(formattedPrice);
+                        $('#price-'+cartId).text(formattedPrice);
                         // Cập nhật số lượng hiển thị
-                        $('#quantity').text(response.quantity);
+                        $('#quantity-'+cartId).val(response.quantity);
                     }else if(response.status == 'delete'){
                         $('#cart-item-' + cartId).remove();
+                        $('#cart-size').text(response.cartSize);
                     }
                 },
             });

@@ -9,17 +9,17 @@
 <jsp:useBean id="parentCategoryDAO" class="database.ParentCategoryDao"
              scope="page" />
 <jsp:useBean id="productDAO" class="database.ProductDao" scope="page" />
-
+<jsp:useBean id="importProduct" class="database.ImportProductDao" />
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <html>
 <head>
     <title>Title</title>
     <meta charset="UTF-8">
-    <%@ include file="layouts/common.jsp"%>
     <style>
         .card:hover {
             border: 2px solid;
@@ -121,7 +121,7 @@
         					style="width: 160px; height: 150px">
         					<div class="card h-110">
         						<a
-        							href="bolocsanpham?parentCategoryID=${p.id}&hanhDong=parent-category"
+        							href="customer?action=searchByParentCategory&parentCateId=${p.id}"
         							style="text-decoration: none" class="text-success"><img
         							class="card-img-top" src="${p.imageURL}" alt="">
         							<div class="card-body">
@@ -139,13 +139,47 @@
 
     <div class="row" style="margin-left: 30px">
         			<c:forEach var="product" items="${productDAO.selectNewestProducts()}">
-        				<div class="col-lg-4 col-md-6 mb-4 mt-2"
+        				<c:if test="${importProduct.selectToTalProductInStock(product.id) < 1}" >
+						<div class="col-lg-4 col-md-6 mb-4 mt-2"
+							 style="width: 216px; height: 355px">
+									<div class="card">
+										<a href="customer?action=productDetail&productId=${product.id}"><img
+												class="card-img-top" src="${product.imageUrl}" alt="" style="filter: grayscale(1)"></a>
+										<div class="card-body">
+											<h5 class="card-title">
+												<a href="#" style="text-decoration: none">
+														${product.name} </a>
+											</h5>
+											<p class="mt-1">ĐVT: ${product.unit}</p>
+											<p>
+        										<span class="text-success"> <fmt:formatNumber
+														value="${product.getFinalPrice()}" type="currency"
+														currencyCode="VND" minFractionDigits="0" />
+        										</span> <span
+													style="text-decoration: line-through; padding-left: 5px">
+        											<fmt:formatNumber value="${product.price}" type="currency"
+																	  currencyCode="VND" minFractionDigits="0" />
+        										</span>
+											</p>
+											<span class="discount-percentage">
+        										Sold out  </span>
+											<button class="ms-1 btn btn-secondary"
+													data-product-id="${product.id}">
+												<i class="bi bi-cart3"></i> Đã hết hàng
+											</button>
+										</div>
+									</div>
+						</div>
+						</c:if>
+						<c:if test="${importProduct.selectToTalProductInStock(product.id) > 0}" >
+
+												<div class="col-lg-4 col-md-6 mb-4 mt-2"
         					style="width: 216px; height: 355px">
 
         					<c:choose>
         						<c:when test="${product.discount != null}">
         							<div class="card">
-        								<a href="chitietsanpham?productID=${product.id}"><img
+        								<a href="customer?action=productDetail&productId=${product.id}"><img
         									class="card-img-top" src="${product.imageUrl}" alt=""></a>
         								<div class="card-body">
         									<h5 class="card-title">
@@ -165,10 +199,10 @@
         									</p>
         									<span class="discount-percentage"> Giảm
         										${product.discount.percent}% </span>
-											<a href="customer?action=addToCart&productId=${product.id}" class="ms-1 btn btn-success add-to-cart-btn"
-											   data-product-id="${product.id}">
+											<button class="ms-1 btn btn-success add-to-cart-btn"
+													data-product-id="${product.id}">
 												<i class="bi bi-cart3"></i> Thêm Vào Giỏ
-											</a>
+											</button>
         								</div>
 
         							</div>
@@ -176,7 +210,7 @@
         						</c:when>
         						<c:otherwise>
         							<div class="card">
-        								<a href="chitietsanpham?productID=${product.id}"><img
+        								<a href="customer?action=productDetail&productId=${product.id}"><img
         									class="card-img-top" src="${product.imageUrl}" alt=""></a>
         								<div class="card-body">
         									<h5 class="card-title">
@@ -191,10 +225,10 @@
         										</span>
         									</p>
 
-											<a href="customer?action=addToCart&productId=${product.id}" class="ms-1 btn btn-success add-to-cart-btn"
+											<button class="ms-1 btn btn-success add-to-cart-btn"
 											   data-product-id="${product.id}">
 												<i class="bi bi-cart3"></i> Thêm Vào Giỏ
-											</a>
+											</button>
         								</div>
 
         							</div>
@@ -202,9 +236,52 @@
         					</c:choose>
 
         				</div>
+						</c:if>
         			</c:forEach>
     </div>
+	<input type="hidden" id="amount" value="1">
 </div>
+<script>
+	$(document).ready(function() {
+		$(".add-to-cart-btn").click(function() {
+			// Lưu trữ $(this) vào biến để sử dụng trong hàm success
+			var addButton = $(this);
 
+			// Kiểm tra session của khách hàng
+			$.ajax({
+				type: "post",
+				url: "customer?action=checkLoginCustomer",
+				success: function(response) {
+					if (response.isLoggedIn) {
+						// Nếu đã đăng nhập, thực hiện AJAX request để thêm vào giỏ hàng
+						var productId = addButton.data("product-id"); // Sử dụng biến addButton thay vì $(this)
+						var amount = document.getElementById('amount').value;
+						$.ajax({
+							type: "post",
+							url: "customer?action=addToCart",
+							data: {
+								productId: productId,
+								quantity: amount
+							},
+							success: function(response) {
+								console.log(response.cartSize)
+								$("#cart-size").text(response.cartSize);
+							},
+							error: function(error) {
+								console.log("Error: " + error);
+							}
+						});
+					} else {
+						window.location.href = "dangNhap.jsp";
+					}
+				},
+				error: function(error) {
+					console.log("Error: " + error);
+				}
+			});
+		});
+	});
+
+</script>
 </body>
 </html>

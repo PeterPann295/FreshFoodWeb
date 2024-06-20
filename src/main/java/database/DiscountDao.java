@@ -21,6 +21,7 @@ public class DiscountDao extends AbsDao<Discount> {
             if(i > 0){
                 super.insert(discount);
             }
+            JDBCUtil.closeConnection(con);
             return i;
         } catch (Exception e) {
             e.printStackTrace();
@@ -43,6 +44,7 @@ public class DiscountDao extends AbsDao<Discount> {
                 Discount cate = new Discount(discountID,name,percent);
                 discount.add(cate);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,6 +64,7 @@ public class DiscountDao extends AbsDao<Discount> {
                 int percent = rs.getInt("percent");
                 discount = new Discount(discountID,name,percent);
             }
+            JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
         }
