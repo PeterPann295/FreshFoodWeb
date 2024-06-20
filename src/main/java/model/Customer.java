@@ -16,37 +16,37 @@ public class Customer implements IModel {
         public Customer(){
         }
 
-        public Customer(int id, String username, String password, String fullName, String email, String numberPhone, boolean role) {
+        public Customer(int id, String username, String password, String fullName, String numberPhone, String email, boolean role) {
             this.id = id;
             this.username = username;
             this.password = password;
             this.fullName = fullName;
-            this.email = email;
             this.numberPhone = numberPhone;
+            this.email = email;
             this.role = role;
             this.beforeData = toString();
             this.provider = null;
             this.provider_user_id = null;
         }
-        public Customer(String username, String password, String fullName, String email, String numberPhone) {
+        public Customer(String username, String password, String fullName, String numberPhone, String email) {
             this.username = username;
             this.password = password;
             this.fullName = fullName;
-            this.email = email;
             this.numberPhone = numberPhone;
+            this.email = email;
             this.role = false;
             this.beforeData = toString();
             this.provider = null;
             this.provider_user_id = null;
         }
 
-        public Customer(int id, String username, String password, String fullName, String email, String numberPhone, boolean role, String provider, String provider_user_id) {
+        public Customer(int id, String username, String password, String fullName, String numberPhone, String email, boolean role, String provider, String provider_user_id) {
             this.id = id;
             this.username = username;
             this.password = password;
             this.fullName = fullName;
-            this.email = email;
             this.numberPhone = numberPhone;
+            this.email = email;
             this.role = role;
             this.provider = provider;
             this.provider_user_id = provider_user_id;

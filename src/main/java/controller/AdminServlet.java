@@ -86,7 +86,7 @@ public class AdminServlet extends HttpServlet {
         resp.setContentType("text/html; charset=UTF-8");
 
         DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        diskFileItemFactory.setRepository(new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp"));
+        diskFileItemFactory.setRepository(new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp"));
         ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
 
         String url = "";
@@ -101,7 +101,7 @@ public class AdminServlet extends HttpServlet {
                     }
                 } else {
                     if ("imgCate".equals(fileItem.getFieldName())) {
-                        File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/categories/" + fileItem.getName());
+                        File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\categories" + fileItem.getName());
                         fileItem.write(file);
                         url = "/assets/images/categories/" + fileItem.getName();
                     }
@@ -131,7 +131,7 @@ public class AdminServlet extends HttpServlet {
         resp.setContentType("text/html; charset=UTF-8");
 
         DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        diskFileItemFactory.setRepository(new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp"));
+        diskFileItemFactory.setRepository(new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets"));
         ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
 
         String productName = "";
@@ -198,7 +198,7 @@ public class AdminServlet extends HttpServlet {
                     }
                 } else { // Xử lý trường thông tin là file
                     if ("imgProduct".equals(fileItem.getFieldName())) {
-                        File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/products/" + fileItem.getName());
+                        File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products" + fileItem.getName());
                         fileItem.write(file);
                         imgProduct = "/assets/images/products/" + fileItem.getName();
                         count ++;
@@ -422,7 +422,7 @@ public class AdminServlet extends HttpServlet {
                     if ("imgProduct".equals(fileItem.getFieldName())) {
                         String fileName = fileItem.getName();
                         if(fileName != null && !fileName.isEmpty()){
-                            File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/products/" + fileName);
+                            File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products\\" + fileName);
                             fileItem.write(file);
                             imgProduct = "/assets/images/products/" + fileName;
                         }
@@ -527,4 +527,4 @@ public class AdminServlet extends HttpServlet {
         String json = gson.toJson(orderSummaries);
         resp.getWriter().write(json);
     }
-    }
+}
