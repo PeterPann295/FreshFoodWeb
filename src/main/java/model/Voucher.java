@@ -10,6 +10,10 @@ public class Voucher {
         this.code = name;
         this.discount = discount;
     }
+
+    public Voucher() {
+    }
+
     public Voucher(String name, double discount) {
         this.code = name;
         this.discount = discount;

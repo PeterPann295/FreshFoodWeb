@@ -90,25 +90,21 @@ public class VoucherDao implements IDao<Voucher> {
 
     @Override
     public Voucher selectById(int id) {
-        Voucher voucher = null;
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "Select * from vouchers where id = ?";
+            String sql = "SELECT * FROM vouchers WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
-            while(rs.next()) {
-                int id_pm = rs.getInt("id");
-                String code = rs.getNString("code");
-                double discount = rs.getDouble("discount");
-                voucher = new Voucher(id_pm,code, discount);
+            if (rs.next()) {
+                Voucher voucher = new Voucher(rs.getInt("id"), rs.getString("code"), rs.getDouble("discount"));
+                JDBCUtil.closeConnection(con);
+                return voucher;
             }
-            JDBCUtil.closeConnection(con);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return voucher;
+        return null;
     }
     public Voucher selectByCode(String code) {
         Voucher voucher = null;

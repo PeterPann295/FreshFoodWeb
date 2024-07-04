@@ -63,7 +63,7 @@
                     <use xlink:href="#import" /></svg> Nhập Hàng
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/voucher.jsp'/>"> <svg
                         class="bi">
                     <use xlink:href="#voucher" /></svg> Quản lí voucher
                 </a></li>
