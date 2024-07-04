@@ -75,11 +75,47 @@ public class AdminServlet extends HttpServlet {
             deleteCustomer(req, resp);
         } else if(action.equals("getTotalRevenue7Days")){
             getTotalRevenue7Days(req, resp);
+        } else if ("addVoucher".equals(action)) {
+            addVoucher(req, resp);
+        } else if ("updateVoucher".equals(action)) {
+            updateVoucher(req, resp);
+        } else if ("deleteVoucher".equals(action)) {
+            deleteVoucher(req, resp);
         }
 
 
     }
 
+    private void addVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String code = req.getParameter("code");
+        double discount = Double.parseDouble(req.getParameter("discount"));
+
+        Voucher voucher = new Voucher(code, discount);
+        voucherDao.insert(voucher);
+
+        resp.sendRedirect(req.getContextPath() + "/admin/themVoucher.jsp");
+    }
+
+    private void updateVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        String code = req.getParameter("code");
+        double discount = Double.parseDouble(req.getParameter("discount"));
+
+        Voucher voucher = new Voucher(id, code, discount);
+        voucherDao.update(voucher);
+
+        resp.sendRedirect(req.getContextPath() + "/admin/vouchers.jsp");
+    }
+
+    private void deleteVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+
+        Voucher voucher = new Voucher();
+        voucher.setId(id);
+        voucherDao.delete(voucher);
+
+        resp.sendRedirect(req.getContextPath() + "/admin/vouchers.jsp");
+    }
     private void addParentCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
