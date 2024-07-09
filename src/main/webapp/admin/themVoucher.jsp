@@ -25,13 +25,6 @@
                 <form class="form-container" action="../admin?action=addVoucher" method="post">
 
                     <h1 class="text-center">Thêm Voucher</h1>
-
-                    <div class="mb-3">
-                        <label for="voucherName" class="form-label">Tên Voucher</label>
-                        <input type="text" class="form-control" id="voucherName"
-                               name="voucherName" placeholder="Nhập tên voucher" value="${voucherName}">
-                    </div>
-
                     <div class="mb-3">
                         <label for="code" class="form-label">Mã Voucher</label>
                         <input type="text" class="form-control" id="code"
@@ -45,17 +38,7 @@
                         <div class="text-danger">${err_discount}</div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="expiryDate" class="form-label">Ngày Hết Hạn</label>
-                        <input type="date" class="form-control" id="expiryDate" name="expiryDate"
-                               placeholder="Chọn ngày hết hạn" value="${expiryDate}">
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Mô Tả Voucher</label>
-                        <textarea type="text" class="form-control" id="description"
-                                  name="description" placeholder="Nhập mô tả voucher" rows="5" cols="50">${description}</textarea>
-                    </div>
 
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary width-btn">Thêm Voucher</button>

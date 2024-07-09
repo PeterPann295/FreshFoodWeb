@@ -129,10 +129,12 @@ public class VoucherDao implements IDao<Voucher> {
     }
 
     public static void main(String[] args) {
-        Voucher voucher = new Voucher("Voucher 1", 0.1);
+        Voucher voucher = new Voucher("gg20k", 20000);
         VoucherDao voucherDao = new VoucherDao();
-        voucherDao.insert(voucher);
-        System.out.println(voucherDao.selectAll());
+        System.out.println( voucherDao.insert(voucher));
+        //System.out.println(voucherDao.update(voucher));
+
+        //System.out.println(voucherDao.selectByCode("gg30k"));
 
     }
 }
