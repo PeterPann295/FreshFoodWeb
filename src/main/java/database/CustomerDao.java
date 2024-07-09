@@ -15,17 +15,25 @@ public class CustomerDao extends AbsDao<Customer> {
         try {
             Connection con = JDBCUtil.getConnection();
 
-            String sql = "insert into Customers (username, password, fullName, numberPhone, email, role, provider, provider_user_id)" +
-                    "  values (?,?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO Customers (username, password, fullName, numberPhone, email, role, provider, provider_user_id) VALUES (?,?,?,?,?,?,?,?)";
             PreparedStatement pst = con.prepareStatement(sql);
+
             pst.setNString(1, customer.getUsername());
             pst.setNString(2, customer.getPassword());
             pst.setNString(3, customer.getFullName());
-            pst.setNString(4, customer.getNumberPhone());
+
+            // Kiểm tra và cắt ngắn chuỗi số điện thoại nếu cần
+            String numberPhone = customer.getNumberPhone();
+            if (numberPhone.length() > 15) {
+                numberPhone = numberPhone.substring(0, 15);
+            }
+            pst.setNString(4, numberPhone);
+
             pst.setNString(5, customer.getEmail());
             pst.setBoolean(6, customer.isRole());
             pst.setNString(7, customer.getProvider());
             pst.setNString(8, customer.getProvider_user_id());
+
             int i = pst.executeUpdate();
             if (i > 0) {
                 super.insert(customer);
@@ -38,7 +46,6 @@ public class CustomerDao extends AbsDao<Customer> {
         }
         return 0;
     }
-
     @Override
     public int update(Customer customer) {
         try {

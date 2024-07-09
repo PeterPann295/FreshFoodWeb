@@ -43,5 +43,12 @@ public class Voucher {
         this.discount = discount;
     }
 
-
+    @Override
+    public String toString() {
+        return "Voucher{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", discount=" + discount +
+                '}';
+    }
 }

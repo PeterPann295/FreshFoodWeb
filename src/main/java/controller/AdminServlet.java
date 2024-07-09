@@ -29,9 +29,7 @@ public class AdminServlet extends HttpServlet {
     private ProductDao productDao = new ProductDao();
     private VoucherDao voucherDao = new VoucherDao();
     private OrderStatusDao orderStatusDao = new OrderStatusDao();
-    private PaymentMethodDao paymentMethodDao = new PaymentMethodDao();
     private OrderDao orderDao = new OrderDao();
-    private OrderItemDao orderItemDao = new OrderItemDao();
     private ImportProductDao importProductDao = new ImportProductDao();
     private LogDao logDao = new LogDao();
     private CustomerDao customerDao = new CustomerDao();
@@ -43,57 +41,71 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        if ("addParentCategory".equals(action)) {
-            addParentCategory(req, resp);
-        } else if ("addCategory".equals(action)) {
-        } else if ("addDiscount".equals(action)) {
-        } else if ("addProduct".equals(action)) {
-            addProduct(req, resp);
-        } else if (action.equals("updateOrder")) {
-            updateOrder(req, resp);
-        } else if (action.equals("getOrderStatus")) {
-            getOrderStatus(req, resp);
-        } else if (action.equals("detailOrder")) {
-            detailOrder(req, resp);
-        } else if(action.equals("importProduct")){
-            importProduct(req, resp);
-        } else if(action.equals("deleteLog")){
-            deleteLog(req, resp);
-        } else if(action.equals("detailLog")){
-            detailLog(req, resp);
-        } else if(action.equals("goUpdateProduct")){
-            goUpdateProduct(req, resp);
-        } else if(action.equals("updateProduct")){
-            updateProduct(req, resp);
-        } else if(action.equals("deleteProduct")){
-            deleteProduct(req, resp);
-        } else if(action.equals("goUpdateCustomer")){
-            goUpdateCustomer(req, resp);
-        } else if(action.equals("updateCustomer")){
-            updateCustomer(req, resp);
-        } else if(action.equals("deleteCustomer")){
-            deleteCustomer(req, resp);
-        } else if(action.equals("getTotalRevenue7Days")){
-            getTotalRevenue7Days(req, resp);
-        } else if ("addVoucher".equals(action)) {
-            addVoucher(req, resp);
-        } else if ("updateVoucher".equals(action)) {
-            updateVoucher(req, resp);
-        } else if ("deleteVoucher".equals(action)) {
-            deleteVoucher(req, resp);
+        switch (action) {
+            case "addParentCategory":
+                addParentCategory(req, resp);
+                break;
+            case "updateOrder":
+                updateOrder(req, resp);
+                break;
+            case "getOrderStatus":
+                getOrderStatus(req, resp);
+                break;
+            case "detailOrder":
+                detailOrder(req, resp);
+                break;
+            case "importProduct":
+                importProduct(req, resp);
+                break;
+            case "deleteLog":
+                deleteLog(req, resp);
+                break;
+            case "detailLog":
+                detailLog(req, resp);
+                break;
+            case "goUpdateProduct":
+                goUpdateProduct(req, resp);
+                break;
+            case "updateProduct":
+                updateProduct(req, resp);
+                break;
+            case "deleteProduct":
+                deleteProduct(req, resp);
+                break;
+            case "goUpdateCustomer":
+                goUpdateCustomer(req, resp);
+                break;
+            case "updateCustomer":
+                updateCustomer(req, resp);
+                break;
+            case "deleteCustomer":
+                deleteCustomer(req, resp);
+                break;
+            case "getTotalRevenue7Days":
+                getTotalRevenue7Days(req, resp);
+                break;
+            case "addVoucher":
+                addVoucher(req, resp);
+                break;
+            case "updateVoucher":
+                updateVoucher(req, resp);
+                break;
+            case "deleteVoucher":
+                deleteVoucher(req, resp);
+                break;
+            default:
+                // Xử lý khi action không hợp lệ
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                break;
         }
-
-
     }
-
     private void addVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
         double discount = Double.parseDouble(req.getParameter("discount"));
 
         Voucher voucher = new Voucher(code, discount);
         voucherDao.insert(voucher);
-
-        resp.sendRedirect(req.getContextPath() + "/admin/themVoucher.jsp");
+        resp.sendRedirect(req.getContextPath() + "/admin/voucher.jsp");
     }
 
     private void updateVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -104,18 +116,24 @@ public class AdminServlet extends HttpServlet {
         Voucher voucher = new Voucher(id, code, discount);
         voucherDao.update(voucher);
 
-        resp.sendRedirect(req.getContextPath() + "/admin/vouchers.jsp");
+        resp.sendRedirect(req.getContextPath() + "/admin/voucher.jsp");
     }
 
     private void deleteVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int id = Integer.parseInt(req.getParameter("id"));
+        String voucherIdStr = req.getParameter("voucherId");
+        if (voucherIdStr != null && !voucherIdStr.isEmpty()) {
+            int id = Integer.parseInt(voucherIdStr); // Chuyển đổi voucherId thành số nguyên
 
-        Voucher voucher = new Voucher();
-        voucher.setId(id);
-        voucherDao.delete(voucher);
+            Voucher voucher = new Voucher();
+            voucher.setId(id);
+            voucherDao.delete(voucher); // Xóa voucher
 
-        resp.sendRedirect(req.getContextPath() + "/admin/vouchers.jsp");
+            resp.sendRedirect(req.getContextPath() + "/admin/voucher.jsp"); // Chuyển hướng về trang danh sách voucher
+        } else {
+            throw new ServletException("Thiếu thông tin voucherId");
+        }
     }
+
     private void addParentCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
@@ -161,103 +179,6 @@ public class AdminServlet extends HttpServlet {
         resp.sendRedirect(link + "/admin/danhMucCha.jsp");
     }
 
-    private void addProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=UTF-8");
-
-        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        diskFileItemFactory.setRepository(new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets"));
-        ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
-
-        String productName = "";
-        double price = 0;
-        String unit = "";
-        double weight = 0;
-        String imgProduct = "";
-        boolean availables = false;
-        int categoryId = 0;
-        int discountId = 0;
-        String description = "";
-        int count = 0;
-        try {
-            List<FileItem> fileItems = fileUpload.parseRequest(req);
-            for (FileItem fileItem : fileItems) {
-                if (fileItem.isFormField()) { // Xử lý các trường thông tin không phải là file
-                    String fieldName = fileItem.getFieldName();
-                    String fieldValue = fileItem.getString("UTF-8"); // Lấy giá trị của trường dữ liệu
-                    System.out.println(fieldValue);
-                    switch (fieldName) {
-                        case "productName":
-                            productName = fieldValue;
-                            count ++;
-                            break;
-                        case "price":
-                            price = Double.parseDouble(fieldValue);
-                            count ++;
-                            break;
-                        case "unit":
-                            unit = fieldValue;
-                            count ++;
-                            break;
-                        case "weight":
-                            weight = Double.parseDouble(fieldValue);
-                            count ++;
-                            break;
-                        case "imgProduct":
-                            imgProduct = fieldValue;
-                            count ++;
-                            break;
-                        case "availables":
-                            availables = Boolean.parseBoolean(fieldValue);
-                            count ++;
-                            break;
-                        case "category":
-                            categoryId = Integer.parseInt(fieldValue);
-                            count ++;
-                            break;
-                        case "discount":
-                            if(fieldValue.equals("none")){
-                                discountId = 0;
-                                count ++;
-                                break;
-                            }
-                            discountId = Integer.parseInt(fieldValue);
-                            count ++;
-                            break;
-                        case "description":
-                            description = fieldValue;
-                            count ++;
-                            break;
-                        default:
-                            // Xử lý trường dữ liệu khác nếu cần
-                    }
-                } else { // Xử lý trường thông tin là file
-                    if ("imgProduct".equals(fileItem.getFieldName())) {
-                        File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products" + fileItem.getName());
-                        fileItem.write(file);
-                        imgProduct = "/assets/images/products/" + fileItem.getName();
-                        count ++;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        if(count == 9){
-            if(discountId == 0){
-                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), null);
-                productDao.insert(product);
-            }else {
-                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), discountDao.selectById(discountId));
-                productDao.insert(product);
-            }
-
-        }
-        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
-                + req.getContextPath();
-        resp.sendRedirect(link + "/admin/sanPham.jsp");
-    }
     private void updateOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
