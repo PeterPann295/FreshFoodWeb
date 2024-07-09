@@ -1,6 +1,8 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
+<%@ page isELIgnored="false" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +43,7 @@
         </li>
     </ul>
 
-    <div class="text-end text-white me-5"> Xin chào  ${sessionScope.customer.username} </div>
+    <div class="text-end text-white me-5"> Xin chào  ${sessionScope.customer_login.username} </div>
 
     <div id="navbarSearch" class="navbar-search w-100 collapse">
         <input class="form-control w-100 rounded-0 border-0" type="text"

@@ -40,7 +40,7 @@
 <div class="row mt-4">
 
     <jsp:include page="/layouts/filterProduct.jsp" />
-
+    <input type="hidden" id="amount" value="1">
     <div class="col-lg-9">
         <div class="btn-toolbar mb-2  " style="margin-left: 8px">
             <button type="button" id="sortPriceDesc" class="btn-sort btn btn-sm btn-outline-success" style="margin-right: 5px">Giá Giảm Dần</button>

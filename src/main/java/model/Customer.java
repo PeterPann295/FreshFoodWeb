@@ -5,8 +5,8 @@ public class Customer implements IModel {
         private String username;
         private String password;
         private String fullName;
-        private String email;
         private String numberPhone;
+        private String email;
         private boolean role;
 
         private String provider;
@@ -16,7 +16,7 @@ public class Customer implements IModel {
         public Customer(){
         }
 
-        public Customer(int id, String username, String password, String fullName, String email, String numberPhone, boolean role) {
+        public Customer(int id, String username, String password, String fullName, String numberPhone, String email, boolean role) {
             this.id = id;
             this.username = username;
             this.password = password;
@@ -28,7 +28,7 @@ public class Customer implements IModel {
             this.provider = null;
             this.provider_user_id = null;
         }
-        public Customer(String username, String password, String fullName, String email, String numberPhone) {
+        public Customer(String username, String password, String fullName, String numberPhone , String email) {
             this.username = username;
             this.password = password;
             this.fullName = fullName;
@@ -40,7 +40,7 @@ public class Customer implements IModel {
             this.provider_user_id = null;
         }
 
-        public Customer(int id, String username, String password, String fullName, String email, String numberPhone, boolean role, String provider, String provider_user_id) {
+        public Customer(int id, String username, String password, String fullName, String numberPhone, String email, boolean role, String provider, String provider_user_id) {
             this.id = id;
             this.username = username;
             this.password = password;

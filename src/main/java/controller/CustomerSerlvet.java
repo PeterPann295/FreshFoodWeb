@@ -97,6 +97,14 @@ public class CustomerSerlvet extends HttpServlet {
             searchByNameProduct(req, resp);
         } else if (action.equals("searchByParentCategory")) {
             searchByParentCategory(req, resp);
+        } else if(action.equals("changePassword")) {
+            changePassword(req, resp);
+        } else if(action.equals("changeInformation")){
+            changeInformation(req,resp);
+        } else if(action.equals("forgetPassword")){
+            forgetPassword(req, resp);
+        } else if(action.equals("resetPassword")){
+            resetPassword(req, resp);
         }
     }
 
@@ -145,15 +153,22 @@ public class CustomerSerlvet extends HttpServlet {
         String password = req.getParameter("password");
         Customer customer = cusDao.checkLogin(username, Encode.toSHA1(password));
         String url = "";
+        HttpSession session = req.getSession();
         if (customer != null) {
-            HttpSession session = req.getSession();
             session.setAttribute("customer_login", customer);
-            url = "/trangChu.jsp";
+            if(customer.isRole()){
+                url = "/admin/thongKe.jsp";
+            }else{
+                url = "/trangChu.jsp";
+            }
         } else {
-            req.setAttribute("error_login", "Tên đăng nhập hoặc mật khẩu không đúng!");
+            session.setAttribute("error_login", "Tên đăng nhập hoặc mật khẩu không đúng!");
             url = "/dangNhap.jsp";
         }
-        req.getRequestDispatcher(url).forward(req, resp);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + url);
+
     }
 
     private void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -228,7 +243,7 @@ public class CustomerSerlvet extends HttpServlet {
             req.setAttribute("err_password", "Mật khẩu tối thiểu 6 kí tự");
         }
         if (!error) {
-            Customer cus = new Customer(username, Encode.toSHA1(password), fullName, email, phone);
+            Customer cus = new Customer(username, Encode.toSHA1(password), fullName, phone, email);
             cusDao.insert(cus);
             req.setAttribute("register_success", "Chức mừng bạn đăng kí thành công, vui lòng đăng nhập");
             url = "/dangNhap.jsp";
@@ -694,4 +709,85 @@ public class CustomerSerlvet extends HttpServlet {
                 + req.getContextPath();
         resp.sendRedirect(link + "/timKiemSanPham.jsp");
     }
+    private void changePassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String password = req.getParameter("new-password");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        System.out.println(customer.toString());
+        customer.setPassword(Encode.toSHA1(password));
+        System.out.println(password);
+        System.out.println(Encode.toSHA1(password));
+        cusDao.update(customer);
+        logout(req, resp);
+    }
+    private void changeInformation(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String fullName = req.getParameter("full-name");
+        String phone = req.getParameter("phone");
+        String email = req.getParameter("email");
+        HttpSession session = req.getSession();
+        Customer customer = (Customer) session.getAttribute("customer_login");
+        customer.setFullName(fullName);
+        customer.setEmail(email);
+        customer.setNumberPhone(phone);
+        cusDao.update(customer);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/trangChu.jsp");
+    }
+    private void forgetPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String username = req.getParameter("username");
+        boolean error = false;
+        HttpSession session = req.getSession();
+        String url = "";
+        if(!cusDao.checkUsername(username)){
+            error = true;
+            session.setAttribute("error_forgetPassword","Tài khoản không tồn tại trong hệ thống");
+            url = "/quenMatKhau.jsp";
+        }else{
+            Customer customer = cusDao.selectByUsername(username);
+            String resetCode = RandomNumberGenerator.generateRandomNumbersString();
+            cusDao.updateResetCode(resetCode, customer.getUsername());
+            Email.sendEmaiQuenMatKhau(customer, resetCode);
+            session.setAttribute("customer_resetPassword", customer);
+            url = "/datLaiMatKhau.jsp";
+        }
+
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + url);
+    }
+    private void resetPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String resetCode = req.getParameter("resetCode");
+        String password = req.getParameter("new-password");
+        HttpSession session = req.getSession();
+        String url = "";
+        Customer customer = (Customer) session.getAttribute("customer_resetPassword");
+        if(cusDao.checkResetCode(customer.getUsername(), resetCode)){
+            customer.setPassword(Encode.toSHA1(password));
+            cusDao.update(customer);
+            session.setAttribute("register_success", "Đặt lại mật khẩu thành công");
+            url = "/dangNhap.jsp";
+        }else{
+            url = "/datLaiMatKhau.jsp";
+            session.setAttribute("error_resetCode", "Mã xác nhận không chính xác");
+
+        }
+
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + url);
+    }
+
 }

@@ -18,6 +18,8 @@
       vertical-align: middle; /* Căn giữa theo chiều dọc */
     }
   </style>
+  <jsp:include page="layouts/cssDatatable.jsp" />
+
 </head>
 <body>
 
@@ -37,7 +39,7 @@
           </a>
         </div>
       </div>
-      <table class="table">
+      <table class="table" id="tableHistoryImportProduct">
         <thead>
         <tr>
           <th scope="col">#</th>
@@ -73,6 +75,38 @@
     </main>
   </div>
 </div>
+<jsp:include page="layouts/jsDatatable.jsp" />
+<script>
+  new DataTable('#tableHistoryImportProduct', {
+    layout: {
+      topStart: {
+        buttons: [
+          {
+            extend: 'copy',
+
+          },
+          {
+            extend: 'csv',
+
+          },
+          {
+            extend: 'excel',
+
+          },
+          {
+            extend: 'pdf',
+
+          },
+          {
+            extend: 'print',
+
+          },
+
+        ]
+      }
+    }
+  });
+</script>
 
 </body>
 </html>

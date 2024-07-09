@@ -4,8 +4,20 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+<!--  <filter>-->
+<!--    <filter-name>SecurityFilterAdmin</filter-name>-->
+<!--    <display-name>SecurityFilterAdmin</display-name>-->
+<!--    <description></description>-->
+<!--    <filter-class>filter.SecurityFilterAdmin</filter-class>-->
+<!--  </ilter>-->
+<!--  <filter-mapping>-->
+<!--    <filter-name>SecurityFilterAdmin</filter-name>-->
+<!--    <url-pattern>/admin/*</url-pattern>-->
+<!--  </filter-mapping>f-->
+
+
   <welcome-file-list>
     <welcome-file>trangChu.jsp</welcome-file>
-
   </welcome-file-list>
+
 </web-app>
