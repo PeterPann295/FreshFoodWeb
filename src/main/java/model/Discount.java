@@ -19,6 +19,11 @@ public class Discount implements IModel {
         beforeData = toString();
     }
 
+
+    public Discount(int discountId) {
+        this.id = discountId;
+    }
+
     public int getId() {
         return id;
     }

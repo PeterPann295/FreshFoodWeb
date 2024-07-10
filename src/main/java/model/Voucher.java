@@ -10,6 +10,10 @@ public class Voucher {
         this.code = name;
         this.discount = discount;
     }
+
+    public Voucher() {
+    }
+
     public Voucher(String name, double discount) {
         this.code = name;
         this.discount = discount;
@@ -39,5 +43,12 @@ public class Voucher {
         this.discount = discount;
     }
 
-
+    @Override
+    public String toString() {
+        return "Voucher{" +
+                "id=" + id +
+                ", code='" + code + '\'' +
+                ", discount=" + discount +
+                '}';
+    }
 }

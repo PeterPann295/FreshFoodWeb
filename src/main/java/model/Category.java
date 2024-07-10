@@ -1,6 +1,5 @@
 package model;
 
-import java.io.Serializable;
 
 public class Category implements IModel{
     private int id;
@@ -19,6 +18,14 @@ public class Category implements IModel{
         this.name = name;
         this.parentCategory = parentCategory;
         this.beforeData = toString();
+    }
+
+    public Category(int categoryId) {
+        this.id = categoryId;
+    }
+
+    public Category(String categoryName) {
+        this.name = categoryName;
     }
 
     public int getId() {

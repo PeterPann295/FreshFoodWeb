@@ -89,7 +89,7 @@
                                 </c:if>
                                 <li><hr class="dropdown-divider"></li>
                                 <c:if test="${sessionScope.customer_login.role == true}">
-                                    <li><a class="dropdown-item" href="dashBoard.jsp">Trang quản trị</a></li>
+                                    <li><a class="dropdown-item" href="<c:url value='../admin/thongKe.jsp'/>">Trang quản trị</a></li>
 
                                 </c:if>
                                 <li><a class="dropdown-item" href="../customer?action=logout">Đăng xuất</a></li>

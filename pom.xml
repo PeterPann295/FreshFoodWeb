@@ -90,7 +90,11 @@
       <groupId>com.sun.mail</groupId>
       <artifactId>javax.mail</artifactId>
       <version>1.6.2</version> <!-- Sử dụng phiên bản phù hợp nhất -->
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>5.2.3</version>
     </dependency>
+   
   </dependencies>
   <build>
     <finalName>Project_Web_FreshFood</finalName>

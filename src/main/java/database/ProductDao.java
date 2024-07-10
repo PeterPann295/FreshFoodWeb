@@ -25,7 +25,7 @@ public class ProductDao extends AbsDao<Product> {
             pst.setBoolean(7, product.isAvailable());
             pst.setInt(8, product.getCategory().getId());
             if(product.getDiscount() != null) {
-            pst.setInt(9, product.getDiscount().getId());
+                pst.setInt(9, product.getDiscount().getId());
             } else {
                 pst.setNull(9, Types.INTEGER);
             }
@@ -276,7 +276,7 @@ public class ProductDao extends AbsDao<Product> {
         boolean hasDiscountFilter = discount != null;
         StringBuilder queryBuilder = new StringBuilder("SELECT * FROM products ");
         if(hasCategoryFilter || hasPriceFilter || hasDiscountFilter){
-           queryBuilder = new StringBuilder("SELECT * FROM products WHERE ");
+            queryBuilder = new StringBuilder("SELECT * FROM products WHERE ");
         }
         if (hasCategoryFilter) {
             queryBuilder.append("(");
