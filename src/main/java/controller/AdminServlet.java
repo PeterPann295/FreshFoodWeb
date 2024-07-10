@@ -99,12 +99,83 @@ public class AdminServlet extends HttpServlet {
             case "updateVoucher":
                 updateVoucher(req, resp);
                 break;
+            case "addDiscount":
+                addDiscount(req, resp);
+                break;
+            case "goUpdateDiscount":
+                goUpdateDiscount(req, resp);
+                break;
+            case "updateDiscount":
+                updateDiscount(req, resp);
+                break;
+            case "deleteDiscount":
+                deleteDiscount(req, resp);
+                break;
             default:
                 // Xử lý khi action không hợp lệ
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 break;
         }
     }
+    private void addDiscount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String name = req.getParameter("name");
+        int percent = Integer.parseInt(req.getParameter("percent"));
+
+        Discount discount = new Discount(name, percent);
+        discountDao.insert(discount);
+        resp.sendRedirect(req.getContextPath() + "/admin/discount.jsp");
+    }
+
+
+    private void goUpdateDiscount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+
+        String discountIdParam = req.getParameter("discountId");
+        Discount discount = discountDao.selectById(Integer.parseInt(discountIdParam));
+
+        HttpSession session = req.getSession();
+        session.setAttribute("discount", discount);
+
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/capnhatDiscount.jsp");
+    }
+    private void updateDiscount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+
+        String discountIdStr = req.getParameter("discountId");
+        if (discountIdStr != null && !discountIdStr.isEmpty()) {
+            int id = Integer.parseInt(discountIdStr);
+            String code = req.getParameter("name");
+            int value = Integer.parseInt(req.getParameter("percent"));
+
+            Discount discount = new Discount(id, code, value);
+            discountDao.update(discount);
+
+            resp.sendRedirect(req.getContextPath() + "/admin/discount.jsp");
+        } else {
+            throw new ServletException("Thiếu thông tin discountId");
+        }
+    }
+    private void deleteDiscount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String discountIdStr = req.getParameter("discountId");
+        if (discountIdStr != null && !discountIdStr.isEmpty()) {
+            int id = Integer.parseInt(discountIdStr);
+
+            Discount discount = new Discount();
+            discount.setId(id);
+            discountDao.delete(discount);
+
+            resp.sendRedirect(req.getContextPath() + "/admin/discount.jsp");
+        } else {
+            throw new ServletException("Thiếu thông tin discountId");
+        }
+    }
+
     private void addVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
         double discount = Double.parseDouble(req.getParameter("discount"));
