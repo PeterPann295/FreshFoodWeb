@@ -30,7 +30,7 @@
          <form action="../admin?action=deleteLog" method="post">
             <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h3 class="h2">Lịch sử nhập hàng</h3>
+                <h3 class="h2"> Quản Lí Log </h3>
                 <div id="deleteButton" class="btn-toolbar mb-2 mb-md-0" style="margin-right: 50px; display: none">
                         <button type="submit" class="btn btn-sm btn-outline-success">
                             Xóa Log </button>

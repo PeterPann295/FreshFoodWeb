@@ -1,27 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8"%>
-<%@ page isELIgnored="false"%>
+         pageEncoding="UTF-8" %>
+<%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Thay đổi mật khẩu</title>
-    <%@ include file="../layouts/common.jsp"%>
-    <script src="javascript/script.js"></script>
-    <link rel="stylesheet" type="text/css" href="/assets/css/dangKi.css">
+    <title>Đăng nhập</title>
+    <%@ include file="layouts/common.jsp" %>
+    <link rel="stylesheet" type="text/css" href="assets/css/dangNhap.css">
+    <script src="assets/javascript/facebookAPI.js"></script>
 </head>
 <body>
-<%@ include file="../layouts/header.jsp"%>
+<%@ include file="layouts/header.jsp" %>
 
-<div class="container_form">
-    <form class="form-container" id="form_change_password" action="../customer?action=changePassword" method="post">
-        <h1 class="text-center text-success">
-            Thay đổi mật khẩu <a href="#" class="logo-link"> <img
-                style="width: 80px; height: 80px" src="../assets/images/rau.png" alt="Logo"
+<div class="container_form content">
+    <form action="customer?action=resetPassword" id="form-reset-password"  method="post" class="form-container">
+        <h1 class="text-center mb-3 text-success ">
+            Đặt Lại Mật Khẩu <a href="#" class="logo-link"> <img
+                style="width: 60px; height: 60px" src="assets/images/rau.png" alt="Logo"
                 class="logo-image">
         </a>
         </h1>
-
+        <div class="text-danger mb-3">${error_resetCode}</div>
+        <div class="form-group mb-2">
+            <label class="margin-label" for="resetCode">Nhập Mã Xác Nhận :</label> <input
+                type="text" class="form-control" id="resetCode" name="resetCode"
+                placeholder="Nhập mã xác nhận" required>
+            <div id="error-username" style="color: red"></div>
+        </div>
         <div class="mb-3">
             <label for="password" class="form-label">Mật khẩu mới</label>
             <div class="input-group">
@@ -40,17 +46,14 @@
                 <input type="password" class="form-control" id="confirm-password"
                        name="confirm-newPassword" placeholder="Nhập lại mật khẩu mới"
                        aria-describedby="button-addon2" required="required">
-
-
             </div>
-            <div class="text-danger"> ${err_password} </div>
         </div>
-
         <button type="button" id="btn-submit" class="btn btn-primary" style="width: 100%;">Thay đổi mật khẩu</button>
+        </button>
     </form>
 </div>
 <script>
-    let form_register = document.getElementById("form_change_password")
+    let form_register = document.getElementById("form-reset-password")
     let btn_submit = document.getElementById("btn-submit")
 
     btn_submit.onclick = () => {
@@ -101,6 +104,9 @@
     }
 </script>
 
-<%@ include file="../layouts/footer.jsp"%>
-</body>
+</body
+
+<footer>
+    <%@ include file="layouts/footer.jsp" %>
+</footer>
 </html>

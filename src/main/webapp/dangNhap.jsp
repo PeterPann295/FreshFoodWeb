@@ -21,8 +21,8 @@
                 class="logo-image">
         </a>
         </h1>
-        <div class="text-danger mb-3">${error_login}</div>
-        <div class="text-danger mb-3">${register_success}</div>
+        <div class="text-danger mb-3" style="text-align: center">${error_login}</div>
+        <div class="text-danger mb-3" style="text-align: center">${register_success}</div>
         <div class="form-group mb-2">
             <label class="margin-label" for="username">Tên đăng nhập:</label> <input
                 type="text" class="form-control" id="username" name="username"

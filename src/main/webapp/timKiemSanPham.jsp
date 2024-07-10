@@ -49,7 +49,7 @@
             <button type="button" id="sortZA" class="btn-sort btn btn-sm btn-outline-success" style="margin-right: 5px">Z-A</button>
 
         </div>
-        <input type="hidden" id="numberInput" value="1">
+        <input type="hidden" id="amount" value="1">
 
         <div class="row" id="productContainer" >
             <c:forEach var="product" items="${searchProduct}">

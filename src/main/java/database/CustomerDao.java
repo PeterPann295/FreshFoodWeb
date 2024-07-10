@@ -1,6 +1,7 @@
 package database;
 
 import model.Customer;
+import utils.Encode;
 import utils.JDBCUtil;
 
 import java.sql.Connection;
@@ -211,6 +212,7 @@ public class CustomerDao extends AbsDao<Customer> {
                 String provider = rs.getNString("provider");
                 String providerUserId = rs.getNString("provider_user_id");
                 c = new Customer(id,user_name, password_, nameCustomer_, numberPhone_, email, role, provider, providerUserId);
+
                 super.user_id = c.getId();
                 super.login(c);
             }
@@ -220,10 +222,68 @@ public class CustomerDao extends AbsDao<Customer> {
         }
         return c;
     }
+    public int updateResetCode(String resetCode, String username){
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "UPDATE Customers SET reset_code=? WHERE username = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1,Integer.parseInt(resetCode));
+            pst.setString(2, username);
+            int i = pst.executeUpdate();
+            JDBCUtil.closeConnection(con);
+            if (i > 0) {
+                return i;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public boolean checkResetCode(String username, String resetCode) {
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from Customers Where username=? and reset_code = ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, username);
+            pst.setString(2, resetCode);
+            ResultSet rs = pst.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public Customer selectByUsername(String username) {
+        Customer customer = null;
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from Customers Where username=?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setString(1, username);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                customer = new Customer();
+                customer.setId(rs.getInt("id"));
+                customer.setUsername(rs.getString("username"));
+                customer.setPassword(rs.getString("password"));
+                customer.setFullName(rs.getString("fullName"));
+                customer.setNumberPhone(rs.getString("numberPhone"));
+                customer.setEmail(rs.getString("email"));
+                customer.setRole(rs.getBoolean("role"));
+                customer.setProvider(rs.getString("provider"));
+                customer.setProvider_user_id(rs.getString("provider_user_id"));
+                customer.setBeforeData(customer.toString());
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customer;
+    }
 
     public static void main(String[] args) {
         CustomerDao customerDao = new CustomerDao();
-        System.out.println(customerDao.selectById(1).beforeData());
     }
 
 }
