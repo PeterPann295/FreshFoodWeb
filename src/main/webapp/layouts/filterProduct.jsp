@@ -32,7 +32,7 @@
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
 
-                                        <button class="accordion-button collapsed" type="button"
+                                        <button style="background: #efffcf" class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse"
                                                 data-bs-target="#flush-collapse-${loop.index}"
                                                 aria-expanded="false"

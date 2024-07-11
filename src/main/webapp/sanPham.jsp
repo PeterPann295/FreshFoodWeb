@@ -52,7 +52,7 @@
         <input type="hidden" id="numberInput" value="1">
 
         <div class="row" id="productContainer" >
-            <c:forEach var="product" items="${productDAO.selectAll()}">
+            <c:forEach var="product" items="${listProductPaging}">
                 <div class="col-lg-4 col-md-6 mb-4"
                      style="width: 216px; height: 355px">
 
@@ -116,6 +116,11 @@
 
                 </div>
             </c:forEach>
+            <div style="text-align: center" class="mt-4 mb-4">
+                <c:forEach begin="1" end="${endPage}" var="i">
+                    <a class="btn btn-primary" href="/customer?action=goListProduct&index=${i}" role="button"> ${i} </a>                </c:forEach>
+            </div>
+
         </div>
 
 

@@ -189,7 +189,7 @@
     </span>
                         </p>
 <%--                        <a href="../customer?selectedProducts=selectedProducts&action=goConfirmAddress">--%>
-                            <button type="submit" class="btn btn-success">Thanh Toán</button>
+                        <button type="submit" class="btn btn-success" id="submitButton" style="display: none;">Thanh Toán</button>
 <%--                        </a>--%>
                     </div>
                 </div></form>
@@ -208,9 +208,18 @@
 <c:remove var="response" scope="session" />
 <script>
     $(document).ready(function() {
+        function checkCheckboxStatus() {
+            // Check if at least one checkbox is checked
+            if ($('input[name="selectedProducts"]:checked').length > 0) {
+                $('#submitButton').show();
+            } else {
+                $('#submitButton').hide();
+            }
+        }
         // Lắng nghe sự kiện thay đổi của checkbox "selectedProducts"
         $('input[name="selectedProducts"]').change(function() {
             updateCart($(this));
+            checkCheckboxStatus();
         });
 
         // Lắng nghe sự kiện thay đổi của checkbox "selectAll"
@@ -222,6 +231,7 @@
             // Đặt trạng thái checked của tất cả các checkbox theo trạng thái của checkbox "Chọn tất cả"
             checkboxes.prop('checked', selectAllChecked);
             updateAllCart(selectAllChecked);
+            checkCheckboxStatus();
         });
         $('.btn-minus').click(function() {
             var cartId = $(this).data('cart-id');
@@ -264,6 +274,8 @@
                         $('#price-'+cartId).text(formattedPrice);
                         // Cập nhật số lượng hiển thị
                         $('#quantity-'+cartId).val(response.quantity);
+                        $('#cart-size').text(response.cartSize);
+
                     }else if(response.status == 'delete'){
                         $('#cart-item-' + cartId).remove();
                         $('#cart-size').text(response.cartSize);

@@ -274,9 +274,37 @@ public class CustomerDao extends AbsDao<Customer> {
         }
         return customer;
     }
+    public ArrayList<Customer> selectAdmin() {
+        ArrayList<Customer> customers = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "Select * from customers where role=1";
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Customer customer = new Customer();
+                customer = new Customer();
+                customer.setId(rs.getInt("id"));
+                customer.setUsername(rs.getString("username"));
+                customer.setPassword(rs.getString("password"));
+                customer.setFullName(rs.getString("fullName"));
+                customer.setNumberPhone(rs.getString("numberPhone"));
+                customer.setEmail(rs.getString("email"));
+                customer.setRole(rs.getBoolean("role"));
+                customer.setProvider(rs.getString("provider"));
+                customer.setProvider_user_id(rs.getString("provider_user_id"));
+                customers.add(customer);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
 
     public static void main(String[] args) {
         CustomerDao customerDao = new CustomerDao();
+        System.out.println(customerDao.selectAdmin().size());
     }
 
 }

@@ -432,16 +432,66 @@ public class ProductDao extends AbsDao<Product> {
         }
         return products;
     }
+    public int countProduct(){
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM products";
+
+        try (Connection con = JDBCUtil.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+    public ArrayList<Product> selectPaging(int index) {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM products ORDER BY id \n" +
+                    "LIMIT 12 OFFSET ?";
+            PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, (index-1)*12);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+
+                DiscountDao discountDao = new DiscountDao();
+                Discount discount = discountDao.selectById(discountId);
+
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
+                products.add(product);
+            }
+            JDBCUtil.closeConnection(con);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
 
 
 
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
-        String[] categories = {"1","2","3","5", "10"};
-        ArrayList<Product> products = productDao.selectProductByFilter(null,"price between 50000 and 200000", null, "ZA");
-        for (Product product : products) {
-            System.out.println("name: " + product.getName() + " - " + " price: "  + product.getPrice());
-        }
+        System.out.println(productDao.selectPaging(3).size());
     }
 
 

@@ -48,7 +48,7 @@
                     <use xlink:href="#category" /></svg> Danh Mục
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/admin.jsp'/>"> <svg
                         class="bi">
                     <use xlink:href="#admin" /></svg> Admin
                 </a></li>
@@ -124,12 +124,12 @@
 
             <ul class="nav flex-column mb-auto">
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="trangChu.jsp"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="../trangChu.jsp"> <svg
                         class="bi">
                     <use xlink:href="#gear-wide-connected" /></svg> Trang Mua Hàng
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="dangxuat"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="../customer?action=logout"> <svg
                         class="bi">
                     <use xlink:href="#door-closed" /></svg> Đăng Xuất
                 </a></li>

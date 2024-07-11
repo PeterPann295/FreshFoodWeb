@@ -38,9 +38,9 @@ public class ApiGHN {
                 "    \"to_address\": \"" + addressDetail + "\",\n" +
                 "    \"to_ward_code\": \"" + wardId + "\",\n" +
                 "    \"to_district_id\": " + districtId + ",\n" +
-                "    \"cod_amount\": 200000,\n" +
+                "    \"cod_amount\": 500000,\n" +
                 "    \"content\": \"Theo New York Times\",\n" +
-                "    \"weight\": 200,\n" +
+                "    \"weight\": 5000,\n" +
                 "    \"length\": 1,\n" +
                 "    \"width\": 19,\n" +
                 "    \"height\": 10,\n" +
@@ -55,12 +55,12 @@ public class ApiGHN {
                 "        {\n" +
                 "            \"name\": \"Áo Polo\",\n" +
                 "            \"code\": \"Polo123\",\n" +
-                "            \"quantity\": 1,\n" +
+                "            \"quantity\": 5,\n" +
                 "            \"price\": 200000,\n" +
                 "            \"length\": 12,\n" +
                 "            \"width\": 12,\n" +
                 "            \"height\": 12,\n" +
-                "            \"weight\": 1200,\n" +
+                "            \"weight\": 3200,\n" +
                 "            \"category\": {\n" +
                 "                \"level1\": \"Áo\"\n" +
                 "            }\n" +

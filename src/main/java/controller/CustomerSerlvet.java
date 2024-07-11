@@ -105,6 +105,8 @@ public class CustomerSerlvet extends HttpServlet {
             forgetPassword(req, resp);
         } else if(action.equals("resetPassword")){
             resetPassword(req, resp);
+        } else if (action.equals("goListProduct")) {
+            goListProduct(req,resp);
         }
     }
 
@@ -283,7 +285,7 @@ public class CustomerSerlvet extends HttpServlet {
             cartItemDao.insert(cartItem);
         }
         cart = cartDao.selectByCustomerId(customer.getId());
-        int cartSize = cart.getCartItems().size();
+        int cartSize = cart.getTotalQuantity();
         System.out.println(cartSize);
         resp.getWriter().write("{\"cartSize\": " + cartSize + "}");
     }
@@ -385,7 +387,7 @@ public class CustomerSerlvet extends HttpServlet {
             }
             cartItemDao.update(cartItem);
         }
-        int cartSize = cartDao.selectByCustomerId(customer.getId()).getCartItems().size();
+        int cartSize = cartDao.selectByCustomerId(customer.getId()).getTotalQuantity();
         JsonObject jsonResponse = new JsonObject();
         Gson gson = new Gson();
         double priceUpdate = cartItem.getProduct().getFinalPrice() * cartItem.getQuantity();
@@ -405,7 +407,7 @@ public class CustomerSerlvet extends HttpServlet {
         String cartIdParam = req.getParameter("cartId");
         CartItem cartItem = cartItemDao.selectById(Integer.parseInt(cartIdParam));
         cartItemDao.delete(cartItem);
-        int cartSize = cartDao.selectByCustomerId(customer.getId()).getCartItems().size();
+        int cartSize = cartDao.selectByCustomerId(customer.getId()).getTotalQuantity();
         JsonObject jsonResponse = new JsonObject();
         Gson gson = new Gson();
         jsonResponse.addProperty("cartSize", cartSize);
@@ -622,7 +624,10 @@ public class CustomerSerlvet extends HttpServlet {
         if (status == 5 && order.getStatus().getId() < 3) {
             order.setStatus(orderStatusDao.selectById(status));
             orderDao.update(order);
-        }
+        } else {
+            order.setStatus(orderStatusDao.selectById(status));
+            orderDao.update(order);
+         }
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + "/customer?action=getOrderStatus&status=" + status);
@@ -666,11 +671,7 @@ public class CustomerSerlvet extends HttpServlet {
         String price = priceParam != null ? priceParam : null;
         String discount = discountParam != null ? discountParam : null;
         String sort = (sortByParam != null && sortByParam.length() > 0) ? sortByParam : null;
-        System.out.println("da vao day " + price);
-        System.out.println("da vao day " + discount);
-        System.out.println("sort " + sort);
         ArrayList<Product> productList = prodDao.selectProductByFilter(categories, price, discount, sort);
-        System.out.println("so luong san pham: " + productList.size());
         Gson gson = new Gson();
         String json = gson.toJson(productList);
         System.out.println(json);
@@ -788,6 +789,24 @@ public class CustomerSerlvet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
                 + req.getContextPath();
         resp.sendRedirect(link + url);
+    }
+    private void goListProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        HttpSession session = req.getSession();
+        int count = prodDao.countProduct();
+        int endPage = count / 12;
+        if(count % 12 != 0){
+            endPage ++;
+        }
+        String indexParam = req.getParameter("index");
+        ArrayList<Product> listProduct = prodDao.selectPaging(Integer.parseInt(indexParam));
+        session.setAttribute("listProductPaging", listProduct);
+        session.setAttribute("endPage", endPage);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/sanPham.jsp");
     }
 
 }

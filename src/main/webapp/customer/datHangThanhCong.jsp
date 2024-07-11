@@ -2,6 +2,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,7 +24,7 @@
         </a>
         </h1>
 
-        <b> Chúc mừng bạn đã đặt thành công đơn hàng <a class="link-warning" href="trangChu.jsp"> Quay về trang chủ ! </a> </b>
+        <b> Chúc mừng bạn đã đặt thành công đơn hàng <a class="link-warning" href="<c:url value='../trangChu.jsp'/>"> Quay về trang chủ ! </a> </b>
 
     </form>
 </div>
