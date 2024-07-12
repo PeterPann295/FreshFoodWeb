@@ -48,7 +48,7 @@
                     <use xlink:href="#category" /></svg> Danh Mục
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/danhMucCha.jsp'/>"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/admin.jsp'/>"> <svg
                         class="bi">
                     <use xlink:href="#admin" /></svg> Admin
                 </a></li>
@@ -89,34 +89,15 @@
             </h6>
             <ul class="nav flex-column mb-auto">
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="danhMucLonAdmin.jsp"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="xuHuongSanPham.jsp"> <svg
                         class="bi">
-                    <use xlink:href="#file-earmark-text" /></svg> Danh Mục Lớn
+                    <use xlink:href="#file-earmark-text" /></svg> Xu Hướng Bán Hàng Của Sản Phẩm 3 Tháng Gần Nhất
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="danhMucAdmin.jsp"> <svg
-                        class="bi">
-                    <use xlink:href="#file-earmark-text" /></svg> Danh Mục
-                </a></li>
-                <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="chuongTrinhKhuyenMaiAdmin.jsp"> <svg
-                        class="bi">
-                    <use xlink:href="#file-earmark-text" /></svg> Chương Trình Giảm Giá
-                </a></li>
-                <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="top5SanPhamBanChayAdmin.jsp"> <svg
-                        class="bi">
-                    <use xlink:href="#file-earmark-text" /></svg> Top 5 Sản Phẩm Bán Chạy Nhất
-                </a></li>
-                <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="top5KhachHangAdmin.jsp"> <svg
-                        class="bi">
-                    <use xlink:href="#file-earmark-text" /></svg> Top 5 Khách Hàng Mua Nhiều Nhất
-                </a></li>
-                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="xuHuongDatHang.jsp"> <svg
                         class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/lienHeAdmin.jsp'/>"> <svg
                         class="bi">
-                    <use xlink:href="#file-earmark-text" /></svg> Phản Hồi Từ Khách Hàng
+                    <use xlink:href="#file-earmark-text" /></svg> Xu Hướng Đặt Hàng Của Khách Hàng Trong 3 Tháng Gần Nhất
                 </a></li>
             </ul>
 
@@ -124,12 +105,12 @@
 
             <ul class="nav flex-column mb-auto">
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="trangChu.jsp"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="../trangChu.jsp"> <svg
                         class="bi">
                     <use xlink:href="#gear-wide-connected" /></svg> Trang Mua Hàng
                 </a></li>
                 <li class="nav-item"><a
-                        class="nav-link d-flex align-items-center gap-2" href="dangxuat"> <svg
+                        class="nav-link d-flex align-items-center gap-2" href="../customer?action=logout"> <svg
                         class="bi">
                     <use xlink:href="#door-closed" /></svg> Đăng Xuất
                 </a></li>

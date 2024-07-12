@@ -3,6 +3,8 @@ package service;
 import database.OrderDao;
 import model.Order;
 import utils.OrderSummary;
+import utils.OrderSummaryYear;
+import utils.OrderTrend;
 
 import java.util.ArrayList;
 
@@ -53,41 +55,13 @@ public class OrderService {
         return orderDao.getTotalRevenue7Days();
     }
 
-    public static void main(String[] args) {
-        OrderService orderService = new OrderService();
-
-        // Test insert order
-        Order newOrder = new Order();
-        // Set properties for newOrder
-        int result = orderService.insert(newOrder);
-        System.out.println("Insert Order Result: " + result);
-
-        // Test get all orders
-        ArrayList<Order> orders = orderService.selectAll();
-        System.out.println("All Orders: " + orders);
-
-        // Test get order by id
-        Order order = orderService.selectById(1);
-        System.out.println("Order with ID 1: " + order);
-
-        // Test get orders by customer id
-        ArrayList<Order> customerOrders = orderService.selectByCustomerId(1);
-        System.out.println("Orders by Customer ID 1: " + customerOrders);
-
-        // Test get orders by status id
-        ArrayList<Order> statusOrders = orderService.selectByStatusId(1);
-        System.out.println("Orders by Status ID 1: " + statusOrders);
-
-        // Test get orders by customer id and status id
-        ArrayList<Order> customerStatusOrders = orderService.selectByCustomerIdAndStatusId(1, 1);
-        System.out.println("Orders by Customer ID 1 and Status ID 1: " + customerStatusOrders);
-
-        // Test get total product sold by product id
-        int totalSold = orderService.selectTotalProductSold(1);
-        System.out.println("Total Product Sold by Product ID 1: " + totalSold);
-
-        // Test get total revenue for the last 7 days
-        ArrayList<OrderSummary> totalRevenue = orderService.getTotalRevenue7Days();
-        System.out.println("Total Revenue for Last 7 Days: " + totalRevenue);
+    public double totalRevenue() {
+        return orderDao.totalRevenue();
+    }
+    public ArrayList<OrderSummaryYear> getTotalRevenueEveryYear() {
+        return orderDao.getTotalRevenueEveryYear();
+    }
+    public ArrayList<OrderTrend> selectOrderTrend() {
+        return orderDao.selectOrderTrend();
     }
 }

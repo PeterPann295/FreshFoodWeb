@@ -78,10 +78,11 @@
                         </c:choose></td>
                         <td><c:choose>
                             <c:when test="${importProduct.selectToTalProductInStock(p.id) > 0}">
-                                Còn Hàng
+                             <span class="text-success"> Còn Hàng</span>
                             </c:when>
                             <c:otherwise>
-                                Hết Hàng
+                                <span class="text-danger"> Hết Hàng
+ </span>
                             </c:otherwise>
                         </c:choose></td>
                         <td><a href="../admin?action=goUpdateProduct&productId=${p.id}"

@@ -27,13 +27,13 @@
                                                                 type="currency" currencyCode="VND" minFractionDigits="0"  /></h3>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group me-2">
-                        <a href="thongKeTheoNam.jsp"><button type="button" class="btn btn-sm btn-outline-success">Theo Năm</button> </a>
-                        <a href="thongKe.jsp"><button type="button" class="btn btn-sm btn-outline-secondary">7 Ngày Gần Nhất</button></a>
+                        <a href="thongKeTheoNam.jsp"><button type="button" class="btn btn-sm btn-outline-secondary">Theo Năm</button> </a>
+                        <a href="thongKe.jsp"><button type="button" class="btn btn-sm btn-outline-success">7 Ngày Gần Nhất</button></a>
                     </div>
 
                 </div>
             </div>
-            <h5 class="text-success" style="margin-left: 40px;">Biểu Đồ Doanh Thu 7 Ngày Bán Hàng Gần Nhất</h5>
+            <h5 class="text-success" style="margin-left: 40px;">Biểu Đồ Doanh Thu Theo Từng Năm</h5>
 
             <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
             <div class="table-responsive small">
@@ -59,7 +59,7 @@
         const ctx = document.getElementById('myChart');
 
         // Sử dụng Fetch API để lấy dữ liệu từ servlet
-        fetch('../admin?action=getTotalRevenue7Days') // Thay thế '/yourContextPath' bằng đường dẫn thực tế của bạn
+        fetch('../admin?action=getTotalRevenueEveryYear') // Thay thế '/yourContextPath' bằng đường dẫn thực tế của bạn
             .then(response => response.json())
             .then(data => {
                 console.log(data)
@@ -69,7 +69,7 @@
                 // Lặp qua mỗi đối tượng trong mảng phản hồi
                 data.forEach(item => {
                     // Trích xuất orderDate và totalAmount từ mỗi đối tượng
-                    const orderDate = item.orderDate;
+                    const orderDate = item.year;
                     const totalAmount = item.totalAmount;
 
                     // Thêm orderDate vào mảng labels

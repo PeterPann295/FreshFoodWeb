@@ -60,7 +60,22 @@
                         <th scope="row">${p.id}</th>
                         <td><img style="width: 60px; height: 50px"
                                  src="${p.imageUrl}" alt="Logo" class="logo-image"></td>
-                        <td>${p.name}</td>
+                        <td>
+                            <c:set var="totalInStock" value="${importProduct.selectToTalProductInStock(p.id)}" />
+
+                            <c:choose>
+                                <c:when test="${totalInStock <= 0}">
+                                    <p class="text-danger">${p.name}</p>
+                                </c:when>
+                                <c:when test="${totalInStock <= 5}">
+                                    <p class="text-warning">${p.name}</p>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="text-success">${p.name}</p>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+
                         <td><fmt:formatNumber value="${p.price}" type="currency"
                                               currencyCode="VND" minFractionDigits="0"  /></td>
                         <td class="text-center align-middle">${importProduct.selectTotalQuatityImportByProductId(p.id)}</td>

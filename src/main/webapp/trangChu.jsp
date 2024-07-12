@@ -241,6 +241,114 @@
     </div>
 	<input type="hidden" id="amount" value="1">
 </div>
+<div style="margin: 40px; margin-top: 40px;">
+	<h3 class="text-success">Khuyến Mãi Hấp Dẫn</h3>
+	<hr class="border border-success border-1 opacity-75">
+
+	<div class="row" style="margin-left: 30px">
+		<c:forEach var="product" items="${productDAO.selectProductHasDiscount()}">
+			<c:if test="${importProduct.selectToTalProductInStock(product.id) < 1}" >
+				<div class="col-lg-4 col-md-6 mb-4 mt-2"
+					 style="width: 216px; height: 355px">
+					<div class="card">
+						<a href="customer?action=productDetail&productId=${product.id}"><img
+								class="card-img-top" src="${product.imageUrl}" alt="" style="filter: grayscale(1)"></a>
+						<div class="card-body">
+							<h5 class="card-title">
+								<a href="#" style="text-decoration: none">
+										${product.name} </a>
+							</h5>
+							<p class="mt-1">ĐVT: ${product.unit}</p>
+							<p>
+        										<span class="text-success"> <fmt:formatNumber
+														value="${product.getFinalPrice()}" type="currency"
+														currencyCode="VND" minFractionDigits="0" />
+        										</span> <span
+									style="text-decoration: line-through; padding-left: 5px">
+        											<fmt:formatNumber value="${product.price}" type="currency"
+																	  currencyCode="VND" minFractionDigits="0" />
+        										</span>
+							</p>
+							<span class="discount-percentage">
+        										Sold out  </span>
+							<button class="ms-1 btn btn-secondary"
+									data-product-id="${product.id}">
+								<i class="bi bi-cart3"></i> Đã hết hàng
+							</button>
+						</div>
+					</div>
+				</div>
+			</c:if>
+			<c:if test="${importProduct.selectToTalProductInStock(product.id) > 0}" >
+
+				<div class="col-lg-4 col-md-6 mb-4 mt-2"
+					 style="width: 216px; height: 355px">
+
+					<c:choose>
+						<c:when test="${product.discount != null}">
+							<div class="card">
+								<a href="customer?action=productDetail&productId=${product.id}"><img
+										class="card-img-top" src="${product.imageUrl}" alt=""></a>
+								<div class="card-body">
+									<h5 class="card-title">
+										<a href="#" style="text-decoration: none">
+												${product.name} </a>
+									</h5>
+									<p class="mt-1">ĐVT: ${product.unit}</p>
+									<p>
+        										<span class="text-success"> <fmt:formatNumber
+														value="${product.getFinalPrice()}" type="currency"
+														currencyCode="VND" minFractionDigits="0" />
+        										</span> <span
+											style="text-decoration: line-through; padding-left: 5px">
+        											<fmt:formatNumber value="${product.price}" type="currency"
+																	  currencyCode="VND" minFractionDigits="0" />
+        										</span>
+									</p>
+									<span class="discount-percentage"> Giảm
+        										${product.discount.percent}% </span>
+									<button class="ms-1 btn btn-success add-to-cart-btn"
+											data-product-id="${product.id}">
+										<i class="bi bi-cart3"></i> Thêm Vào Giỏ
+									</button>
+								</div>
+
+							</div>
+
+						</c:when>
+						<c:otherwise>
+							<div class="card">
+								<a href="customer?action=productDetail&productId=${product.id}"><img
+										class="card-img-top" src="${product.imageUrl}" alt=""></a>
+								<div class="card-body">
+									<h5 class="card-title">
+										<a href="#" style="text-decoration: none">
+												${product.name} </a>
+									</h5>
+									<p class="mt-1">ĐVT: ${product.unit}</p>
+									<p>
+        										<span class="text-success"> <fmt:formatNumber
+														value="${product.getFinalPrice()}" type="currency"
+														currencyCode="VND" minFractionDigits="0"/>
+        										</span>
+									</p>
+
+									<button class="ms-1 btn btn-success add-to-cart-btn"
+											data-product-id="${product.id}">
+										<i class="bi bi-cart3"></i> Thêm Vào Giỏ
+									</button>
+								</div>
+
+							</div>
+						</c:otherwise>
+					</c:choose>
+
+				</div>
+			</c:if>
+		</c:forEach>
+	</div>
+</div>
+
 <script>
 	$(document).ready(function() {
 		$(".add-to-cart-btn").click(function() {

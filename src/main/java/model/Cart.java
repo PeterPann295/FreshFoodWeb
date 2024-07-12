@@ -58,7 +58,13 @@ public class Cart {
     public void setCartItems(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
-
+    public int getTotalQuantity() {
+        int result = 0;
+        for (CartItem cartItem : cartItems) {
+            result += cartItem.getQuantity();
+        }
+        return result;
+    }
 
     @Override
     public String toString() {

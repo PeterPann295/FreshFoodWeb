@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <meta charset="UTF-8">
     <title>Lịch sử mua hàng</title>
     <%@ include file="/layouts/common.jsp"%>
@@ -96,7 +97,7 @@
                                 <td class="text-center align-middle"><fmt:formatDate value="${p.deliveryDate}" pattern="dd/MM/yyyy" /></td>
                                 <td class="text-center align-middle"> ${p.status.name} </td>
                                 <td class="text-center align-middle"><b><fmt:formatNumber value="${p.total}"
-                                                                                          type="currency" currencyCode="VND" /></b></td>
+                                                                                          type="currency" currencyCode="VND" minFractionDigits="0"/></b></td>
                                 <td class="text-center align-middle"> <a class="a" href="../customer?action=detailOrder&orderId=${p.id}"><button class="btn btn-success"> Chi tiết </button></a> <c:if test="${p.status.id < 3}">
                                     <a class="a" href="../customer?action=updateOrder&status=5&orderId=${p.id}"><button class="btn btn-success"> Hủy </button></a>
                                 </c:if> <c:if test="${p.status.id == 3}">
