@@ -121,12 +121,100 @@ public class AdminServlet extends HttpServlet {
                 break;
             case "addAdmin":
                 addAdmin(req, resp);
+            case "addContact":
+                addContact(req, resp);
+                break;
+            case "updateContact":
+                updateContact(req, resp);
+                break;
+
+            case "goUpdateContact":
+                goUpdateContact(req, resp);
                 break;
             default:
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 break;
         }
     }
+
+
+    private void addContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ContactDAO contactDao = new ContactDAO();
+
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        String message = req.getParameter("message");
+
+        Contact contact = new Contact();
+        contact.setName(name);
+        contact.setEmail(email);
+        contact.setNumberPhone(phone);
+        contact.setEmail(message);
+        contactDao.insert(contact);
+
+        resp.sendRedirect(req.getContextPath() + "/admin/lienHeAdmin.jsp");
+    }
+    private void goUpdateContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ContactDAO contactDao = new ContactDAO();
+
+        String contactIdParam = req.getParameter("contactID");
+        if (contactIdParam != null && !contactIdParam.isEmpty()) {
+            try {
+                int contactId = Integer.parseInt(contactIdParam);
+                Contact contact = contactDao.selectById(contactId);
+
+                if (contact != null) {
+                    HttpSession session = req.getSession();
+                    session.setAttribute("contact", contact);
+
+                    // Chuyển hướng đến trang phản hồi
+                    String link = req.getContextPath() + "/admin/phanHoiAdmin.jsp";
+                    resp.sendRedirect(link);
+                } else {
+                    // Xử lý trường hợp không tìm thấy contact
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy thông tin liên hệ");
+                }
+            } catch (NumberFormatException e) {
+                // Xử lý ngoại lệ khi không thể chuyển đổi contactID thành số nguyên
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Lỗi xử lý yêu cầu");
+            }
+        } else {
+            // Xử lý trường hợp thiếu thông tin contactID
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu thông tin contactID");
+        }
+    }
+
+
+
+
+    private void updateContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        ContactDAO contactDao = new ContactDAO();
+
+        String contactIdStr = req.getParameter("contactId");
+        if (contactIdStr != null && !contactIdStr.isEmpty()) {
+            int id = Integer.parseInt(contactIdStr);
+            String name = req.getParameter("name");
+            String email = req.getParameter("email");
+            String phone = req.getParameter("phone");
+            String message = req.getParameter("message");
+
+            Contact contact = new Contact();
+            contact.setContactId(id);
+            contact.setName(name);
+            contact.setEmail(email);
+            contact.setNumberPhone(phone);
+            contact.setContent(message);
+            contactDao.update(contact);
+
+            resp.sendRedirect(req.getContextPath() + "/admin/lienHeAdmin.jsp");
+        } else {
+            throw new ServletException("Thiếu thông tin contactId");
+        }
+    }
+
+
     private void addDiscount(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
         int percent = Integer.parseInt(req.getParameter("percent"));
