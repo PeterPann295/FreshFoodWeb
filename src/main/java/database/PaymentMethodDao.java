@@ -1,6 +1,5 @@
 package database;
 
-import model.Category;
 import model.PaymentMethod;
 import utils.JDBCUtil;
 

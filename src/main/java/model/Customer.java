@@ -21,8 +21,8 @@ public class Customer implements IModel {
             this.username = username;
             this.password = password;
             this.fullName = fullName;
-            this.email = email;
             this.numberPhone = numberPhone;
+            this.email = email;
             this.role = role;
             this.beforeData = toString();
             this.provider = null;
@@ -32,8 +32,8 @@ public class Customer implements IModel {
             this.username = username;
             this.password = password;
             this.fullName = fullName;
-            this.email = email;
             this.numberPhone = numberPhone;
+            this.email = email;
             this.role = false;
             this.beforeData = toString();
             this.provider = null;
@@ -45,8 +45,8 @@ public class Customer implements IModel {
             this.username = username;
             this.password = password;
             this.fullName = fullName;
-            this.email = email;
             this.numberPhone = numberPhone;
+            this.email = email;
             this.role = role;
             this.provider = provider;
             this.provider_user_id = provider_user_id;

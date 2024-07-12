@@ -5,30 +5,23 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class JDBCUtil {
-    public static Connection getConnection() {
-        Connection c = null;
 
+    public static Connection getConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             String url = "jdbc:mysql://localhost:3306/projectweb";
             String username = "root";
             String password = "";
-            try {
-                c = DriverManager.getConnection(url, username, password);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            return DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new SQLException("MySQL JDBC Driver không được tìm thấy", e);
         }
-
-        return c;
     }
 
-    public static void closeConnection(Connection c) {
-        if (c != null) {
+    public static void closeConnection(Connection connection) {
+        if (connection != null) {
             try {
-                c.close();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -36,10 +29,17 @@ public class JDBCUtil {
     }
 
     public static void main(String[] args) {
-        JDBCUtil jd = new JDBCUtil();
-        Connection con = jd.getConnection();
-        System.out.println(con);
-
+        try {
+            Connection con = getConnection();
+            if (con != null) {
+                System.out.println("Kết nối đến cơ sở dữ liệu thành công!");
+                System.out.println("Connection: " + con);
+                con.close();
+            } else {
+                System.out.println("Không thể kết nối đến cơ sở dữ liệu!");
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi kết nối đến cơ sở dữ liệu: " + e.getMessage());
+        }
     }
 }
-
