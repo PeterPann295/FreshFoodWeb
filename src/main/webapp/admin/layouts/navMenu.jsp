@@ -77,6 +77,11 @@
                         class="bi">
                     <use xlink:href="#log" /></svg> Quản Lí Log
                 </a></li>
+                <li class="nav-item"><a
+                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/lienHeAdmin.jsp'/>"> <svg
+                        class="bi">
+                    <use xlink:href="#file-earmark-text" /></svg> Phản hồi từ khách hàng
+                </a></li>
 
             </ul>
 
@@ -95,10 +100,11 @@
                 </a></li>
                 <li class="nav-item"><a
                         class="nav-link d-flex align-items-center gap-2" href="xuHuongDatHang.jsp"> <svg
-                        class="nav-link d-flex align-items-center gap-2" href="<c:url value='../admin/lienHeAdmin.jsp'/>"> <svg
                         class="bi">
                     <use xlink:href="#file-earmark-text" /></svg> Xu Hướng Đặt Hàng Của Khách Hàng Trong 3 Tháng Gần Nhất
                 </a></li>
+
+
             </ul>
 
             <hr class="my-3">
