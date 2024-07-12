@@ -50,7 +50,7 @@
                         <td>${contact.email}</td>
                         <td>${contact.content}</td>
                         <td>
-                            <a href="../admin?action=phanHoi&contactID=${contact.contactId}" style="text-decoration: none">
+                            <a href="../admin?action=contact&contactID=${contact.contactId}" style="text-decoration: none">
                                 <button class="btn btn-success btn-sm">Phản Hồi</button>
                             </a>
                         </td>

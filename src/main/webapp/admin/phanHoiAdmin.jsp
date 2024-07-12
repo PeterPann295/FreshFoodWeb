@@ -8,7 +8,6 @@
     <meta charset="UTF-8">
     <title>Phản hồi</title>
     <script src="javascript/script.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/styleDangKi.css">
 </head>
 <body>
 <%@ include file="layouts/header.jsp"%>
@@ -17,7 +16,7 @@
         <%@ include file="layouts/navMenu.jsp"%>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="container_form">
-                <form class="form-container" action="${pageContext.request.contextPath}/admin?action=guiMail&contactID=${contact.contactId}" method="post">
+                <form class="form-container" action="${pageContext.request.contextPath}/admin?action=sendMail&contactID=${contact.contactId}" method="post">
 
                 <table class="table">
                         <tr>

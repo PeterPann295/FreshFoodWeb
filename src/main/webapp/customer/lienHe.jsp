@@ -76,9 +76,9 @@
             </form>
         </div>
         <div class="container_form">
-            <form class="form-container" action="../admin?action=them&Contact=${respone}" method="post"
+            <form class="form-container" action="../admin?action=addContact&Contact=${respone}" method="post"
                   style="background-color: #efffcf">
-                <input type="hidden" name="action" value="them">
+                <input type="hidden" name="action" value="addContact">
                 <h3 class="text-success">Liên Hệ Với Chúng Tôi</h3>
                 <p>Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và
                     chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể .</p>

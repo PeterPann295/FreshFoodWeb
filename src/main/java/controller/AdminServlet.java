@@ -117,8 +117,6 @@ public class AdminServlet extends HttpServlet {
             case "deleteDiscount":
                 deleteDiscount(req, resp);
                 break;
-            case "them":
-                themPhanHoi(req, resp);
             case "getTotalRevenueEveryYear":
                 getTotalRevenueEveryYear(req, resp);
                 break;
@@ -127,18 +125,18 @@ public class AdminServlet extends HttpServlet {
             case "addContact":
                 addContact(req, resp);
                 break;
-            case "phanHoi":
-                phanHoi(req, resp);
+            case "contact":
+                contact(req, resp);
                 break;
-            case "guiMail":
-                guiMail(req, resp);
+            case "sendMail":
+                sendMail(req, resp);
                 break;
             default:
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 break;
         }
     }
-    private void themPhanHoi(HttpServletRequest request, HttpServletResponse response)
+    private void addContact(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
@@ -151,7 +149,7 @@ public class AdminServlet extends HttpServlet {
         request.setAttribute("respone", "Bạn đã gửi thành công!");
         request.getRequestDispatcher("/customer/lienHe.jsp").forward(request, response);
     }
-    private void phanHoi(HttpServletRequest request, HttpServletResponse response)
+    private void contact(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String contactID = request.getParameter("contactID");
 
@@ -170,7 +168,7 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-    private void guiMail(HttpServletRequest request, HttpServletResponse response)
+    private void sendMail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String contactID = request.getParameter("contactID");
 
