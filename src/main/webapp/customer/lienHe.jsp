@@ -9,6 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Liên Hệ</title>
+    <%@ include file="/layouts/common.jsp"%>
     <style>
         .card:hover {
             border: 2px solid;
@@ -30,9 +31,11 @@
             padding: 20px;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="css/styleDangKi.css">
 
 </head>
 <body>
+
 <%@ include file="/layouts/header.jsp"%>
 
 <div class="row ms-4 mt-4" style="margin-bottom: 30px">
@@ -73,9 +76,9 @@
             </form>
         </div>
         <div class="container_form">
-            <form class="form-container" action="lienhe"
+            <form class="form-container" action="../admin?action=them&Contact=${respone}" method="post"
                   style="background-color: #efffcf">
-                <input type="hidden" name="hanhDong" value="them">
+                <input type="hidden" name="action" value="them">
                 <h3 class="text-success">Liên Hệ Với Chúng Tôi</h3>
                 <p>Nếu bạn có thắc mắc gì, có thể gửi yêu cầu cho chúng tôi, và
                     chúng tôi sẽ liên lạc lại với bạn sớm nhất có thể .</p>
@@ -116,6 +119,7 @@
         </div>
     </div>
 </div>
+<%@ include file="/layouts/footer.jsp"%>
 </body>
 <script src="javascript/scriptAjax.js"></script>
 </html>

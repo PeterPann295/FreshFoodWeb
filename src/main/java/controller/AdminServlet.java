@@ -7,6 +7,7 @@ import model.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import utils.Email;
 import service.*;
 import utils.Encode;
 import utils.OrderSummary;
@@ -116,6 +117,8 @@ public class AdminServlet extends HttpServlet {
             case "deleteDiscount":
                 deleteDiscount(req, resp);
                 break;
+            case "them":
+                themPhanHoi(req, resp);
             case "getTotalRevenueEveryYear":
                 getTotalRevenueEveryYear(req, resp);
                 break;
@@ -124,93 +127,74 @@ public class AdminServlet extends HttpServlet {
             case "addContact":
                 addContact(req, resp);
                 break;
-            case "updateContact":
-                updateContact(req, resp);
+            case "phanHoi":
+                phanHoi(req, resp);
                 break;
-
-            case "goUpdateContact":
-                goUpdateContact(req, resp);
+            case "guiMail":
+                guiMail(req, resp);
                 break;
             default:
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 break;
         }
     }
+    private void themPhanHoi(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String name = request.getParameter("name");
+        String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
+        String content = request.getParameter("content");
 
-
-    private void addContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ContactDAO contactDao = new ContactDAO();
-
-        String name = req.getParameter("name");
-        String email = req.getParameter("email");
-        String phone = req.getParameter("phone");
-        String message = req.getParameter("message");
-
-        Contact contact = new Contact();
-        contact.setName(name);
-        contact.setEmail(email);
-        contact.setNumberPhone(phone);
-        contact.setEmail(message);
-        contactDao.insert(contact);
-
-        resp.sendRedirect(req.getContextPath() + "/admin/lienHeAdmin.jsp");
+        Contact contact = new Contact(name, phone, email, content);
+        ContactDAO dao = new ContactDAO();
+        dao.insert(contact);
+        request.setAttribute("respone", "Bạn đã gửi thành công!");
+        request.getRequestDispatcher("/customer/lienHe.jsp").forward(request, response);
     }
-    private void goUpdateContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ContactDAO contactDao = new ContactDAO();
+    private void phanHoi(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String contactID = request.getParameter("contactID");
 
-        String contactIdParam = req.getParameter("contactID");
-        if (contactIdParam != null && !contactIdParam.isEmpty()) {
-            try {
-                int contactId = Integer.parseInt(contactIdParam);
-                Contact contact = contactDao.selectById(contactId);
+        int id = Integer.parseInt(contactID);
 
-                if (contact != null) {
-                    HttpSession session = req.getSession();
-                    session.setAttribute("contact", contact);
+        ContactDAO dao = new ContactDAO();
+        ArrayList<Contact> contacts = dao.selectByID(id);
 
-                    // Chuyển hướng đến trang phản hồi
-                    String link = req.getContextPath() + "/admin/phanHoiAdmin.jsp";
-                    resp.sendRedirect(link);
-                } else {
-                    // Xử lý trường hợp không tìm thấy contact
-                    resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy thông tin liên hệ");
-                }
-            } catch (NumberFormatException e) {
-                // Xử lý ngoại lệ khi không thể chuyển đổi contactID thành số nguyên
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Lỗi xử lý yêu cầu");
-            }
+        if (!contacts.isEmpty()) {
+            Contact contact = contacts.get(0);
+            request.setAttribute("contact", contact);
+            request.getRequestDispatcher("/admin/phanHoiAdmin.jsp").forward(request, response);
         } else {
-            // Xử lý trường hợp thiếu thông tin contactID
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Thiếu thông tin contactID");
+            // Xử lý khi không tìm thấy thông tin liên hệ
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy thông tin liên hệ");
         }
     }
 
+    private void guiMail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String contactID = request.getParameter("contactID");
 
+        int id = Integer.parseInt(contactID);
 
+        String tieuDe = request.getParameter("tieuDe");
+        String noiDung = request.getParameter("noiDung");
 
-    private void updateContact(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        ContactDAO dao = new ContactDAO();
+        ArrayList<Contact> contacts = dao.selectByID(id);
 
-        ContactDAO contactDao = new ContactDAO();
+        if (!contacts.isEmpty()) {
+            Contact contact = contacts.get(0);
 
-        String contactIdStr = req.getParameter("contactId");
-        if (contactIdStr != null && !contactIdStr.isEmpty()) {
-            int id = Integer.parseInt(contactIdStr);
-            String name = req.getParameter("name");
-            String email = req.getParameter("email");
-            String phone = req.getParameter("phone");
-            String message = req.getParameter("message");
+            // Gửi email và xóa liên hệ sau khi đã xử lý
+            Email email = new Email();
+            email.sendEmail(contact.getEmail(), tieuDe, noiDung);
+            dao.delete(contact);
 
-            Contact contact = new Contact();
-            contact.setContactId(id);
-            contact.setName(name);
-            contact.setEmail(email);
-            contact.setNumberPhone(phone);
-            contact.setContent(message);
-            contactDao.update(contact);
-
-            resp.sendRedirect(req.getContextPath() + "/admin/lienHeAdmin.jsp");
+            // Chuyển hướng về trang danh sách liên hệ của admin
+            request.getRequestDispatcher("/admin/lienHeAdmin.jsp").forward(request, response);
         } else {
-            throw new ServletException("Thiếu thông tin contactId");
+            // Xử lý khi không tìm thấy thông tin liên hệ
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy thông tin liên hệ");
         }
     }
 

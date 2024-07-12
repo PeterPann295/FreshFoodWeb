@@ -28,7 +28,6 @@
                 <h3 class="h2">Danh Sách Phản Hồi Từ Khách Hàng</h3>
                 <span style="color: red">${response}</span>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <!-- You can add a button here if needed, for example to add new contacts -->
                 </div>
             </div>
             <table class="table" id="tableContact">
@@ -51,7 +50,7 @@
                         <td>${contact.email}</td>
                         <td>${contact.content}</td>
                         <td>
-                            <a href="../admin?action=goUpdateContact&contactID=${contact.contactId}" style="text-decoration: none">
+                            <a href="../admin?action=phanHoi&contactID=${contact.contactId}" style="text-decoration: none">
                                 <button class="btn btn-success btn-sm">Phản Hồi</button>
                             </a>
                         </td>
