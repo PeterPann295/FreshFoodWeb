@@ -4,6 +4,7 @@ import model.Category;
 import model.Discount;
 import model.Product;
 import utils.JDBCUtil;
+import utils.TrendProduct;
 
 import java.lang.reflect.Type;
 import java.sql.*;
@@ -486,12 +487,84 @@ public class ProductDao extends AbsDao<Product> {
         }
         return products;
     }
+    public ArrayList<Product> selectProductHasDiscount() {
+        ArrayList<Product> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT * FROM products where discount_id IS NOT NULL ORDER BY id DESC LIMIT 10"; // Sắp xếp giảm dần theo ID và giới hạn kết quả là 10
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                String description = rs.getString("description");
+                double price = rs.getDouble("price");
+                String imageUrl = rs.getString("imageUrl");
+                String unit = rs.getString("unit");
+                double weight = rs.getDouble("weight");
+                boolean available = rs.getBoolean("available");
+                int categoryId = rs.getInt("category_id");
+                int discountId = rs.getInt("discount_id");
+
+                CategoryDao categoryDao = new CategoryDao();
+                Category category = categoryDao.selectById(categoryId);
+
+                DiscountDao discountDao = new DiscountDao();
+                Discount discount = discountDao.selectById(discountId);
+
+                Product product = new Product(id, name, description, price, imageUrl, unit, weight, available, category, discount);
+                products.add(product);
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+    public ArrayList<TrendProduct> selectTrendProduct() {
+        ArrayList<TrendProduct> products = new ArrayList<>();
+        try {
+            Connection con = JDBCUtil.getConnection();
+            String sql = "SELECT \n" +
+                    "    p.id AS product_id,\n" +
+                    "    SUM(CASE WHEN DATE_FORMAT(o.time_order, '%Y-%m') = DATE_FORMAT(CURRENT_DATE - INTERVAL 2 MONTH, '%Y-%m') THEN oi.quantity ELSE 0 END) AS quantity_month_1,\n" +
+                    "    SUM(CASE WHEN DATE_FORMAT(o.time_order, '%Y-%m') = DATE_FORMAT(CURRENT_DATE - INTERVAL 1 MONTH, '%Y-%m') THEN oi.quantity ELSE 0 END) AS quantity_month_2,\n" +
+                    "    SUM(CASE WHEN DATE_FORMAT(o.time_order, '%Y-%m') = DATE_FORMAT(CURRENT_DATE, '%Y-%m') THEN oi.quantity ELSE 0 END) AS quantity_month_3\n" +
+                    "FROM \n" +
+                    "    orders o\n" +
+                    "JOIN \n" +
+                    "    order_items oi ON o.id = oi.order_id\n" +
+                    "JOIN \n" +
+                    "    products p ON oi.product_id = p.id\n" +
+                    "WHERE \n" +
+                    "    o.time_order >= DATE_SUB(CURRENT_DATE, INTERVAL 2 MONTH)\n" +
+                    "    AND o.status_id = 4\n" +
+                    "GROUP BY \n" +
+                    "    p.name\n" +
+                    "ORDER BY \n" +
+                    "    p.name;"; // Sắp xếp giảm dần theo ID và giới hạn kết quả là 10
+            PreparedStatement pst = con.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                int productId = rs.getInt("product_id");
+                int qm1 = rs.getInt("quantity_month_1");
+                int qm2 = rs.getInt("quantity_month_2");
+                int qm3 = rs.getInt("quantity_month_3");
+                Product product = selectById(productId);
+                products.add(new TrendProduct(selectById(productId), qm1, qm2, qm3));
+            }
+            JDBCUtil.closeConnection(con);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
 
 
 
     public static void main(String[] args) {
         ProductDao productDao = new ProductDao();
-        System.out.println(productDao.selectPaging(3).size());
+        System.out.println(productDao.selectTrendProduct().size());
     }
 
 

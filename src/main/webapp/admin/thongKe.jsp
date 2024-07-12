@@ -9,6 +9,7 @@
          pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<jsp:useBean id="order" class="database.OrderDao" />
 <html>
 <head>
     <title>Title</title>
@@ -22,11 +23,12 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h3 >Tổng doanh thu cửa hàng: </h3>
+                <h3 >Tổng doanh thu cửa hàng: <fmt:formatNumber value="${order.totalRevenue()}"
+                                                                type="currency" currencyCode="VND" minFractionDigits="0"  /></h3>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group me-2">
-                        <a href="dashBoard2.jsp"><button type="button" class="btn btn-sm btn-outline-success">Theo Năm</button> </a>
-                        <a href="dashBoard.jsp"><button type="button" class="btn btn-sm btn-outline-secondary">7 Ngày Gần Nhất</button></a>
+                        <a href="thongKeTheoNam.jsp"><button type="button" class="btn btn-sm btn-outline-success">Theo Năm</button> </a>
+                        <a href="thongKe.jsp"><button type="button" class="btn btn-sm btn-outline-secondary">7 Ngày Gần Nhất</button></a>
                     </div>
 
                 </div>

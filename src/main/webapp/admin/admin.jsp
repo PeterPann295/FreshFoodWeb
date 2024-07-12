@@ -29,7 +29,12 @@
             <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h3 class="h2">Danh Sách Admin</h3>
-                <div class="btn-toolbar mb-2 mb-md-0"> <span style="color: red"> ${response} </span> </div>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="themNguoiDungAdmin.jsp">
+                        <button type="button" class="btn btn-sm btn-outline-success">
+                            Thêm Admin     </button>
+                    </a>
+                </div>
             </div>
 
             <table class="table" id="example">
@@ -109,6 +114,17 @@
             </table>
 
         </main>
+        <c:remove var="username" scope="session"/>
+        <c:remove var="err_username" scope="session"/>
+        <c:remove var="password" scope="session"/>
+        <c:remove var="err_password" scope="session"/>
+        <c:remove var="fullName" scope="session"/>
+        <c:remove var="err_fullName" scope="session"/>
+        <c:remove var="phone" scope="session"/>
+        <c:remove var="err_phone" scope="session"/>
+        <c:remove var="email" scope="session"/>
+        <c:remove var="err_email" scope="session"/>
+
     </div>
 </div>
 <jsp:include page="layouts/jsDatatable.jsp" />
