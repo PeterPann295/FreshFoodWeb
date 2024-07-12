@@ -81,7 +81,7 @@
                     </c:when>
                     <c:otherwise>
                         <fmt:formatNumber value="${productDetail.price}"
-                                          type="currency" currencyCode="VND" />
+                                          type="currency" currencyCode="VND" minFractionDigits="0" />
                     </c:otherwise>
                 </c:choose></td>
             </tr>

@@ -2,6 +2,7 @@ package service;
 
 import database.ProductDao;
 import model.Product;
+import utils.TrendProduct;
 
 import java.util.ArrayList;
 
@@ -55,8 +56,19 @@ public class ProductService {
     public ArrayList<Product> selectProductsByParentCategoryId(int parentId) {
         return productDao.selectProductsByParentCategoryId(parentId);
     }
-
-    public static void main(String[] args) {
+    public int countProduct() {
+        return productDao.countProduct();
+    }
+    public ArrayList<Product> selectPaging(int index) {
+        return productDao.selectPaging(index);
+    }
+    public ArrayList<Product> selectProductHasDiscount() {
+        return productDao.selectProductHasDiscount();
+    }
+    public ArrayList<TrendProduct> selectTrendProduct() {
+        return productDao.selectTrendProduct();
+    }
+        public static void main(String[] args) {
         ProductService productService = new ProductService();
 
         // Test insert product

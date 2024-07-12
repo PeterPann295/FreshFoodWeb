@@ -44,7 +44,7 @@
                     class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="<c:url value='../trangChu.jsp'/>" class="nav-link px-2 text-white">Trang
                     Chủ</a></li>
-                <li><a href="<c:url value='../sanPham.jsp'/>" class="nav-link px-2 text-white">Sản
+                <li><a href="../customer?action=goListProduct&index=1" class="nav-link px-2 text-white">Sản
                     Phẩm</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">Giới
                     Thiệu</a></li>
@@ -63,7 +63,7 @@
                 <button class="btn btn-success">
                     <i class="bi bi-cart3"></i> Giỏ Hàng <span id="cart-size"
                                                                class="badge bg-danger cart-size"> <c:if test="${customer_login==null}" >0</c:if>
-                <c:if test="${customer_login != null}" > ${cartSize.selectByCustomerId(customer_login.id) == null ? 0 : cartSize.selectByCustomerId(customer_login.id).cartItems.size()} </c:if>
+                <c:if test="${customer_login != null}" > ${cartSize.selectByCustomerId(customer_login.id) == null ? 0 : cartSize.selectByCustomerId(customer_login.id).totalQuantity} </c:if>
                 </span>
                 </button>
             </a>

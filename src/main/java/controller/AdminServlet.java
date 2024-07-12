@@ -8,7 +8,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import utils.Email;
+import service.*;
+import utils.Encode;
 import utils.OrderSummary;
+import utils.OrderSummaryYear;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -20,20 +23,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @WebServlet("/admin")
 public class AdminServlet extends HttpServlet {
-    private ParentCategoryDao parentCateDao = new ParentCategoryDao();
-    private CategoryDao categoryDao = new CategoryDao();
-    private DiscountDao discountDao = new DiscountDao();
-    private ProductDao productDao = new ProductDao();
+    private ParentCategoryService parentCateDao = new ParentCategoryService();
+    private CategoryService categoryDao = new CategoryService();
+    private DiscountService discountDao = new DiscountService();
+    private ProductService productDao = new ProductService();
     private VoucherDao voucherDao = new VoucherDao();
-    private OrderStatusDao orderStatusDao = new OrderStatusDao();
-    private OrderDao orderDao = new OrderDao();
-    private ImportProductDao importProductDao = new ImportProductDao();
+    private OrderStatusService orderStatusDao = new OrderStatusService();
+    private OrderService orderDao = new OrderService();
+    private ImportProductService importProductDao = new ImportProductService();
     private LogDao logDao = new LogDao();
-    private CustomerDao customerDao = new CustomerDao();
+    private CustomerService customerDao = new CustomerService();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
@@ -114,6 +119,13 @@ public class AdminServlet extends HttpServlet {
                 break;
             case "them":
                 themPhanHoi(req, resp);
+            case "getTotalRevenueEveryYear":
+                getTotalRevenueEveryYear(req, resp);
+                break;
+            case "addAdmin":
+                addAdmin(req, resp);
+            case "addContact":
+                addContact(req, resp);
                 break;
             case "phanHoi":
                 phanHoi(req, resp);
@@ -315,7 +327,7 @@ public class AdminServlet extends HttpServlet {
         resp.setContentType("text/html; charset=UTF-8");
 
         DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        diskFileItemFactory.setRepository(new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp"));
+        diskFileItemFactory.setRepository(new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp"));
         ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
 
         String url = "";
@@ -330,7 +342,7 @@ public class AdminServlet extends HttpServlet {
                     }
                 } else {
                     if ("imgCate".equals(fileItem.getFieldName())) {
-                        File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\categories" + fileItem.getName());
+                        File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/categories/" + fileItem.getName());
                         fileItem.write(file);
                         url = "/assets/images/categories/" + fileItem.getName();
                     }
@@ -354,6 +366,103 @@ public class AdminServlet extends HttpServlet {
         resp.sendRedirect(link + "/admin/danhMucCha.jsp");
     }
 
+    private void addProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+
+        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
+        diskFileItemFactory.setRepository(new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp"));
+        ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
+
+        String productName = "";
+        double price = 0;
+        String unit = "";
+        double weight = 0;
+        String imgProduct = "";
+        boolean availables = false;
+        int categoryId = 0;
+        int discountId = 0;
+        String description = "";
+        int count = 0;
+        try {
+            List<FileItem> fileItems = fileUpload.parseRequest(req);
+            for (FileItem fileItem : fileItems) {
+                if (fileItem.isFormField()) { // Xử lý các trường thông tin không phải là file
+                    String fieldName = fileItem.getFieldName();
+                    String fieldValue = fileItem.getString("UTF-8"); // Lấy giá trị của trường dữ liệu
+                    System.out.println(fieldValue);
+                    switch (fieldName) {
+                        case "productName":
+                            productName = fieldValue;
+                            count ++;
+                            break;
+                        case "price":
+                            price = Double.parseDouble(fieldValue);
+                            count ++;
+                            break;
+                        case "unit":
+                            unit = fieldValue;
+                            count ++;
+                            break;
+                        case "weight":
+                            weight = Double.parseDouble(fieldValue);
+                            count ++;
+                            break;
+                        case "imgProduct":
+                            imgProduct = fieldValue;
+                            count ++;
+                            break;
+                        case "availables":
+                            availables = Boolean.parseBoolean(fieldValue);
+                            count ++;
+                            break;
+                        case "category":
+                            categoryId = Integer.parseInt(fieldValue);
+                            count ++;
+                            break;
+                        case "discount":
+                            if(fieldValue.equals("none")){
+                                discountId = 0;
+                                count ++;
+                                break;
+                            }
+                            discountId = Integer.parseInt(fieldValue);
+                            count ++;
+                            break;
+                        case "description":
+                            description = fieldValue;
+                            count ++;
+                            break;
+                        default:
+                            // Xử lý trường dữ liệu khác nếu cần
+                    }
+                } else { // Xử lý trường thông tin là file
+                    if ("imgProduct".equals(fileItem.getFieldName())) {
+                        File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/products/" + fileItem.getName());
+                        fileItem.write(file);
+                        imgProduct = "/assets/images/products/" + fileItem.getName();
+                        count ++;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+        if(count == 9){
+            if(discountId == 0){
+                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), null);
+                productDao.insert(product);
+            }else {
+                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), discountDao.selectById(discountId));
+                productDao.insert(product);
+            }
+
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/sanPham.jsp");
+    }
     private void updateOrder(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
@@ -458,103 +567,6 @@ public class AdminServlet extends HttpServlet {
         resp.sendRedirect(link + "/admin/chiTietLog.jsp");
     }
 
-    private void addProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=UTF-8");
-
-        DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
-        diskFileItemFactory.setRepository(new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets"));
-        ServletFileUpload fileUpload = new ServletFileUpload(diskFileItemFactory);
-
-        String productName = "";
-        double price = 0;
-        String unit = "";
-        double weight = 0;
-        String imgProduct = "";
-        boolean availables = false;
-        int categoryId = 0;
-        int discountId = 0;
-        String description = "";
-        int count = 0;
-        try {
-            List<FileItem> fileItems = fileUpload.parseRequest(req);
-            for (FileItem fileItem : fileItems) {
-                if (fileItem.isFormField()) { // Xử lý các trường thông tin không phải là file
-                    String fieldName = fileItem.getFieldName();
-                    String fieldValue = fileItem.getString("UTF-8"); // Lấy giá trị của trường dữ liệu
-                    System.out.println(fieldValue);
-                    switch (fieldName) {
-                        case "productName":
-                            productName = fieldValue;
-                            count ++;
-                            break;
-                        case "price":
-                            price = Double.parseDouble(fieldValue);
-                            count ++;
-                            break;
-                        case "unit":
-                            unit = fieldValue;
-                            count ++;
-                            break;
-                        case "weight":
-                            weight = Double.parseDouble(fieldValue);
-                            count ++;
-                            break;
-                        case "imgProduct":
-                            imgProduct = fieldValue;
-                            count ++;
-                            break;
-                        case "availables":
-                            availables = Boolean.parseBoolean(fieldValue);
-                            count ++;
-                            break;
-                        case "category":
-                            categoryId = Integer.parseInt(fieldValue);
-                            count ++;
-                            break;
-                        case "discount":
-                            if(fieldValue.equals("none")){
-                                discountId = 0;
-                                count ++;
-                                break;
-                            }
-                            discountId = Integer.parseInt(fieldValue);
-                            count ++;
-                            break;
-                        case "description":
-                            description = fieldValue;
-                            count ++;
-                            break;
-                        default:
-                            // Xử lý trường dữ liệu khác nếu cần
-                    }
-                } else { // Xử lý trường thông tin là file
-                    if ("imgProduct".equals(fileItem.getFieldName())) {
-                        File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products" + fileItem.getName());
-                        fileItem.write(file);
-                        imgProduct = "/assets/images/products/" + fileItem.getName();
-                        count ++;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        if(count == 9){
-            if(discountId == 0){
-                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), null);
-                productDao.insert(product);
-            }else {
-                Product product = new Product(productName, description, price, imgProduct, unit, weight, availables, categoryDao.selectById(categoryId), discountDao.selectById(discountId));
-                productDao.insert(product);
-            }
-
-        }
-        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
-                + req.getContextPath();
-        resp.sendRedirect(link + "/admin/sanPham.jsp");
-    }
     private void goUpdateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
@@ -652,7 +664,7 @@ public class AdminServlet extends HttpServlet {
                     if ("imgProduct".equals(fileItem.getFieldName())) {
                         String fileName = fileItem.getName();
                         if(fileName != null && !fileName.isEmpty()){
-                            File file = new File("C:\\IntelliJ\\FreshFoodWeb\\src\\main\\webapp\\assets\\images\\products\\" + fileName);
+                            File file = new File("D:/FutureOfMe/ProjectWeb/FreshFoodWeb/src/main/webapp/assets/images/products/" + fileName);
                             fileItem.write(file);
                             imgProduct = "/assets/images/products/" + fileName;
                         }
@@ -757,4 +769,88 @@ public class AdminServlet extends HttpServlet {
         String json = gson.toJson(orderSummaries);
         resp.getWriter().write(json);
     }
+    private void getTotalRevenueEveryYear(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException{
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("application/json; charset=UTF-8");
+        ArrayList<OrderSummaryYear> orderSummaries = orderDao.getTotalRevenueEveryYear();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(orderSummaries);
+        resp.getWriter().write(json);
+    }
+
+    private void addAdmin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String confirmPassword = req.getParameter("confirm-password");
+        String fullName = req.getParameter("full-name");
+        String phone = req.getParameter("phone");
+        String email = req.getParameter("email");
+        username = (username.equals("null")) ? "" : username;
+        password = (password.equals("null")) ? "" : password;
+        fullName = (fullName.equals("null")) ? "" : fullName;
+        phone = (phone.equals("null")) ? "" : phone;
+        email = (email.equals("null")) ? "" : email;
+        HttpSession session = req.getSession();
+        session.setAttribute("username", username);
+        session.setAttribute("password", password);
+        session.setAttribute("confirm-password", confirmPassword);
+        session.setAttribute("fullName", fullName);
+        session.setAttribute("phone", phone);
+        session.setAttribute("email", email);
+        boolean error = false;
+        String url = "";
+        if (customerDao.checkUsername(username)) {
+            session.setAttribute("err_username", "Tên Đăng Nhập Đã Tồn Tại, Vui Lòng Chọn Tên Đăng Nhập Khác");
+            url = "/admin/themNguoiDungAdmin.jsp";
+            error = true;
+        }
+        if (!password.equals(confirmPassword)) {
+            session.setAttribute("err_password", "Nhập Mật Khẩu Không Khớp");
+            url = "/admin/themNguoiDungAdmin.jsp";
+            error = true;
+        }
+
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        Pattern emailPattern = Pattern.compile(emailRegex);
+        Matcher emailMatcher = emailPattern.matcher(email);
+
+        if (!emailMatcher.matches()) {
+            error = true;
+            url = "/admin/themNguoiDungAdmin.jsp";
+            session.setAttribute("err_email", "Câu trúc của email chưa đúng!");
+        }
+
+        // Kiểm tra số diện thoại
+        Pattern soDienThoaiPattern = Pattern.compile("\\d{10}");
+        Matcher soDienThoaiMatcher = soDienThoaiPattern.matcher(phone);
+        if (!soDienThoaiMatcher.matches()) {
+            error = true;
+            url = "/admin/themNguoiDungAdmin.jsp";
+            session.setAttribute("err_phone", "Số điện thoại bao gồm 10 ký tự!");
+        }
+        if (username.length() < 8) {
+            error = true;
+            url = "/admin/themNguoiDungAdmin.jsp";
+            session.setAttribute("err_username", "Tên đăng nhập phải từ 6 kí tự");
+        }
+        if (password.length() < 8) {
+            error = true;
+            url = "/admin/themNguoiDungAdmin.jsp";
+            session.setAttribute("err_password", "Mật khẩu tối thiểu 6 kí tự");
+        }
+        if (!error) {
+            Customer cus = new Customer(username, Encode.toSHA1(password), fullName, phone, email);
+            cus.setRole(true);
+            customerDao.insert(cus);
+            session.setAttribute("register_success", "Chức mừng bạn đăng kí thành công, vui lòng đăng nhập");
+            url = "/admin/admin.jsp";
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort();
+        resp.sendRedirect(link + url);    }
+
 }
