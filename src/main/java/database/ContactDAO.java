@@ -56,9 +56,8 @@ public class ContactDAO extends AbsDao<Contact> {
         }
         return contacts;
     }
-
-    public Contact selectById(int id) {
-        Contact contact = null;
+    public ArrayList<Contact> selectByID(int id) {
+        ArrayList<Contact> contacts = new ArrayList<>();
         try {
             Connection con = JDBCUtil.getConnection();
             String sql = "SELECT * FROM Contacts WHERE contactID = ?";
@@ -71,13 +70,14 @@ public class ContactDAO extends AbsDao<Contact> {
                 String numberPhone = rs.getNString("numberPhone");
                 String email = rs.getNString("email");
                 String content = rs.getNString("content");
-                contact = new Contact(contactID, name, numberPhone, email, content);
+                Contact contact = new Contact(contactID, name, numberPhone, email, content);
+                contacts.add(contact);
             }
             JDBCUtil.closeConnection(con);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return contact;
+        return contacts;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ContactDAO extends AbsDao<Contact> {
 
        // Contact contact = new Contact("Nguyen Van A", "0123456789", "a@gmail.com", "Noi dung lien he");
 
-      // System.out.println(contactDao.insert(contact));
+//       System.out.println(contactDao.selectByID(1));
 
         ArrayList<Contact> contacts = contactDao.selectAll();
         for (Contact contact : contacts) {
