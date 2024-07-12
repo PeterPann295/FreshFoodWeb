@@ -48,6 +48,7 @@ public class OrderDao extends AbsDao<Order>{
                         order.setId(generatedId); // Cập nhật ID vào đối tượng Order
                     }
                 }
+                super.insert(order);
             }
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {
@@ -77,6 +78,7 @@ public class OrderDao extends AbsDao<Order>{
             pst.setInt(13, order.getVoucher().getId());
             pst.setInt(14, order.getId()); // Đặt tham số ID của Order cần cập nhật
             rowsAffected = pst.executeUpdate();
+            super.update(order);
             JDBCUtil.closeConnection(con);
         } catch (Exception e) {
             e.printStackTrace();
@@ -146,6 +148,7 @@ public class OrderDao extends AbsDao<Order>{
                 order.setStatus(orderStatusDao.selectById(rs.getInt("status_id")));
                 order.setVoucher(voucherDao.selectById(rs.getInt("voucher_id")));
                 order.setOrderItems(orderItemDao.selectByOrderId(order));
+                order.setBeforeData(order.toString());
                 orders.add(order);
             }
             JDBCUtil.closeConnection(con);
@@ -179,6 +182,7 @@ public class OrderDao extends AbsDao<Order>{
                 order.setStatus(orderStatusDao.selectById(rs.getInt("status_id")));
                 order.setVoucher(voucherDao.selectById(rs.getInt("voucher_id")));
                 order.setOrderItems(orderItemDao.selectByOrderId(order));
+                order.setBeforeData(order.toString());
                 orders.add(order);
             }
             JDBCUtil.closeConnection(con);
@@ -212,6 +216,7 @@ public class OrderDao extends AbsDao<Order>{
                 order.setStatus(orderStatusDao.selectById(rs.getInt("status_id")));
                 order.setVoucher(voucherDao.selectById(rs.getInt("voucher_id")));
                 order.setOrderItems(orderItemDao.selectByOrderId(order));
+                order.setBeforeData(order.toString());
                 orders.add(order);
             }
             JDBCUtil.closeConnection(con);
@@ -246,6 +251,7 @@ public class OrderDao extends AbsDao<Order>{
                 order.setStatus(orderStatusDao.selectById(rs.getInt("status_id")));
                 order.setVoucher(voucherDao.selectById(rs.getInt("voucher_id")));
                 order.setOrderItems(orderItemDao.selectByOrderId(order));
+                order.setBeforeData(order.toString());
                 orders.add(order);
             }
             JDBCUtil.closeConnection(con);

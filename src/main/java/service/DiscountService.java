@@ -15,8 +15,13 @@ public class DiscountService {
     public int insert(Discount discount) {
         return discountDao.insert(discount);
     }
-
-    public ArrayList<Discount> selectAll() {
+    public int delete(Discount discount) {
+        return discountDao.delete(discount);
+    }
+    public int update(Discount discount) {
+        return discountDao.update(discount);
+    }
+        public ArrayList<Discount> selectAll() {
         return discountDao.selectAll();
     }
 

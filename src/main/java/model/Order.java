@@ -19,7 +19,9 @@ public class Order implements IModel {
     private OrderStatus status;
     private Voucher voucher;
     private List<OrderItem> orderItems;
-    public Order() {}
+    private String beforeData;
+    public Order() {
+    }
 
     public Order(int id, Customer customer,String toName, double total, Timestamp date,String numberPhone, String from_address, String to_address, double deliveryFee, Timestamp deliveryDate, String note, PaymentMethod paymentMethod, OrderStatus status, Voucher voucher, List<OrderItem> orderItems) {
         this.id = id;
@@ -37,6 +39,7 @@ public class Order implements IModel {
         this.status = status;
         this.voucher = voucher;
         this.orderItems = orderItems;
+        beforeData = toString();
     }
 
     public Order(Customer customer,String toName, double total, Timestamp date,String numberPhone, String from_address, String to_address, double deliveryFee, Timestamp deliveryDate, String note, PaymentMethod paymentMethod, OrderStatus status, Voucher voucher, List<OrderItem> orderItems) {
@@ -54,6 +57,15 @@ public class Order implements IModel {
         this.status = status;
         this.voucher = voucher;
         this.orderItems = orderItems;
+        beforeData = toString();
+    }
+
+    public String getBeforeData() {
+        return beforeData;
+    }
+
+    public void setBeforeData(String beforeData) {
+        this.beforeData = beforeData;
     }
 
     public int getId() {
@@ -200,8 +212,8 @@ public class Order implements IModel {
                 "', deliveryFee=" + deliveryFee +
                 ", deliveryDate=" + deliveryDate +
                 ", note='" + note +
-                "', paymentMethod=" + paymentMethod.getId() + // Tránh gọi paymentMethod.toString()
-                ", status=" + status.getId() + // Tránh gọi status.toString()
+                "', paymentMethod=" +(paymentMethod!=null ? paymentMethod.getId() : "null" )+ // Tránh gọi paymentMethod.toString()
+                ", status=" +(status != null ? status.getId() : "null" )+ // Tránh gọi status.toString()
                 ", voucher=" + (voucher != null ? voucher.getId() : "null") + // Tránh gọi voucher.toString()
                 ", orderItems=" + (orderItems != null ? orderItems.size() : "null") + // Không gọi orderItems.toString()
                 "}";
@@ -209,16 +221,16 @@ public class Order implements IModel {
 
     @Override
     public String table() {
-        return "";
+        return "Order";
     }
 
     @Override
     public String beforeData() {
-        return "";
+        return beforeData;
     }
 
     @Override
     public String afterData() {
-        return "";
+        return toString();
     }
 }
