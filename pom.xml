@@ -109,6 +109,12 @@
       <artifactId>javax.mail</artifactId>
       <version>1.6.2</version> <!-- Sử dụng phiên bản phù hợp nhất -->
     </dependency>
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>5.0.1</version>
+    </dependency>
+
   </dependencies>
   <build>
     <finalName>Project_Web_FreshFood</finalName>

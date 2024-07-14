@@ -2,6 +2,7 @@ package database;
 
 import model.IModel;
 import model.Log;
+import utils.Email;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,9 @@ public class AbsDao <T extends IModel> implements IDao<T>{
 
     @Override
     public int delete(T t) {
+        Email.sendEmail("21130354@st.hcmuaf.edu.vn", "V/v Hành Vi Danger Của Người Dùng", "Người Dùng Với Id là "+ user_id +
+
+                " đã thực hiện hành vi xóa dữ liệu trên table" + t.table() + ", với dữ liệu đã xóa là " + t.beforeData());
         return logDao.insert(Log.delete(t, user_id));
     }
 

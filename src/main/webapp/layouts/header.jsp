@@ -48,7 +48,7 @@
                     Phẩm</a></li>
                 <li><a href="#" class="nav-link px-2 text-white">Giới
                     Thiệu</a></li>
-                <li><a href="#" class="nav-link px-2 text-white">Liên Hệ</a></li>
+                <li><a href="<c:url value='../customer/lienHe.jsp'/>" class="nav-link px-2 text-white">Liên Hệ</a></li>
             </ul>
 
             <form action="../customer?action=searchByNameProduct" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" method="post">

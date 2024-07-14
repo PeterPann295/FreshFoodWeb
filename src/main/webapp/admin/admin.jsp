@@ -97,7 +97,7 @@
                             </c:if>
                         </td>
                         <td style="display: flex">
-                            <a href="../admin?action=goUpdateCustomer&customerId=${p.id}"
+                            <a href="../admin?action=goUpdateAdmin&customerId=${p.id}"
                                style="text-decoration: none">
                                 <button class="btn btn-success btn-sm"><i class="bi bi-pencil-square"></i></button>
                             </a> <a href="../admin?action=deleteCustomer&customerId=${p.id}"

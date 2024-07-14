@@ -42,7 +42,7 @@ public class ContactDAO extends AbsDao<Contact> {
             PreparedStatement pst = con.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                int contactID = rs.getInt("contactID");
+                int contactID = rs.getInt("id");
                 String name = rs.getNString("name");
                 String numberPhone = rs.getNString("numberPhone");
                 String email = rs.getNString("email");
@@ -60,12 +60,12 @@ public class ContactDAO extends AbsDao<Contact> {
         ArrayList<Contact> contacts = new ArrayList<>();
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "SELECT * FROM Contacts WHERE contactID = ?";
+            String sql = "SELECT * FROM Contacts WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
-                int contactID = rs.getInt("contactID");
+                int contactID = rs.getInt("id");
                 String name = rs.getNString("name");
                 String numberPhone = rs.getNString("numberPhone");
                 String email = rs.getNString("email");
@@ -85,7 +85,7 @@ public class ContactDAO extends AbsDao<Contact> {
         int result = 0;
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "UPDATE Contacts SET name = ?, numberPhone = ?, email = ?, content = ? WHERE contactID = ?";
+            String sql = "UPDATE Contacts SET name = ?, numberPhone = ?, email = ?, content = ? WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setNString(1, contact.getName());
             pst.setNString(2, contact.getNumberPhone());
@@ -108,7 +108,7 @@ public class ContactDAO extends AbsDao<Contact> {
         int result = 0;
         try {
             Connection con = JDBCUtil.getConnection();
-            String sql = "DELETE FROM Contacts WHERE contactID = ?";
+            String sql = "DELETE FROM Contacts WHERE id = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, contact.getContactId());
             result = pst.executeUpdate();

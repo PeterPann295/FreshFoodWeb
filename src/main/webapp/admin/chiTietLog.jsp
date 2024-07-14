@@ -69,7 +69,7 @@
                         </tr>
                         <tr>
                             <td>Thời gian</td>
-                            <td> <fmt:formatDate value="${log.time}" pattern="dd/MM/yyyy hh:MM:ss" />
+                            <td> <fmt:formatDate value="${log.time}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
                         </tr>
 
                     </table>

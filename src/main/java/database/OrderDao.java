@@ -75,7 +75,12 @@ public class OrderDao extends AbsDao<Order>{
             pst.setNString(10, order.getNote());
             pst.setInt(11, order.getPaymentMethod().getId());
             pst.setInt(12, order.getStatus().getId());
-            pst.setInt(13, order.getVoucher().getId());
+            if(order.getVoucher() != null){
+                pst.setInt(13, order.getVoucher().getId());
+            } else {
+                pst.setNull(13, java.sql.Types.INTEGER);
+            }
+
             pst.setInt(14, order.getId()); // Đặt tham số ID của Order cần cập nhật
             rowsAffected = pst.executeUpdate();
             super.update(order);
@@ -275,7 +280,7 @@ public class OrderDao extends AbsDao<Order>{
                 return rs.getInt("total_quantity_sold");
             }
             JDBCUtil.closeConnection(con);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -372,6 +377,8 @@ public class OrderDao extends AbsDao<Order>{
                     "    LEFT JOIN orders o ON c.id = o.customer_id\n" +
                     "WHERE\n" +
                     "    o.time_order >= DATE_SUB(CURRENT_DATE, INTERVAL 3 MONTH)\n" +
+                    "    AND o.status_id = 4\n" +
+
                     "GROUP BY\n" +
                     "    c.id, c.fullName\n" +
                     "ORDER BY\n" +

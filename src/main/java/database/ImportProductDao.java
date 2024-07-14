@@ -4,10 +4,7 @@ import model.Discount;
 import model.ImportProduct;
 import utils.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class ImportProductDao implements IDao<ImportProduct>{
@@ -61,7 +58,7 @@ public class ImportProductDao implements IDao<ImportProduct>{
                 importProducts.add(ip);
             }
             JDBCUtil.closeConnection(con);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return importProducts;
@@ -78,7 +75,7 @@ public class ImportProductDao implements IDao<ImportProduct>{
                 return rs.getInt("total_quatity");
             }
             JDBCUtil.closeConnection(con);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;

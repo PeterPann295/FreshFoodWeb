@@ -116,6 +116,6 @@ public class LogDao implements IDao<Log>{
 
     public static void main(String[] args) {
         LogDao logDao = new LogDao();
-        System.out.println(logDao.selectAll().size());
+        System.out.println(logDao.selectById(253).getTime());
     }
 }

@@ -46,6 +46,9 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
         String action = req.getParameter("action");
         switch (action) {
             case "addParentCategory":
@@ -122,6 +125,7 @@ public class AdminServlet extends HttpServlet {
                 break;
             case "addAdmin":
                 addAdmin(req, resp);
+                break;
             case "addContact":
                 addContact(req, resp);
                 break;
@@ -131,6 +135,12 @@ public class AdminServlet extends HttpServlet {
             case "sendMail":
                 sendMail(req, resp);
                 break;
+            case "goUpdateAdmin":
+                goUpdateAdmin(req, resp);
+                break;
+            case "updateAdmin":
+                updateAdmin(req, resp);
+                break;
             default:
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
                 break;
@@ -138,6 +148,10 @@ public class AdminServlet extends HttpServlet {
     }
     private void addContact(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
@@ -157,11 +171,13 @@ public class AdminServlet extends HttpServlet {
 
         ContactDAO dao = new ContactDAO();
         ArrayList<Contact> contacts = dao.selectByID(id);
-
+        HttpSession session = request.getSession();
         if (!contacts.isEmpty()) {
             Contact contact = contacts.get(0);
-            request.setAttribute("contact", contact);
-            request.getRequestDispatcher("/admin/phanHoiAdmin.jsp").forward(request, response);
+            session.setAttribute("contact", contact);
+            String link = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+                    + request.getContextPath();
+            response.sendRedirect(link + "/admin/phanHoiAdmin.jsp");
         } else {
             // Xử lý khi không tìm thấy thông tin liên hệ
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy thông tin liên hệ");
@@ -189,7 +205,9 @@ public class AdminServlet extends HttpServlet {
             dao.delete(contact);
 
             // Chuyển hướng về trang danh sách liên hệ của admin
-            request.getRequestDispatcher("/admin/lienHeAdmin.jsp").forward(request, response);
+            String link = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+                    + request.getContextPath();
+            response.sendRedirect(link + "/admin/lienHeAdmin.jsp");
         } else {
             // Xử lý khi không tìm thấy thông tin liên hệ
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Không tìm thấy thông tin liên hệ");
@@ -203,7 +221,9 @@ public class AdminServlet extends HttpServlet {
 
         Discount discount = new Discount(name, percent);
         discountDao.insert(discount);
-        resp.sendRedirect(req.getContextPath() + "/admin/discount.jsp");
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/discount.jsp");
     }
 
 
@@ -236,7 +256,9 @@ public class AdminServlet extends HttpServlet {
             Discount discount = new Discount(id, code, value);
             discountDao.update(discount);
 
-            resp.sendRedirect(req.getContextPath() + "/admin/discount.jsp");
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/admin/discount.jsp");
         } else {
             throw new ServletException("Thiếu thông tin discountId");
         }
@@ -250,8 +272,9 @@ public class AdminServlet extends HttpServlet {
             discount.setId(id);
             discountDao.delete(discount);
 
-            resp.sendRedirect(req.getContextPath() + "/admin/discount.jsp");
-        } else {
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/admin/discount.jsp");        } else {
             throw new ServletException("Thiếu thông tin discountId");
         }
     }
@@ -262,7 +285,10 @@ public class AdminServlet extends HttpServlet {
 
         Voucher voucher = new Voucher(code, discount);
         voucherDao.insert(voucher);
-        resp.sendRedirect(req.getContextPath() + "/admin/voucher.jsp");
+
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/voucher.jsp");
     }
 
     private void goUpdateVoucher(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -296,7 +322,10 @@ public class AdminServlet extends HttpServlet {
             Voucher voucher = new Voucher(id, code, discount);
             voucherDao.update(voucher); // Cập nhật voucher
 
-            resp.sendRedirect(req.getContextPath() + "/admin/voucher.jsp"); // Chuyển hướng về trang danh sách voucher
+
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/admin/voucher.jsp");// Chuyển hướng về trang danh sách voucher
         } else {
             throw new ServletException("Thiếu thông tin voucherId");
         }
@@ -313,7 +342,11 @@ public class AdminServlet extends HttpServlet {
             voucher.setId(id);
             voucherDao.delete(voucher); // Xóa voucher
 
-            resp.sendRedirect(req.getContextPath() + "/admin/voucher.jsp"); // Chuyển hướng về trang danh sách voucher
+
+
+            String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                    + req.getContextPath();
+            resp.sendRedirect(link + "/admin/voucher.jsp");// Chuyển hướng về trang danh sách voucher
         } else {
             throw new ServletException("Thiếu thông tin voucherId");
         }
@@ -742,6 +775,54 @@ public class AdminServlet extends HttpServlet {
         String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort();
         resp.sendRedirect(link + "/admin/khachHang.jsp");
     }
+    private void goUpdateAdmin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String customerIdParam = req.getParameter("customerId");
+        System.out.println("id: " + customerIdParam);
+        Customer customer = customerDao.selectById(Integer.parseInt(customerIdParam));
+        HttpSession session = req.getSession();
+        session.setAttribute("updateCustomer", customer);
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort()
+                + req.getContextPath();
+        resp.sendRedirect(link + "/admin/capNhatAdmin.jsp");
+    }
+    private void updateAdmin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setContentType("text/html; charset=UTF-8");
+        String customerIdParam = req.getParameter("customerId");
+        String fullName = req.getParameter("fullName");
+        String phone = req.getParameter("numberPhone");
+        String email = req.getParameter("email");
+        String role[] = req.getParameterValues("role");
+        boolean isAdmin = Boolean.parseBoolean(role[0]);
+
+        Customer customer = customerDao.selectById(Integer.parseInt(customerIdParam));
+        System.out.println(fullName + phone + email);
+        if(fullName != null && !fullName.isEmpty()){
+            customer.setFullName(fullName);
+        }
+        if(phone != null && !phone.isEmpty()){
+            customer.setNumberPhone(phone);
+        }
+        if(email != null && !email.isEmpty()){
+            customer.setEmail(email);
+        }
+        customer.setRole(isAdmin);
+        System.out.println(customer);
+        HttpSession session = req.getSession();
+        int i = customerDao.update(customer);
+        if( i > 0){
+            session.setAttribute("response", "Cập Nhật Thành Công ");
+        }else {
+            session.setAttribute("response", "Cập Nhật Thất Bại ");
+        }
+        String link = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort();
+        resp.sendRedirect(link + "/admin/admin.jsp");
+    }
+
     private void deleteCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");

@@ -7,7 +7,7 @@ import utils.TrendProduct;
 import java.util.ArrayList;
 
 public class ProductService {
-    private ProductDao productDao;
+    private ProductDao productDao = new ProductDao();
 
     public ProductService() {
         this.productDao = new ProductDao();

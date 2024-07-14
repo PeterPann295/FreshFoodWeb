@@ -80,7 +80,7 @@
                         <td> ${p.id} </td>
                         <td> ${p.action} </td>
                         <td> ${p.table} </td>
-                        <td> <fmt:formatDate value="${p.time}" pattern="dd/MM/yyyy hh:MM:ss" />
+                        <td> <fmt:formatDate value="${p.time}" pattern="dd/MM/yyyy HH:mm:ss" /></td>
                         <td>
                         <a href="../admin?action=detailLog&logId=${p.id}">
                             <button type="button" class="btn btn-sm btn-outline-success">

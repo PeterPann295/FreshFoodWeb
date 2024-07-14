@@ -20,6 +20,7 @@
 <body>
 
 <%@ include file="layouts/header.jsp"%>
+<c:remove var="contact" scope="session" />
 <div class="container-fluid">
     <div class="row">
         <%@ include file="layouts/navMenu.jsp"%>
